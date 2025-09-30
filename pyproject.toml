@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=80.9.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lib_prep_tools"
+version = "0.0.0"
+description = "Visualization tool for comparing RNA-seq expression data across different library preparation methods using UMAP."
+authors = [
+    { name="Piet Rottinghuis", email="prottinghuis@gmail.com" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
