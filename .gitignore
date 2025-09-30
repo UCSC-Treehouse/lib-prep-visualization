@@ -1,0 +1,2 @@
+# Ignore packaging files
+*.egg-info
