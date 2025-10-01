@@ -16,3 +16,8 @@ dependencies = []
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.4.2",
+]
