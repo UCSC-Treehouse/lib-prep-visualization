@@ -1,9 +1,15 @@
 from pydantic import BaseModel, HttpUrl, field_validator, RootModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 from pathlib import Path
 from datetime import datetime
 import re
 import json
+import requests
+
+# Manifest Dataset Status Options
+STATUS_IN_PROGRESS = "in_progress"
+STATUS_SUCCESS = "success"
+STATUS_FAILED = "failed"
 
 
 class CompendiaDownloadConfig(BaseModel):
@@ -72,3 +78,65 @@ def load_manifest(file_path: Path) -> DownloadManifest:
     with open(file_path, 'r') as f:
         manifest_data = json.load(f)
     return DownloadManifest(**manifest_data)
+
+def download_file(url: HttpUrl, target_path: Path, chunk_size: int = 10*1024*1024) -> Optional[Path]:
+    """
+    Download a file from a URL to the target path. Return None if the file download fails.
+    """
+    try:
+        response = requests.get(url, stream=True)
+        response.raise_for_status()  # Raise an error for bad responses
+        with open(target_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=chunk_size):
+                f.write(chunk)
+        return target_path
+    except requests.RequestException:
+        return None
+
+def download_compendia(download_list_config: DownloadListConfig, manifest_path: DownloadManifest, data_dir: Path, software_version: str):
+    """
+    File download steps:
+    - get compendia target from download list
+    - create target directory if it doesn't exist
+    - add entry to manifest marking as 'in_progress' with current software version
+    - download clinical and manifest file to temp directory
+    - compute md5 checksum and file size
+    - move files to target directory
+    - update manifest entry with checksum, file size, status 'downloaded', and current timestamp
+    """
+    for compendia_download_config in download_list_config.root:
+        compendia_id = compendia_download_config.compendia_id
+        target_dir = data_dir / compendia_id
+        target_dir.mkdir(parents=True, exist_ok=True)
+        log_fp = target_dir / 'download.log'
+        if not log_fp.exists():
+            log_fp.touch()
+
+        # Add or update entry in manifest marking as 'in_progress'
+        manifest_entry = DatasetEntry(
+            last_download=datetime.now(),
+            md5checksum="",
+            file_size=0,
+            status=STATUS_IN_PROGRESS,
+            software_version=software_version
+        )
+        manifest_path.add_entry(compendia_id, manifest_entry)
+
+        # Download expression and metadata files
+        expression_fp = target_dir / "expression.tsv.gz"
+        downloaded_expression_fp = download_file(compendia_download_config.expression_url, expression_fp)
+
+        metadata_fp = target_dir / "metadata.tsv.gz"
+        downloaded_metadata_fp = download_file(compendia_download_config.metadata_url, metadata_fp)
+
+        if not expression_fp or not metadata_fp:
+            # Update manifest entry marking as 'failed'
+            manifest_entry.status = STATUS_FAILED
+            manifest_entry.last_download = datetime.now()
+            manifest_path.add_entry(compendia_id, manifest_entry)
+            continue
+        else:
+            manifest_entry.status = STATUS_SUCCESS
+            manifest_entry.last_download = datetime.now()
+            manifest_path.add_entry(compendia_id, manifest_entry)
+
