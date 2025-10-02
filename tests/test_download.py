@@ -50,7 +50,7 @@ def test_invalid_compendia_id_in_config(invalid_config):
     with pytest.raises(ValidationError):
         CompendiaDownloadConfig(**invalid_config)
 
-def test_invalid_expression_url():
+def test_invalid_expression_url_in_config():
     invalid_config = {
         "compendia_id": "compendia_1",
         "expression_url": "not_a_url",  # Invalid URL
@@ -59,7 +59,7 @@ def test_invalid_expression_url():
     with pytest.raises(ValidationError):
         CompendiaDownloadConfig(**invalid_config)
 
-def test_invalid_metadata_url():
+def test_invalid_metadata_url_in_config():
     invalid_config = {
         "compendia_id": "compendia_1",
         "expression_url": "http://example.com/expression",
