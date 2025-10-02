@@ -1,8 +1,10 @@
 import pytest
 from pydantic import ValidationError
 from pathlib import Path
+import json
 
-from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, load_config, DatasetEntry
+
+from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, load_config, DatasetEntry, load_manifest, DownloadManifest
 
 def test_valid_compendia_download_config():
     valid_config = {
@@ -181,3 +183,21 @@ def test_nonexistent_file_load_config(tmp_path: Path):
     non_existent_file = tmp_path / "non_existent_config.json"
     with pytest.raises(FileNotFoundError):
         load_config(non_existent_file)
+
+def test_load_manifest_initialize_new_manifest(tmp_path: Path):
+    empty_download_manifest = load_manifest(tmp_path / "non_existent_manifest.json")
+    assert isinstance(empty_download_manifest, DownloadManifest)
+    assert len(empty_download_manifest.root) == 0
+
+def test_load_manifest_with_existing_file(tmp_path: Path):
+    manifest_data = {
+        "dataset_1": valid_dataset_model_entry.copy(),
+        "dataset_2": valid_dataset_model_entry.copy()
+    }
+    manifest_file = tmp_path / "manifest.json"
+    with open(manifest_file, 'w') as f:
+        import json
+        json.dump(manifest_data, f)
+    manifest = load_manifest(manifest_file)
+    assert isinstance(manifest, DownloadManifest)
+    assert len(manifest.root) == 2
