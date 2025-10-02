@@ -1,6 +1,8 @@
 from pydantic import BaseModel, HttpUrl, field_validator
 from typing import List
+from pathlib import Path
 import re
+import json
 
 
 class CompendiaDownloadConfig(BaseModel):
@@ -21,3 +23,13 @@ class DownloadListConfig(BaseModel):
     compendia_downloads: List[CompendiaDownloadConfig]
 
 
+def load_config(file_path: Path) -> DownloadListConfig:
+    """
+    Load a json config file and parse it into a DownloadListConfig object.
+    """
+    # Check that the file path exists
+    if not file_path.exists():
+        raise FileNotFoundError(f"Config file {file_path} does not exist.")
+    with open(file_path, 'r') as f:
+        config_data = json.load(f)
+    return DownloadListConfig(**config_data)
