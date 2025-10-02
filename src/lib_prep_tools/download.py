@@ -1,6 +1,7 @@
-from pydantic import BaseModel, HttpUrl, field_validator
-from typing import List
+from pydantic import BaseModel, HttpUrl, field_validator, RootModel
+from typing import List, Dict
 from pathlib import Path
+from datetime import datetime
 import re
 import json
 
@@ -21,6 +22,31 @@ class CompendiaDownloadConfig(BaseModel):
 
 class DownloadListConfig(BaseModel):
     compendia_downloads: List[CompendiaDownloadConfig]
+
+
+class DatasetEntry(BaseModel):
+    last_download: datetime
+    md5checksum: str
+    file_size: int
+    status: str
+    software_version: str
+
+    model_config = {
+        "validate_assignment": True  # validates any field change
+    }
+
+class DownloadManifest(RootModel):
+    root: Dict[str, DatasetEntry]
+
+    def add_entry(self, name: str, entry: DatasetEntry):
+        """Add a new DatasetEntry under the given name."""
+        if not isinstance(entry, DatasetEntry):
+            raise TypeError("entry must be a DatasetEntry instance")
+        self.root[name] = entry
+
+    def get_entry(self, name: str) -> DatasetEntry:
+        """Retrieve an existing DatasetEntry for modification."""
+        return self.root[name]
 
 
 def load_config(file_path: Path) -> DownloadListConfig:
