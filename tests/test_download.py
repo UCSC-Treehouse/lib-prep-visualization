@@ -1,7 +1,8 @@
 import pytest
 from pydantic import ValidationError
+from pathlib import Path
 
-from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig
+from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, load_config
 
 def test_valid_compendia_download_config():
     valid_config = {
@@ -112,3 +113,30 @@ def test_invalid_download_list_in_download_list_config():
     }
     with pytest.raises(ValidationError):
         DownloadListConfig(**invalid_config)
+
+def test_valid_file_load_config(tmp_path: Path):
+    config_data = {
+        "compendia_downloads": [
+            {
+                "compendia_id": "compendia_1",
+                "expression_url": "http://example.com/expression1",
+                "metadata_url": "http://example.com/metadata1"
+            },
+            {
+                "compendia_id": "compendia_2",
+                "expression_url": "http://example.com/expression2",
+                "metadata_url": "http://example.com/metadata2"
+            }
+        ]
+    }
+    config_file = tmp_path / "config.json"
+    with open(config_file, 'w') as f:
+        import json
+        json.dump(config_data, f)
+    config = load_config(config_file)
+    assert isinstance(config, DownloadListConfig)
+
+def test_nonexistent_file_load_config(tmp_path: Path):
+    non_existent_file = tmp_path / "non_existent_config.json"
+    with pytest.raises(FileNotFoundError):
+        load_config(non_existent_file)
