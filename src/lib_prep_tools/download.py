@@ -59,3 +59,16 @@ def load_config(file_path: Path) -> DownloadListConfig:
     with open(file_path, 'r') as f:
         config_data = json.load(f)
     return DownloadListConfig(**config_data)
+
+
+def load_manifest(file_path: Path) -> DownloadManifest:
+    """
+    Load a json manifest file and parse it into a DownloadManifest object.
+    """
+    # Check that the file path exists
+    if not file_path.exists():
+        # Create an empty manifest if it doesn't exist yet
+        return DownloadManifest({})
+    with open(file_path, 'r') as f:
+        manifest_data = json.load(f)
+    return DownloadManifest(**manifest_data)
