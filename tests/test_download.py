@@ -2,7 +2,7 @@ import pytest
 from pydantic import ValidationError
 from pathlib import Path
 
-from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, load_config
+from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, load_config, DatasetEntry
 
 def test_valid_compendia_download_config():
     valid_config = {
@@ -113,6 +113,47 @@ def test_invalid_download_list_in_download_list_config():
     }
     with pytest.raises(ValidationError):
         DownloadListConfig(**invalid_config)
+
+valid_dataset_model_entry = {
+    "last_download": "2023-10-01T12:00:00",
+    "md5checksum": "d41d8cd98f00b204e9800998ecf8427e",
+    "file_size": 123456,
+    "status": "completed",
+    "software_version": "1.0.0"
+}
+
+def test_valid_dataset_entry_model():
+    entry = DatasetEntry(**valid_dataset_model_entry)
+
+def test_invalid_datetime_dataset_entry_model():
+    invalid_entry = valid_dataset_model_entry.copy()
+    invalid_entry["last_download"] = "not_a_datetime"  # Invalid datetime
+    with pytest.raises(ValidationError):
+        DatasetEntry(**invalid_entry)
+
+def test_invalid_md5checksum_dataset_entry_model():
+    invalid_entry = valid_dataset_model_entry.copy()
+    invalid_entry["md5checksum"] = 123456  # Invalid type
+    with pytest.raises(ValidationError):
+        DatasetEntry(**invalid_entry)
+
+def test_invalid_file_size_dataset_entry_model():
+    invalid_entry = valid_dataset_model_entry.copy()
+    invalid_entry["file_size"] = "123456b"  # Invalid type
+    with pytest.raises(ValidationError):
+        DatasetEntry(**invalid_entry)
+
+def test_invalid_status_dataset_entry_model():
+    invalid_entry = valid_dataset_model_entry.copy()
+    invalid_entry["status"] = 100  # Invalid type
+    with pytest.raises(ValidationError):
+        DatasetEntry(**invalid_entry)
+
+def test_invalid_software_version_dataset_entry_model():
+    invalid_entry = valid_dataset_model_entry.copy()
+    invalid_entry["software_version"] = 1.0  # Invalid type
+    with pytest.raises(ValidationError):
+        DatasetEntry(**invalid_entry)
 
 def test_valid_file_load_config(tmp_path: Path):
     config_data = {
