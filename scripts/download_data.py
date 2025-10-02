@@ -1,8 +1,10 @@
 import argparse
 from lib_prep_tools import __version__
-from lib_prep_tools.download import load_config
+from lib_prep_tools.download import load_config, load_manifest, DownloadListConfig, download_compendia
 from pathlib import Path
 
+DATA_DIR = Path.cwd() / 'data' / str(__version__)
+MANIFEST_PATH = DATA_DIR / 'download_manifest.json'
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Download compendia datasets based on a configuration file.")
@@ -13,7 +15,9 @@ def parse_args():
 def main():
     config_path = parse_args()
     download_list_model = load_config(config_path)
-    print(download_list_model)
+    manifest_model = load_manifest(MANIFEST_PATH)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    download_compendia(download_list_model, manifest_model, DATA_DIR, str(__version__))
 
 if __name__ == "__main__":
     main()
