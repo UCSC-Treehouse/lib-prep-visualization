@@ -20,8 +20,8 @@ class CompendiaDownloadConfig(BaseModel):
         return v
 
 
-class DownloadListConfig(BaseModel):
-    compendia_downloads: List[CompendiaDownloadConfig]
+class DownloadListConfig(RootModel[List[CompendiaDownloadConfig]]):
+    pass
 
 
 class DatasetEntry(BaseModel):
@@ -58,7 +58,7 @@ def load_config(file_path: Path) -> DownloadListConfig:
         raise FileNotFoundError(f"Config file {file_path} does not exist.")
     with open(file_path, 'r') as f:
         config_data = json.load(f)
-    return DownloadListConfig(**config_data)
+    return DownloadListConfig(config_data)
 
 
 def load_manifest(file_path: Path) -> DownloadManifest:
