@@ -104,6 +104,7 @@ def download_compendia(download_list_config: DownloadListConfig, manifest_path: 
     - move files to target directory
     - update manifest entry with checksum, file size, status 'downloaded', and current timestamp
     """
+    manifest_fp = data_dir / 'download_manifest.json'
     for compendia_download_config in download_list_config.root:
         compendia_id = compendia_download_config.compendia_id
         target_dir = data_dir / compendia_id
@@ -140,3 +141,6 @@ def download_compendia(download_list_config: DownloadListConfig, manifest_path: 
             manifest_entry.last_download = datetime.now()
             manifest_path.add_entry(compendia_id, manifest_entry)
 
+    # Write the manifest back to disk
+    with open(manifest_fp, 'w') as f:
+        json.dump(manifest_path.model_dump(), f, indent=4, default=str)  # default=str to handle datetime serialization
