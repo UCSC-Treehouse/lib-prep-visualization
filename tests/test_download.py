@@ -71,43 +71,39 @@ def test_invalid_metadata_url_in_config():
     with pytest.raises(ValidationError):
         CompendiaDownloadConfig(**invalid_config)
 
-def test_valid_download_config():
-    valid_config = {
-        "compendia_downloads": [
-            {
-                "compendia_id": "compendia_1",
-                "expression_url": "http://example.com/expression1",
-                "metadata_url": "http://example.com/metadata1"
-            },
-            {
-                "compendia_id": "compendia_2",
-                "expression_url": "http://example.com/expression2",
-                "metadata_url": "http://example.com/metadata2"
-            }
-        ]
-    }
-    config = DownloadListConfig(**valid_config)
-    assert len(config.compendia_downloads) == 2
-    for compendia_download_config in config.compendia_downloads:
+def test_valid_download_list_config():
+    valid_config = [
+        {
+            "compendia_id": "compendia_1",
+            "expression_url": "http://example.com/expression1",
+            "metadata_url": "http://example.com/metadata1"
+        },
+        {
+            "compendia_id": "compendia_2",
+            "expression_url": "http://example.com/expression2",
+            "metadata_url": "http://example.com/metadata2"
+        }
+    ]
+    config = DownloadListConfig(root=valid_config)
+    assert len(config.root) == 2
+    for compendia_download_config in config.root:
         assert isinstance(compendia_download_config, CompendiaDownloadConfig)
 
 def test_invalid_compendia_in_download_list_config():
-    invalid_config = {
-        "compendia_downloads": [
-            {
-                "compendia_id": "compendia_1",
-                "expression_url": "http://example.com/expression1",
-                "metadata_url": "http://example.com/metadata1"
-            },
-            {
-                "compendia_id": "compendia/2",  # Invalid compendia_id
-                "expression_url": "http://example.com/expression2",
-                "metadata_url": "http://example.com/metadata2"
-            }
-        ]
-    }
+    invalid_config = [      
+        {
+            "compendia_id": "compendia_1",
+            "expression_url": "http://example.com/expression1",
+            "metadata_url": "http://example.com/metadata1"
+        },
+        {
+            "compendia_id": "compendia/2",  # Invalid compendia_id
+            "expression_url": "http://example.com/expression2",
+            "metadata_url": "http://example.com/metadata2"
+        }
+    ]
     with pytest.raises(ValidationError):
-        DownloadListConfig(**invalid_config)
+        DownloadListConfig(invalid_config)
 
 def test_invalid_download_list_in_download_list_config():
     invalid_config = {
@@ -158,20 +154,18 @@ def test_invalid_software_version_dataset_entry_model():
         DatasetEntry(**invalid_entry)
 
 def test_valid_file_load_config(tmp_path: Path):
-    config_data = {
-        "compendia_downloads": [
-            {
-                "compendia_id": "compendia_1",
-                "expression_url": "http://example.com/expression1",
-                "metadata_url": "http://example.com/metadata1"
-            },
-            {
-                "compendia_id": "compendia_2",
-                "expression_url": "http://example.com/expression2",
-                "metadata_url": "http://example.com/metadata2"
-            }
-        ]
-    }
+    config_data = [
+        {
+            "compendia_id": "compendia_1",
+            "expression_url": "http://example.com/expression1",
+            "metadata_url": "http://example.com/metadata1"
+        },
+        {
+            "compendia_id": "compendia_2",
+            "expression_url": "http://example.com/expression2",
+            "metadata_url": "http://example.com/metadata2"
+        }
+    ]
     config_file = tmp_path / "config.json"
     with open(config_file, 'w') as f:
         import json
