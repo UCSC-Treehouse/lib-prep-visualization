@@ -82,6 +82,8 @@ def load_manifest(file_path: Path) -> DownloadManifest:
 def download_file(url: HttpUrl, target_path: Path, chunk_size: int = 10*1024*1024) -> Optional[Path]:
     """
     Download a file from a URL to the target path. Return None if the file download fails.
+
+    This function was written with the help of GitHub copilot. The docstring was used as the prompt.
     """
     try:
         response = requests.get(url, stream=True)
