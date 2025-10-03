@@ -30,7 +30,7 @@ class DownloadListConfig(RootModel[List[CompendiaDownloadConfig]]):
     pass
 
 
-class DatasetEntry(BaseModel):
+class ManifestEntry(BaseModel):
     last_download: datetime
     md5checksum: str
     file_size: int
@@ -42,16 +42,16 @@ class DatasetEntry(BaseModel):
     }
 
 class DownloadManifest(RootModel):
-    root: Dict[str, DatasetEntry]
+    root: Dict[str, ManifestEntry]
 
-    def add_entry(self, name: str, entry: DatasetEntry):
-        """Add a new DatasetEntry under the given name."""
-        if not isinstance(entry, DatasetEntry):
-            raise TypeError("entry must be a DatasetEntry instance")
+    def add_entry(self, name: str, entry: ManifestEntry):
+        """Add a new ManifestEntry under the given name."""
+        if not isinstance(entry, ManifestEntry):
+            raise TypeError("entry must be a ManifestEntry instance")
         self.root[name] = entry
 
-    def get_entry(self, name: str) -> DatasetEntry:
-        """Retrieve an existing DatasetEntry for modification."""
+    def get_entry(self, name: str) -> ManifestEntry:
+        """Retrieve an existing ManifestEntry for modification."""
         return self.root[name]
 
 
@@ -114,7 +114,7 @@ def download_compendia(download_list_config: DownloadListConfig, manifest_path: 
             log_fp.touch()
 
         # Add or update entry in manifest marking as 'in_progress'
-        manifest_entry = DatasetEntry(
+        manifest_entry = ManifestEntry(
             last_download=datetime.now(),
             md5checksum="",
             file_size=0,
