@@ -2,8 +2,9 @@ import pytest
 from pydantic import ValidationError
 from pathlib import Path
 import json
+import requests
 
-from lib_prep_tools.download import DownloadListConfig, load_config, load_manifest, DownloadManifest
+from lib_prep_tools.download import DownloadListConfig, load_config, load_manifest, DownloadManifest, download_file
 
 """
 Unit tests for functions in lib_prep_tools.download
@@ -59,3 +60,23 @@ def test_load_manifest_with_existing_file(tmp_path: Path):
     manifest = load_manifest(manifest_file)
     assert isinstance(manifest, DownloadManifest)
     assert len(manifest.root) == 2
+
+
+def test_download_file_valid_url(tmp_path: Path, requests_mock):
+    mock_url = "http://table.com/file"
+    target_path = tmp_path / "downloaded_file.txt"
+    requests_mock.get(mock_url, content=b"expression table content")
+    result_path = download_file(mock_url, target_path)
+    assert result_path == target_path
+    assert target_path.exists()
+    assert target_path.stat().st_size > 0 # file is not empty. st_size retrieves file size in bytes
+
+
+def test_download_file_invalid_url(tmp_path: Path, requests_mock):
+    mock_url = "http://table.com/file"
+    target_path = tmp_path / "downloaded_file.txt"
+    requests_mock.get(mock_url, status_code=404)
+    result_path = download_file(mock_url, target_path)
+    assert result_path == None
+    assert not target_path.exists()
+
