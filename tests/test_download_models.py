@@ -2,6 +2,9 @@ import pytest
 from pydantic import ValidationError
 from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, DatasetEntry, DownloadManifest
 
+"""
+Unit tests for pydantic models in lib_prep_tools.download
+"""
 
 def test_valid_compendia_download_config():
     valid_config = {
