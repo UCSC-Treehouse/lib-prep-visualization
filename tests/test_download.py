@@ -9,7 +9,7 @@ from lib_prep_tools.download import DownloadListConfig, load_config, load_manife
 Unit tests for functions in lib_prep_tools.download
 """
 
-def test_valid_file_load_config(tmp_path: Path):
+def test_load_config_valid_file(tmp_path: Path):
     config_data = [
         {
             "compendia_id": "compendia_1",
@@ -29,7 +29,7 @@ def test_valid_file_load_config(tmp_path: Path):
     config = load_config(config_file)
     assert isinstance(config, DownloadListConfig)
 
-def test_nonexistent_file_load_config(tmp_path: Path):
+def test_load_config_nonexistent_file(tmp_path: Path):
     non_existent_file = tmp_path / "non_existent_config.json"
     with pytest.raises(FileNotFoundError):
         load_config(non_existent_file)
