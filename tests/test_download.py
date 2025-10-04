@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 import requests
 
-from lib_prep_tools.download import DownloadListConfig, load_config, load_manifest, DownloadManifest, download_file
+from lib_prep_tools.download import DownloadListConfig, load_config, load_manifest, DownloadManifest, download_file, need_download, STATUS_SUCCESS, STATUS_FAILED
 
 """
 Unit tests for functions in lib_prep_tools.download
@@ -79,4 +79,28 @@ def test_download_file_invalid_url(tmp_path: Path, requests_mock):
     result_path = download_file(mock_url, target_path)
     assert result_path == None
     assert not target_path.exists()
+
+need_download_manifest = DownloadManifest(root={
+        "compendia_1": {
+            "last_download": "2000-01-01T12:00:00",
+            "md5checksum": "d41d8cd98f00b204e9800998ecf8427e",
+            "file_size": 123456,
+            "status": STATUS_SUCCESS,
+            "software_version": "0.0.0"
+        }
+    })
+
+def test_need_download_compendia_missing():
+    assert need_download(need_download_manifest, "compendia_2", "0.0.0") == True
+
+def test_need_download_status_not_success():
+    need_download_manifest.root["compendia_1"].status = STATUS_FAILED
+    assert need_download(need_download_manifest, "compendia_1", "0.0.0") == True
+    need_download_manifest.root["compendia_1"].status = STATUS_SUCCESS
+
+def test_need_download_software_version_mismatch():
+    assert need_download(need_download_manifest, "compendia_1", "0.0.1") == True
+
+def test_need_download_no_download_needed():
+    assert need_download(need_download_manifest, "compendia_1", "0.0.0") == False
 
