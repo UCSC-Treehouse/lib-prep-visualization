@@ -41,16 +41,20 @@ class ManifestFileStatusEntry(BaseModel):
         "validate_assignment": True  # validates any field change
     }
 
-class DownloadManifest(RootModel):
-    root: Dict[str, ManifestFileStatusEntry]
+class ManifestCompendiaEntry(BaseModel):
+    expression: ManifestFileStatusEntry
+    metadata: ManifestFileStatusEntry
 
-    def add_entry(self, name: str, entry: ManifestFileStatusEntry):
+class DownloadManifest(RootModel):
+    root: Dict[str, ManifestCompendiaEntry]
+
+    def add_entry(self, name: str, entry: ManifestCompendiaEntry):
         """Add a new ManifestEntry under the given name."""
-        if not isinstance(entry, ManifestFileStatusEntry):
-            raise TypeError("entry must be a ManifestEntry instance")
+        if not isinstance(entry, ManifestCompendiaEntry):
+            raise TypeError("entry must be a ManifestCompendiaEntry instance")
         self.root[name] = entry
 
-    def get_entry(self, name: str) -> ManifestFileStatusEntry:
+    def get_entry(self, name: str) -> ManifestCompendiaEntry:
         """Retrieve an existing ManifestEntry for modification."""
         return self.root[name]
 
