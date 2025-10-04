@@ -61,8 +61,7 @@ download_manifest = DownloadManifest({
 def test_load_manifest_valid_file(tmp_path: Path):
     manifest_file = tmp_path / "manifest.json"
     with open(manifest_file, 'w') as f:
-        import json
-        json.dump(download_manifest.model_dump_json(indent=4), f)
+        f.write(download_manifest.model_dump_json(indent=4))
     manifest = load_manifest(manifest_file)
     assert isinstance(manifest, DownloadManifest)
     assert len(manifest.root) == 2
