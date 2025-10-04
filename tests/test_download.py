@@ -40,25 +40,25 @@ def test_load_manifest_initialize_new_manifest(tmp_path: Path):
     assert isinstance(empty_download_manifest, DownloadManifest)
     assert len(empty_download_manifest.root) == 0
 
-def test_load_manifest_with_existing_file(tmp_path: Path):
-    manifest_file_status_entry = ManifestFileStatusEntry(
-        last_download="2000-01-01T12:00:00",
-        md5checksum="d41d8cd98f00b204e9800998ecf8427e",
-        file_size=123456,
-        status="completed",
-        software_version="1.0.0"
-    )
-    
-    manifest_compendia_entry = ManifestCompendiaEntry(
-        expression=manifest_file_status_entry,
-        metadata=manifest_file_status_entry
-    )
+manifest_file_status_entry = ManifestFileStatusEntry(
+    last_download="2000-01-01T12:00:00",
+    md5checksum="d41d8cd98f00b204e9800998ecf8427e",
+    file_size=123456,
+    status="completed",
+    software_version="1.0.0"
+)
 
-    download_manifest = DownloadManifest({
-        "compendia_1": manifest_compendia_entry,
-        "compendia_2": manifest_compendia_entry
-    })
+manifest_compendia_entry = ManifestCompendiaEntry(
+    expression=manifest_file_status_entry,
+    metadata=manifest_file_status_entry
+)
 
+download_manifest = DownloadManifest({
+    "compendia_1": manifest_compendia_entry,
+    "compendia_2": manifest_compendia_entry
+})
+
+def test_load_manifest_valid_file(tmp_path: Path):
     manifest_file = tmp_path / "manifest.json"
     with open(manifest_file, 'w') as f:
         import json
@@ -66,6 +66,18 @@ def test_load_manifest_with_existing_file(tmp_path: Path):
     manifest = load_manifest(manifest_file)
     assert isinstance(manifest, DownloadManifest)
     assert len(manifest.root) == 2
+
+def test_load_manifest_invalid_manifest_file_returns_new_manifest(tmp_path: Path):
+    invalid_manifest_json = {
+        "compendia_1": "invalid_entry"
+    }
+    manifest_file = tmp_path / "invalid_manifest.json"
+    with open(manifest_file, 'w') as f:
+        import json
+        json.dump(invalid_manifest_json, f)
+    manifest = load_manifest(manifest_file)
+    assert isinstance(manifest, DownloadManifest)
+    assert len(manifest.root) == 0  # Invalid manifest should result in empty manifest
 
 
 def test_download_file_valid_url(tmp_path: Path, requests_mock):
