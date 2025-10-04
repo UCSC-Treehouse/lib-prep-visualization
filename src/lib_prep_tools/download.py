@@ -82,7 +82,7 @@ def load_manifest(file_path: Path) -> DownloadManifest:
     with open(file_path, 'r') as f:
         manifest_data = json.load(f)
     try:
-        return DownloadManifest.model_validate_json(manifest_data)
+        return DownloadManifest(manifest_data)
     except ValidationError:
         # If the manifest is invalid, return an empty manifest
         return DownloadManifest({})
