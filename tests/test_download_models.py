@@ -1,5 +1,6 @@
 import pytest
 from pydantic import ValidationError
+import lib_prep_tools
 from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, ManifestFileStatusEntry, DownloadManifest
 
 """
@@ -165,3 +166,12 @@ def test_manifest_file_status_entry_invalid_software_version():
     invalid_entry["software_version"] = 1.0  # Invalid type
     with pytest.raises(ValidationError):
         ManifestFileStatusEntry(**invalid_entry)
+
+
+def test_manifest_file_status_entry_defaults():
+    entry = ManifestFileStatusEntry()
+    assert entry.last_download is None
+    assert entry.md5checksum == ""
+    assert entry.file_size == 0
+    assert entry.status == "in_progress"
+    assert entry.software_version == lib_prep_tools.__version__
