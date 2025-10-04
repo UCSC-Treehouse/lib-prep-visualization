@@ -46,7 +46,7 @@ class ManifestCompendiaEntry(BaseModel):
     metadata: ManifestFileStatusEntry
 
 class DownloadManifest(RootModel[Dict[str, ManifestCompendiaEntry]]):
-    
+
     def add_entry(self, name: str, entry: ManifestCompendiaEntry):
         """Add a new compendia entry under the given name."""
         if not isinstance(entry, ManifestCompendiaEntry):
@@ -80,7 +80,7 @@ def load_manifest(file_path: Path) -> DownloadManifest:
         return DownloadManifest({})
     with open(file_path, 'r') as f:
         manifest_data = json.load(f)
-    return DownloadManifest(**manifest_data)
+    return DownloadManifest.model_validate_json(manifest_data)
 
 def file_status_need_download(file_status_entry: ManifestFileStatusEntry, software_version: str) -> bool:
     """
