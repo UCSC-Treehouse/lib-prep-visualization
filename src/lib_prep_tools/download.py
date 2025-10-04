@@ -45,9 +45,8 @@ class ManifestCompendiaEntry(BaseModel):
     expression: ManifestFileStatusEntry
     metadata: ManifestFileStatusEntry
 
-class DownloadManifest(RootModel):
-    root: Dict[str, ManifestCompendiaEntry]
-
+class DownloadManifest(RootModel[Dict[str, ManifestCompendiaEntry]]):
+    
     def add_entry(self, name: str, entry: ManifestCompendiaEntry):
         """Add a new compendia entry under the given name."""
         if not isinstance(entry, ManifestCompendiaEntry):
