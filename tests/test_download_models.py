@@ -1,6 +1,6 @@
 import pytest
 from pydantic import ValidationError
-from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, ManifestEntry, DownloadManifest
+from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, ManifestFileStatusEntry, DownloadManifest
 
 """
 Unit tests for pydantic models in lib_prep_tools.download
@@ -129,39 +129,39 @@ valid_dataset_model_entry = {
 
 
 def test_valid_dataset_entry_model():
-    entry = ManifestEntry(**valid_dataset_model_entry)
+    entry = ManifestFileStatusEntry(**valid_dataset_model_entry)
 
 
 def test_invalid_datetime_dataset_entry_model():
     invalid_entry = valid_dataset_model_entry.copy()
     invalid_entry["last_download"] = "not_a_datetime"  # Invalid datetime
     with pytest.raises(ValidationError):
-        ManifestEntry(**invalid_entry)
+        ManifestFileStatusEntry(**invalid_entry)
 
 
 def test_invalid_md5checksum_dataset_entry_model():
     invalid_entry = valid_dataset_model_entry.copy()
     invalid_entry["md5checksum"] = 123456  # Invalid type
     with pytest.raises(ValidationError):
-        ManifestEntry(**invalid_entry)
+        ManifestFileStatusEntry(**invalid_entry)
 
 
 def test_invalid_file_size_dataset_entry_model():
     invalid_entry = valid_dataset_model_entry.copy()
     invalid_entry["file_size"] = "123456b"  # Invalid type
     with pytest.raises(ValidationError):
-        ManifestEntry(**invalid_entry)
+        ManifestFileStatusEntry(**invalid_entry)
 
 
 def test_invalid_status_dataset_entry_model():
     invalid_entry = valid_dataset_model_entry.copy()
     invalid_entry["status"] = 100  # Invalid type
     with pytest.raises(ValidationError):
-        ManifestEntry(**invalid_entry)
+        ManifestFileStatusEntry(**invalid_entry)
 
 
 def test_invalid_software_version_dataset_entry_model():
     invalid_entry = valid_dataset_model_entry.copy()
     invalid_entry["software_version"] = 1.0  # Invalid type
     with pytest.raises(ValidationError):
-        ManifestEntry(**invalid_entry)
+        ManifestFileStatusEntry(**invalid_entry)
