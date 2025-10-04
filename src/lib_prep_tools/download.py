@@ -82,19 +82,16 @@ def load_manifest(file_path: Path) -> DownloadManifest:
         manifest_data = json.load(f)
     return DownloadManifest(**manifest_data)
 
-def need_download(manifest: DownloadManifest, compendia_id: str, software_version: str) -> bool:
+def file_status_need_download(file_status_entry: ManifestFileStatusEntry, software_version: str) -> bool:
     """
-    Determine if a compendia needs to be downloaded based on the manifest. Return True if the compendia ID is missing, if the status
-    for a compendia is not 'success', or if the software version does not match.
+    Determine if a file needs to be downloaded based on the manifest file status entry. Return True if the status is not 
+    'success', or if the software version does not match.
 
     This function was written with the help of GitHub copilot. The docstring was used as the prompt.
     """
-    if compendia_id not in manifest.root:
+    if file_status_entry.status != STATUS_SUCCESS:
         return True
-    entry = manifest.get_entry(compendia_id)
-    if entry.status != STATUS_SUCCESS:
-        return True
-    if entry.software_version != software_version:
+    if file_status_entry.software_version != software_version:
         return True
     return False
 
