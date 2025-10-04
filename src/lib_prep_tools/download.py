@@ -1,3 +1,4 @@
+from wsgiref.simple_server import software_version
 from pydantic import BaseModel, HttpUrl, field_validator, RootModel, ValidationError
 from typing import List, Dict, Optional
 from pathlib import Path
@@ -5,6 +6,8 @@ from datetime import datetime
 import re
 import json
 import requests
+
+import lib_prep_tools
 
 # Manifest Dataset Status Options
 STATUS_IN_PROGRESS = "in_progress"
@@ -116,7 +119,7 @@ def download_file(url: HttpUrl, target_path: Path, chunk_size: int = 10*1024*102
     except requests.RequestException:
         return None
 
-def download_compendia(download_list_config: DownloadListConfig, manifest_path: DownloadManifest, data_dir: Path, software_version: str):
+def download_compendia(download_list_config: DownloadListConfig, download_manifest: DownloadManifest, data_dir: Path, version: str):
     """
     File download steps:
     - get compendia target from download list
@@ -130,45 +133,41 @@ def download_compendia(download_list_config: DownloadListConfig, manifest_path: 
     manifest_fp = data_dir / 'download_manifest.json'
     for compendia_download_config in download_list_config.root:
         compendia_id = compendia_download_config.compendia_id
-
-        # Check if download is needed
-        if not need_download(manifest_path, compendia_id, software_version):
-            continue
-
         target_dir = data_dir / compendia_id
         target_dir.mkdir(parents=True, exist_ok=True)
-        log_fp = target_dir / 'download.log'
-        if not log_fp.exists():
-            log_fp.touch()
 
-        # Add or update entry in manifest marking as 'in_progress'
-        manifest_entry = ManifestFileStatusEntry(
-            last_download=datetime.now(),
-            md5checksum="",
-            file_size=0,
-            status=STATUS_IN_PROGRESS,
-            software_version=software_version
-        )
-        manifest_path.add_entry(compendia_id, manifest_entry)
+        # Check if the compendia has a manifest entry already. If not add a blank one.
+        if not compendia_id in download_manifest.root:
+            download_manifest.add_entry(compendia_id, ManifestCompendiaEntry(
+                expression=ManifestFileStatusEntry(),
+                metadata=ManifestFileStatusEntry()
+            ))
 
-        # Download expression and metadata files
-        expression_fp = target_dir / "expression.tsv.gz"
-        downloaded_expression_fp = download_file(compendia_download_config.expression_url, expression_fp)
+        # This will either be an existing entry or a new blank one.
+        manifest_entry = download_manifest.get_entry(compendia_id)
 
-        metadata_fp = target_dir / "metadata.tsv.gz"
-        downloaded_metadata_fp = download_file(compendia_download_config.metadata_url, metadata_fp)
-
-        if not expression_fp or not metadata_fp:
-            # Update manifest entry marking as 'failed'
-            manifest_entry.status = STATUS_FAILED
-            manifest_entry.last_download = datetime.now()
-            manifest_path.add_entry(compendia_id, manifest_entry)
-            continue
-        else:
-            manifest_entry.status = STATUS_SUCCESS
-            manifest_entry.last_download = datetime.now()
-            manifest_path.add_entry(compendia_id, manifest_entry)
+        exp_manifest_file_status = manifest_entry.expression
+        if file_status_need_download(exp_manifest_file_status, version):
+            expression_url = compendia_download_config.expression_url
+            exp_path = download_file(expression_url, target_dir / "expression.tsv.gz")
+            if exp_path:
+                exp_manifest_file_status.last_download = datetime.now()
+                exp_manifest_file_status.status = STATUS_SUCCESS
+                exp_manifest_file_status.software_version = version
+            else:
+                exp_manifest_file_status.status = STATUS_FAILED
+        
+        meta_manifest_file_status = manifest_entry.metadata
+        if file_status_need_download(meta_manifest_file_status, version):
+            metadata_url = compendia_download_config.metadata_url
+            meta_path = download_file(metadata_url, target_dir / "metadata.tsv.gz")
+            if meta_path:
+                meta_manifest_file_status.last_download = datetime.now()
+                meta_manifest_file_status.status = STATUS_SUCCESS
+                meta_manifest_file_status.software_version = version
+            else:
+                meta_manifest_file_status.status = STATUS_FAILED        
 
     # Write the manifest back to disk
     with open(manifest_fp, 'w') as f:
-        json.dump(manifest_path.model_dump(), f, indent=4, default=str)  # default=str to handle datetime serialization
+        json.dump(download_manifest.model_dump(), f, indent=4, default=str)  # default=str to handle datetime serialization
