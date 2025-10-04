@@ -6,7 +6,7 @@ from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig,
 Unit tests for pydantic models in lib_prep_tools.download
 """
 
-def test_valid_compendia_download_config():
+def test_compendia_download_config_valid_config():
     valid_config = {
         "compendia_id": "compendia_1",
         "expression_url": "http://example.com/expression",
@@ -50,12 +50,12 @@ def test_valid_compendia_download_config():
         "metadata_url": "http://example.com/metadata"
     }
 ])
-def test_invalid_compendia_id_in_config(invalid_config):
+def test_compendia_downlopad_config_invalid_compendia_ids(invalid_config):
     with pytest.raises(ValidationError):
         CompendiaDownloadConfig(**invalid_config)
 
 
-def test_invalid_expression_url_in_config():
+def test_compendia_download_config_invalid_expression_url():
     invalid_config = {
         "compendia_id": "compendia_1",
         "expression_url": "not_a_url",  # Invalid URL
@@ -65,7 +65,7 @@ def test_invalid_expression_url_in_config():
         CompendiaDownloadConfig(**invalid_config)
 
 
-def test_invalid_metadata_url_in_config():
+def test_compendia_download_config_invalid_metadata_url():
     invalid_config = {
         "compendia_id": "compendia_1",
         "expression_url": "http://example.com/expression",
@@ -75,7 +75,7 @@ def test_invalid_metadata_url_in_config():
         CompendiaDownloadConfig(**invalid_config)
 
 
-def test_valid_download_list_config():
+def test_download_list_config_valid_config():
     valid_config = [
         {
             "compendia_id": "compendia_1",
@@ -94,7 +94,7 @@ def test_valid_download_list_config():
         assert isinstance(compendia_download_config, CompendiaDownloadConfig)
 
 
-def test_invalid_compendia_in_download_list_config():
+def test_download_list_config_invalid_compendia():
     invalid_config = [      
         {
             "compendia_id": "compendia_1",
@@ -111,7 +111,7 @@ def test_invalid_compendia_in_download_list_config():
         DownloadListConfig(invalid_config)
 
 
-def test_invalid_download_list_in_download_list_config():
+def test_download_list_config_wrong_type():
     invalid_config = {
         "compendia_downloads": "not_a_list"  # Invalid type
     }
