@@ -17,7 +17,9 @@ def main():
     download_list_model = load_config(config_path)
     manifest_model = load_manifest(MANIFEST_PATH)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    download_compendia(download_list_model, manifest_model, DATA_DIR, str(lib_prep_tools.__version__))
+    download_manifest = download_compendia(download_list_model, manifest_model, DATA_DIR, str(lib_prep_tools.__version__))
+    with open(MANIFEST_PATH, 'w') as f:
+        f.write(download_manifest.model_dump_json(indent=4))
 
 if __name__ == "__main__":
     main()

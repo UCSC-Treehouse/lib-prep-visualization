@@ -119,7 +119,7 @@ def download_file(url: HttpUrl, target_path: Path, chunk_size: int = 10*1024*102
     except requests.RequestException:
         return None
 
-def download_compendia(download_list_config: DownloadListConfig, download_manifest: DownloadManifest, data_dir: Path, version: str):
+def download_compendia(download_list_config: DownloadListConfig, download_manifest: DownloadManifest, data_dir: Path, version: str) -> DownloadManifest:
     """
     File download steps:
     - get compendia target from download list
@@ -130,7 +130,6 @@ def download_compendia(download_list_config: DownloadListConfig, download_manife
     - move files to target directory
     - update manifest entry with checksum, file size, status 'downloaded', and current timestamp
     """
-    manifest_fp = data_dir / 'download_manifest.json'
     for compendia_download_config in download_list_config.root:
         compendia_id = compendia_download_config.compendia_id
         target_dir = data_dir / compendia_id
@@ -168,6 +167,4 @@ def download_compendia(download_list_config: DownloadListConfig, download_manife
             else:
                 meta_manifest_file_status.status = STATUS_FAILED        
 
-    # Write the manifest back to disk
-    with open(manifest_fp, 'w') as f:
-        json.dump(download_manifest.model_dump(), f, indent=4, default=str)  # default=str to handle datetime serialization
+    return download_manifest
