@@ -1,4 +1,4 @@
-from pydantic import BaseModel, HttpUrl, field_validator, RootModel
+from pydantic import BaseModel, HttpUrl, field_validator, RootModel, ValidationError
 from typing import List, Dict, Optional
 from pathlib import Path
 from datetime import datetime
@@ -72,7 +72,8 @@ def load_config(file_path: Path) -> DownloadListConfig:
 
 def load_manifest(file_path: Path) -> DownloadManifest:
     """
-    Load a json manifest file and parse it into a DownloadManifest object.
+    Load a json manifest file and parse it into a DownloadManifest object. If the file does not exist, return an empty manifest.
+    If the file exists but fails the validation for the DownloadManifest model, return an empty manifest.
     """
     # Check that the file path exists
     if not file_path.exists():
@@ -80,7 +81,11 @@ def load_manifest(file_path: Path) -> DownloadManifest:
         return DownloadManifest({})
     with open(file_path, 'r') as f:
         manifest_data = json.load(f)
-    return DownloadManifest.model_validate_json(manifest_data)
+    try:
+        return DownloadManifest.model_validate_json(manifest_data)
+    except ValidationError:
+        # If the manifest is invalid, return an empty manifest
+        return DownloadManifest({})
 
 def file_status_need_download(file_status_entry: ManifestFileStatusEntry, software_version: str) -> bool:
     """
