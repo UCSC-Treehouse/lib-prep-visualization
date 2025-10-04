@@ -31,11 +31,11 @@ class DownloadListConfig(RootModel[List[CompendiaDownloadConfig]]):
 
 
 class ManifestFileStatusEntry(BaseModel):
-    last_download: datetime = datetime.min
+    last_download: datetime = None
     md5checksum: str = ""
     file_size: int = 0
     status: str = STATUS_IN_PROGRESS
-    software_version: str = "0.0.0"
+    software_version: str = lib_prep_tools.__version__
 
     model_config = {
         "validate_assignment": True  # validates any field change
