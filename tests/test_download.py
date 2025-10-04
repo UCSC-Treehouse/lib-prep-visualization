@@ -1,14 +1,30 @@
 import pytest
-from pydantic import ValidationError
 from pathlib import Path
-import json
-import requests
 
 from lib_prep_tools.download import DownloadListConfig, DownloadManifest, ManifestFileStatusEntry, ManifestCompendiaEntry, load_config, load_manifest, download_file, file_status_need_download, STATUS_SUCCESS, STATUS_FAILED
 
 """
 Unit tests for functions in lib_prep_tools.download
 """
+
+manifest_file_status_entry = ManifestFileStatusEntry(
+    last_download="2000-01-01T12:00:00",
+    md5checksum="d41d8cd98f00b204e9800998ecf8427e",
+    file_size=123456,
+    status="completed",
+    software_version="1.0.0"
+)
+
+manifest_compendia_entry = ManifestCompendiaEntry(
+    expression=manifest_file_status_entry,
+    metadata=manifest_file_status_entry
+)
+
+download_manifest = DownloadManifest({
+    "compendia_1": manifest_compendia_entry,
+    "compendia_2": manifest_compendia_entry
+})
+
 
 def test_load_config_valid_file(tmp_path: Path):
     config_data = [
@@ -39,24 +55,6 @@ def test_load_manifest_initialize_new_manifest(tmp_path: Path):
     empty_download_manifest = load_manifest(tmp_path / "non_existent_manifest.json")
     assert isinstance(empty_download_manifest, DownloadManifest)
     assert len(empty_download_manifest.root) == 0
-
-manifest_file_status_entry = ManifestFileStatusEntry(
-    last_download="2000-01-01T12:00:00",
-    md5checksum="d41d8cd98f00b204e9800998ecf8427e",
-    file_size=123456,
-    status="completed",
-    software_version="1.0.0"
-)
-
-manifest_compendia_entry = ManifestCompendiaEntry(
-    expression=manifest_file_status_entry,
-    metadata=manifest_file_status_entry
-)
-
-download_manifest = DownloadManifest({
-    "compendia_1": manifest_compendia_entry,
-    "compendia_2": manifest_compendia_entry
-})
 
 def test_load_manifest_valid_file(tmp_path: Path):
     manifest_file = tmp_path / "manifest.json"
