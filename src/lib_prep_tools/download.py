@@ -119,52 +119,54 @@ def download_file(url: HttpUrl, target_path: Path, chunk_size: int = 10*1024*102
     except requests.RequestException:
         return None
 
+def get_or_create_manifest_entry(manifest: DownloadManifest, compendia_id: str) -> ManifestCompendiaEntry:
+    """
+    Retrieve an existing manifest entry for the given compendia_id, or create a new one if it doesn't exist.
+
+    This function was drafted with the help of GitHub copilot. The function name was used as a tab complete.
+    """
+    if compendia_id not in manifest.root:
+        manifest.add_entry(compendia_id, ManifestCompendiaEntry(
+            expression=ManifestFileStatusEntry(),
+            metadata=ManifestFileStatusEntry()
+        ))
+    return manifest.get_entry(compendia_id)
+
+def download_file_with_manifest_update(url: HttpUrl, target_path: Path, manifest_entry: ManifestFileStatusEntry, version: str) -> Optional[Path]:
+    """
+    Download a file from a URL to the target path, and update the manifest entry accordingly.
+    Return the target path if successful, or None if the download fails.
+
+    This function was drafted with the help of GitHub copilot. The function name was used as a tab complete.
+    """
+    downloaded_path = download_file(url, target_path)
+    if downloaded_path:
+        manifest_entry.last_download = datetime.now()
+        manifest_entry.status = STATUS_SUCCESS
+        manifest_entry.software_version = version
+        return downloaded_path
+    else:
+        manifest_entry.status = STATUS_FAILED
+        return None
+
 def download_compendia(download_list_config: DownloadListConfig, download_manifest: DownloadManifest, data_dir: Path, version: str) -> DownloadManifest:
-    """
-    File download steps:
-    - get compendia target from download list
-    - create target directory if it doesn't exist
-    - add entry to manifest marking as 'in_progress' with current software version
-    - download clinical and manifest file to temp directory
-    - compute md5 checksum and file size
-    - move files to target directory
-    - update manifest entry with checksum, file size, status 'downloaded', and current timestamp
-    """
     for compendia_download_config in download_list_config.root:
         compendia_id = compendia_download_config.compendia_id
         target_dir = data_dir / compendia_id
         target_dir.mkdir(parents=True, exist_ok=True)
 
-        # Check if the compendia has a manifest entry already. If not add a blank one.
-        if not compendia_id in download_manifest.root:
-            download_manifest.add_entry(compendia_id, ManifestCompendiaEntry(
-                expression=ManifestFileStatusEntry(),
-                metadata=ManifestFileStatusEntry()
-            ))
-
-        # This will either be an existing entry or a new blank one.
-        manifest_entry = download_manifest.get_entry(compendia_id)
+        manifest_entry = get_or_create_manifest_entry(download_manifest, compendia_id)
 
         exp_manifest_file_status = manifest_entry.expression
         if file_status_need_download(exp_manifest_file_status, version):
             expression_url = compendia_download_config.expression_url
-            exp_path = download_file(expression_url, target_dir / "expression.tsv.gz")
-            if exp_path:
-                exp_manifest_file_status.last_download = datetime.now()
-                exp_manifest_file_status.status = STATUS_SUCCESS
-                exp_manifest_file_status.software_version = version
-            else:
-                exp_manifest_file_status.status = STATUS_FAILED
+            exp_path = target_dir / "expression.tsv.gz"
+            download_file_with_manifest_update(expression_url, exp_path, exp_manifest_file_status, version)
         
         meta_manifest_file_status = manifest_entry.metadata
         if file_status_need_download(meta_manifest_file_status, version):
             metadata_url = compendia_download_config.metadata_url
-            meta_path = download_file(metadata_url, target_dir / "metadata.tsv.gz")
-            if meta_path:
-                meta_manifest_file_status.last_download = datetime.now()
-                meta_manifest_file_status.status = STATUS_SUCCESS
-                meta_manifest_file_status.software_version = version
-            else:
-                meta_manifest_file_status.status = STATUS_FAILED        
+            meta_path = target_dir / "metadata.tsv.gz"
+            download_file_with_manifest_update(metadata_url, meta_path, meta_manifest_file_status, version)    
 
     return download_manifest
