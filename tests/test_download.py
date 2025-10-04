@@ -25,6 +25,15 @@ download_manifest = DownloadManifest({
     "compendia_2": manifest_compendia_entry
 })
 
+need_download_manifest_file_status_entry = ManifestFileStatusEntry(
+    last_download="2020-01-01T12:00:00",
+    md5checksum="d41d8cd98f00b204e9800998ecf8427e",
+    file_size=123456,
+    status=STATUS_SUCCESS,
+    software_version="0.0.0"
+)
+
+
 
 def test_load_config_valid_file(tmp_path: Path):
     config_data = [
@@ -95,22 +104,14 @@ def test_download_file_invalid_url(tmp_path: Path, requests_mock):
     assert result_path == None
     assert not target_path.exists()
 
-need_download_manifest = ManifestFileStatusEntry(
-    last_download="2020-01-01T12:00:00",
-    md5checksum="d41d8cd98f00b204e9800998ecf8427e",
-    file_size=123456,
-    status=STATUS_SUCCESS,
-    software_version="0.0.0"
-)
-
 def test_need_download_status_not_success():
-    need_download_manifest.status = STATUS_FAILED
-    assert file_status_need_download(need_download_manifest, "0.0.0") == True
-    need_download_manifest.status = STATUS_SUCCESS
+    need_download_manifest_file_status_entry.status = STATUS_FAILED
+    assert file_status_need_download(need_download_manifest_file_status_entry, "0.0.0") == True
+    need_download_manifest_file_status_entry.status = STATUS_SUCCESS
 
 def test_need_download_software_version_mismatch():
-    assert file_status_need_download(need_download_manifest, "0.0.1") == True
+    assert file_status_need_download(need_download_manifest_file_status_entry, "0.0.1") == True
 
 def test_need_download_no_download_needed():
-    assert file_status_need_download(need_download_manifest, "0.0.0") == False
+    assert file_status_need_download(need_download_manifest_file_status_entry, "0.0.0") == False
 
