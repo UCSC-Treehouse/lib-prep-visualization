@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 import requests
 
-from lib_prep_tools.download import DownloadListConfig, load_config, load_manifest, DownloadManifest, download_file, need_download, STATUS_SUCCESS, STATUS_FAILED
+from lib_prep_tools.download import DownloadListConfig, DownloadManifest, ManifestFileStatusEntry, ManifestCompendiaEntry, load_config, load_manifest, download_file, file_status_need_download, STATUS_SUCCESS, STATUS_FAILED
 
 """
 Unit tests for functions in lib_prep_tools.download
@@ -41,22 +41,28 @@ def test_load_manifest_initialize_new_manifest(tmp_path: Path):
     assert len(empty_download_manifest.root) == 0
 
 def test_load_manifest_with_existing_file(tmp_path: Path):
-    valid_dataset_model_entry = {
-        "last_download": "2023-10-01T12:00:00",
-        "md5checksum": "d41d8cd98f00b204e9800998ecf8427e",
-        "file_size": 123456,
-        "status": "completed",
-        "software_version": "1.0.0"
-    }
+    manifest_file_status_entry = ManifestFileStatusEntry(
+        last_download="2000-01-01T12:00:00",
+        md5checksum="d41d8cd98f00b204e9800998ecf8427e",
+        file_size=123456,
+        status="completed",
+        software_version="1.0.0"
+    )
     
-    manifest_data = {
-        "dataset_1": valid_dataset_model_entry.copy(),
-        "dataset_2": valid_dataset_model_entry.copy()
-    }
+    manifest_compendia_entry = ManifestCompendiaEntry(
+        expression=manifest_file_status_entry,
+        metadata=manifest_file_status_entry
+    )
+
+    download_manifest = DownloadManifest({
+        "compendia_1": manifest_compendia_entry,
+        "compendia_2": manifest_compendia_entry
+    })
+
     manifest_file = tmp_path / "manifest.json"
     with open(manifest_file, 'w') as f:
         import json
-        json.dump(manifest_data, f)
+        json.dump(download_manifest.model_dump_json(indent=4), f)
     manifest = load_manifest(manifest_file)
     assert isinstance(manifest, DownloadManifest)
     assert len(manifest.root) == 2
