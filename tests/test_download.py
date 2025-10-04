@@ -1,7 +1,20 @@
 import pytest
 from pathlib import Path
 
-from lib_prep_tools.download import DownloadListConfig, DownloadManifest, ManifestFileStatusEntry, ManifestCompendiaEntry, load_config, load_manifest, download_file, file_status_need_download, STATUS_SUCCESS, STATUS_FAILED
+from lib_prep_tools.download import (
+    DownloadListConfig, 
+    DownloadManifest, 
+    ManifestFileStatusEntry, 
+    ManifestCompendiaEntry, 
+    load_config, 
+    load_manifest, 
+    download_file, 
+    file_status_need_download,
+    get_or_create_manifest_entry, 
+    download_file_with_manifest_update, 
+    STATUS_SUCCESS,
+    STATUS_FAILED
+)
 
 """
 Unit tests for functions in lib_prep_tools.download
@@ -115,3 +128,12 @@ def test_need_download_software_version_mismatch():
 def test_need_download_no_download_needed():
     assert file_status_need_download(need_download_manifest_file_status_entry, "0.0.0") == False
 
+def test_get_or_create_manifest_entry_existing():
+    entry = get_or_create_manifest_entry(download_manifest, "compendia_1")
+    assert isinstance(entry, ManifestCompendiaEntry)
+    assert entry == manifest_compendia_entry
+
+def test_get_or_create_manifest_entry_not_existing():
+    entry = get_or_create_manifest_entry(download_manifest, "compendia_3")
+    assert isinstance(entry, ManifestCompendiaEntry)
+    assert entry != manifest_compendia_entry
