@@ -49,13 +49,13 @@ class DownloadManifest(RootModel):
     root: Dict[str, ManifestCompendiaEntry]
 
     def add_entry(self, name: str, entry: ManifestCompendiaEntry):
-        """Add a new ManifestEntry under the given name."""
+        """Add a new compendia entry under the given name."""
         if not isinstance(entry, ManifestCompendiaEntry):
             raise TypeError("entry must be a ManifestCompendiaEntry instance")
         self.root[name] = entry
 
     def get_entry(self, name: str) -> ManifestCompendiaEntry:
-        """Retrieve an existing ManifestEntry for modification."""
+        """Retrieve an existing compendia entry."""
         return self.root[name]
 
 
