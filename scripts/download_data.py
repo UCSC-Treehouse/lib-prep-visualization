@@ -1,9 +1,9 @@
 import argparse
-from lib_prep_tools import __version__
+import lib_prep_tools
 from lib_prep_tools.download import load_config, load_manifest, DownloadListConfig, download_compendia
 from pathlib import Path
 
-DATA_DIR = Path.cwd() / 'data' / str(__version__)
+DATA_DIR = Path.cwd() / 'data' / str(lib_prep_tools.__version__)
 MANIFEST_PATH = DATA_DIR / 'download_manifest.json'
 
 def parse_args():
@@ -17,7 +17,7 @@ def main():
     download_list_model = load_config(config_path)
     manifest_model = load_manifest(MANIFEST_PATH)
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    download_compendia(download_list_model, manifest_model, DATA_DIR, str(__version__))
+    download_compendia(download_list_model, manifest_model, DATA_DIR, str(lib_prep_tools.__version__))
 
 if __name__ == "__main__":
     main()
