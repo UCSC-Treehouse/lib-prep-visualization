@@ -37,7 +37,7 @@ class ManifestFileStatusEntry(BaseModel):
     last_download: datetime = None
     md5checksum: str = ""
     file_size: int = 0
-    status: str = STATUS_IN_PROGRESS
+    status: str = STATUS_INCOMPLETE
     software_version: str = lib_prep_tools.__version__
 
     model_config = {
