@@ -160,16 +160,24 @@ def download_compendia(download_list_config: DownloadListConfig, download_manife
 
         manifest_entry = get_or_create_manifest_entry(download_manifest, compendia_id)
 
-        exp_manifest_file_status = manifest_entry.expression
-        if file_status_need_download(exp_manifest_file_status, version):
-            expression_url = compendia_download_config.expression_url
-            exp_path = target_dir / "expression.tsv.gz"
-            download_file_with_manifest_update(expression_url, exp_path, exp_manifest_file_status, version)
-        
-        meta_manifest_file_status = manifest_entry.metadata
-        if file_status_need_download(meta_manifest_file_status, version):
-            metadata_url = compendia_download_config.metadata_url
-            meta_path = target_dir / "metadata.tsv.gz"
-            download_file_with_manifest_update(metadata_url, meta_path, meta_manifest_file_status, version)    
+        # Create a temporary directory to download files into before moving them to the final location
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+
+            exp_manifest_file_status = manifest_entry.expression
+            if file_status_need_download(exp_manifest_file_status, version):
+                expression_url = compendia_download_config.expression_url
+                exp_path = temp_path / "expression.tsv.gz"
+                if download_file_with_manifest_update(expression_url, exp_path, exp_manifest_file_status, version):
+                    # Move the successfully downloaded file into the target directory
+                    exp_path.rename(target_dir / "expression.tsv.gz")
+            
+            meta_manifest_file_status = manifest_entry.metadata
+            if file_status_need_download(meta_manifest_file_status, version):
+                metadata_url = compendia_download_config.metadata_url
+                meta_path = temp_path / "metadata.tsv.gz"
+                if download_file_with_manifest_update(metadata_url, meta_path, meta_manifest_file_status, version):
+                    # Move the successfully downloaded file into the target directory
+                    meta_path.rename(target_dir / "metadata.tsv.gz")
 
     return download_manifest
