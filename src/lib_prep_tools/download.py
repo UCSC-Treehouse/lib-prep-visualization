@@ -10,7 +10,7 @@ import requests
 import lib_prep_tools
 
 # Manifest Dataset Status Options
-STATUS_IN_PROGRESS = "in_progress"
+STATUS_INCOMPLETE = "incomplete"
 STATUS_SUCCESS = "success"
 STATUS_FAILED = "failed"
 
