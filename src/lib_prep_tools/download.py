@@ -132,10 +132,13 @@ def get_or_create_manifest_entry(manifest: DownloadManifest, compendia_id: str) 
         ))
     return manifest.get_entry(compendia_id)
 
-def download_file_with_manifest_update(url: HttpUrl, target_path: Path, manifest_entry: ManifestFileStatusEntry, version: str):
+def download_file_with_manifest_update(url: HttpUrl, target_path: Path, manifest_entry: ManifestFileStatusEntry, version: str) -> bool:
     """
     Download a file from a URL to the target path, and update the manifest entry accordingly.
     Return the target path if successful, or None if the download fails.
+
+    Returns
+        bool: True if download was successful, False otherwise.
 
     This function was drafted with the help of GitHub copilot. The function name was used as a tab complete.
     """
@@ -144,8 +147,10 @@ def download_file_with_manifest_update(url: HttpUrl, target_path: Path, manifest
         manifest_entry.last_download = datetime.now()
         manifest_entry.status = STATUS_SUCCESS
         manifest_entry.software_version = version
+        return True
     else:
         manifest_entry.status = STATUS_FAILED
+        return False
 
 def download_compendia(download_list_config: DownloadListConfig, download_manifest: DownloadManifest, data_dir: Path, version: str) -> DownloadManifest:
     for compendia_download_config in download_list_config.root:
