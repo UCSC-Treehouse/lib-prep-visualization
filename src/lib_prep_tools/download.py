@@ -1,3 +1,4 @@
+import tempfile
 from wsgiref.simple_server import software_version
 from pydantic import BaseModel, HttpUrl, field_validator, RootModel, ValidationError
 from typing import List, Dict, Optional
@@ -142,6 +143,7 @@ def download_file_with_manifest_update(url: HttpUrl, target_path: Path, manifest
 
     This function was drafted with the help of GitHub copilot. The function name was used as a tab complete.
     """
+    manifest_entry.status = STATUS_INCOMPLETE
     downloaded_path = download_file(url, target_path)
     if downloaded_path:
         manifest_entry.last_download = datetime.now()
