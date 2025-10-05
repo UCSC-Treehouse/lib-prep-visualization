@@ -1,5 +1,6 @@
 import pytest
 from pathlib import Path
+from datetime import datetime
 
 from lib_prep_tools.download import (
     DownloadListConfig, 
@@ -137,3 +138,27 @@ def test_get_or_create_manifest_entry_not_existing():
     entry = get_or_create_manifest_entry(download_manifest, "compendia_3")
     assert isinstance(entry, ManifestCompendiaEntry)
     assert entry != manifest_compendia_entry
+
+def test_download_file_with_manifest_update__download_success(monkeypatch):
+    target_path = Path("downloaded_file.txt")
+    # download_file returning a path means successful download
+    monkeypatch.setattr('lib_prep_tools.download.download_file', lambda url, target_path: target_path)
+    manifest_file_status_entry = ManifestFileStatusEntry()
+    # Save the "last_download" time before calling the func. This should be updated by the function if the download is successfull.
+    manifest_before_time = manifest_file_status_entry.last_download
+    download_file_with_manifest_update("http://example.com/file", target_path, manifest_file_status_entry, "1.0.0")
+    assert manifest_file_status_entry.status == STATUS_SUCCESS
+    assert manifest_file_status_entry.software_version == "1.0.0"
+    assert manifest_file_status_entry.last_download != None
+    assert manifest_file_status_entry.last_download != manifest_before_time
+
+def test_download_file_with_manifest_update_download_failure(monkeypatch):
+    target_path = Path("downloaded_file.txt")
+    # download_file returning None means failed download
+    monkeypatch.setattr('lib_prep_tools.download.download_file', lambda url, target_path: None)
+    manifest_file_status_entry = ManifestFileStatusEntry(last_download=datetime.min, status=STATUS_SUCCESS, software_version="0.0.0")
+    download_file_with_manifest_update("http://example.com/file", target_path, manifest_file_status_entry, "1.0.0")
+    # Failed status should switch the status to failed, should not update the version, and should not change the last_download time
+    assert manifest_file_status_entry.status == STATUS_FAILED
+    assert manifest_file_status_entry.software_version == "0.0.0"
+    assert manifest_file_status_entry.last_download == datetime.min
