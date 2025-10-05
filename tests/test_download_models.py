@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 import lib_prep_tools
-from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, ManifestFileStatusEntry, DownloadManifest
+from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, ManifestFileStatusEntry, DownloadManifest, STATUS_INCOMPLETE, STATUS_SUCCESS
 
 """
 Unit tests for pydantic models in lib_prep_tools.download
@@ -124,7 +124,7 @@ valid_manifest_file_status_entry = {
     "last_download": "2023-10-01T12:00:00",
     "md5checksum": "d41d8cd98f00b204e9800998ecf8427e",
     "file_size": 123456,
-    "status": "completed",
+    "status": STATUS_SUCCESS,
     "software_version": "0.0.0"
 }
 
@@ -173,5 +173,5 @@ def test_manifest_file_status_entry_defaults():
     assert entry.last_download is None
     assert entry.md5checksum == ""
     assert entry.file_size == 0
-    assert entry.status == "in_progress"
+    assert entry.status == STATUS_INCOMPLETE
     assert entry.software_version == lib_prep_tools.__version__
