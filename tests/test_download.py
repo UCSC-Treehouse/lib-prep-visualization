@@ -14,6 +14,7 @@ from lib_prep_tools.download import (
     get_or_create_manifest_entry, 
     download_file_with_manifest_update, 
     STATUS_SUCCESS,
+    STATUS_INCOMPLETE,
     STATUS_FAILED
 )
 
@@ -162,3 +163,23 @@ def test_download_file_with_manifest_update_download_failure(monkeypatch):
     assert manifest_file_status_entry.status == STATUS_FAILED
     assert manifest_file_status_entry.software_version == "0.0.0"
     assert manifest_file_status_entry.last_download == datetime.min
+
+def download_file_execution_interruption(url, target_path):
+    """
+    Mocker function to simulate some kind of program interruption during download. ex a KeyboardInterrupt or SystemExit.
+    """
+    raise Exception("Download interrupted")
+
+def test_download_file_with_manifest_update_execution_interrupted(monkeypatch):
+    """
+    The download_file_with_manifest_update function should set the status of the manifest entry to STATUS_INCOMPLETE
+    until the download is fully complete (success or failure). This means that if there is some kind of exception raised
+    during the download_file function call the status of the entry should remain as STATUS_INCOMPLETE.
+    """
+    target_path = Path("downloaded_file.txt")
+    # download_file raising an exception simulates an interrupted execution
+    monkeypatch.setattr('lib_prep_tools.download.download_file', download_file_execution_interruption)
+    manifest_file_status_entry = ManifestFileStatusEntry(last_download=datetime.min, status=STATUS_SUCCESS, software_version="0.0.0")
+    with pytest.raises(Exception):
+        download_file_with_manifest_update("http://example.com/file", target_path, manifest_file_status_entry, "1.0.0")
+    assert manifest_file_status_entry.status == STATUS_INCOMPLETE
