@@ -2,9 +2,48 @@ import argparse
 import lib_prep_tools
 from lib_prep_tools.download import load_config, load_manifest, DownloadListConfig, download_compendia
 from pathlib import Path
+import logging.config
 
 DATA_DIR = Path.cwd() / 'data' / str(lib_prep_tools.__version__)
 MANIFEST_PATH = DATA_DIR / 'download_manifest.json'
+
+logger = logging.getLogger("download_data")
+
+# Set up logging configuration. 
+# There are two handlers: one for console output and one for a rotating log file that will keep logs for debugging purposes.
+# There are two formatters: a simple one for console output and a detailed one for the log file.
+logging_config = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "%(levelname)s: %(message)s"
+        },
+        "detailed": {
+            "format": "[%(levelname)s|%(module)s|%(lineno)d] %(asctime)s: %(message)s",
+            "datefmt": "%Y-%m-%dT%H:%M:%S%z"  # ISO 8601 with timezone
+        }
+    },
+    "handlers": {
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "formatter": "detailed",
+            "filename": str(DATA_DIR / 'download.log'),
+            "maxBytes": 10 * 1024 * 1024,  # 10MB
+            "backupCount": 3
+        }
+    },
+    "loggers": {
+        "root": {"level": "DEBUG", "handlers": ["stdout", "file"]},
+    }
+}
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Download compendia datasets based on a configuration file.")
@@ -13,6 +52,7 @@ def parse_args():
     return args.config
 
 def main():
+    logging.config.dictConfig(config=logging_config)
     config_path = parse_args()
     download_list_model = load_config(config_path)
     manifest_model = load_manifest(MANIFEST_PATH)
