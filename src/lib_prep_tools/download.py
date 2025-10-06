@@ -7,6 +7,7 @@ from datetime import datetime
 import re
 import json
 import requests
+import logging
 
 import lib_prep_tools
 
@@ -15,6 +16,7 @@ STATUS_INCOMPLETE = "incomplete"
 STATUS_SUCCESS = "success"
 STATUS_FAILED = "failed"
 
+logger = logging.getLogger(__name__)
 
 class CompendiaDownloadConfig(BaseModel):
     compendia_id: str
@@ -156,6 +158,7 @@ def download_file_with_manifest_update(url: HttpUrl, target_path: Path, manifest
 
 def download_compendia(download_list_config: DownloadListConfig, download_manifest: DownloadManifest, data_dir: Path, version: str) -> DownloadManifest:
     for compendia_download_config in download_list_config.root:
+        logger.info(f"Processing compendia: {compendia_download_config.compendia_id}")
         compendia_id = compendia_download_config.compendia_id
         target_dir = data_dir / compendia_id
         target_dir.mkdir(parents=True, exist_ok=True)
@@ -173,6 +176,9 @@ def download_compendia(download_list_config: DownloadListConfig, download_manife
                 if download_file_with_manifest_update(expression_url, exp_path, exp_manifest_file_status, version):
                     # Move the successfully downloaded file into the target directory
                     exp_path.rename(target_dir / "expression.tsv.gz")
+                    logger.debug(f"Moved {compendia_id} expression file to {target_dir / 'expression.tsv.gz'}")
+            else:
+                logger.info(f"{compendia_id} expression file is up to date; skipping download.")
             
             meta_manifest_file_status = manifest_entry.metadata
             if file_status_need_download(meta_manifest_file_status, version):
@@ -181,5 +187,8 @@ def download_compendia(download_list_config: DownloadListConfig, download_manife
                 if download_file_with_manifest_update(metadata_url, meta_path, meta_manifest_file_status, version):
                     # Move the successfully downloaded file into the target directory
                     meta_path.rename(target_dir / "metadata.tsv.gz")
+                    logger.debug(f"Moved {compendia_id} metadata file to {target_dir / 'metadata.tsv.gz'}")
+            else:
+                logger.info(f"{compendia_id} metadata file is up to date; skipping download.")
 
     return download_manifest
