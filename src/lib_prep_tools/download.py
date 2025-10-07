@@ -113,13 +113,16 @@ def download_file(url: HttpUrl, target_path: Path, chunk_size: int = 10*1024*102
     This function was written with the help of GitHub copilot. The docstring was used as the prompt.
     """
     try:
+        logger.debug(f"Starting download from {url} to {target_path}")
         response = requests.get(url, stream=True)
         response.raise_for_status()  # Raise an error for bad responses
         with open(target_path, 'wb') as f:
             for chunk in response.iter_content(chunk_size=chunk_size):
                 f.write(chunk)
+        logger.debug(f"Finished download from {url} to {target_path}")
         return target_path
     except requests.RequestException:
+        logger.error(f"Failed to download from {url} to {target_path}")
         return None
 
 def get_or_create_manifest_entry(manifest: DownloadManifest, compendia_id: str) -> ManifestCompendiaEntry:
