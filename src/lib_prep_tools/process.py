@@ -19,6 +19,15 @@ class CompendiaSource(BaseModel):
             )
         return v
     
+    @field_validator("lib_prep_type")
+    @classmethod
+    def valid_lib_prep_type(cls, v: str) -> str:
+        # Make sure that the lib_prep_type is one of the accepted values.
+        accepted_values = ["polya", "ribodepletion"]
+        if v not in accepted_values:
+            raise ValueError(f"lib_prep_type must be one of {accepted_values}")
+        return v
+    
 class CompendiaListConfig(BaseModel):
     """
     Top-level model for the process_data JSON config.
