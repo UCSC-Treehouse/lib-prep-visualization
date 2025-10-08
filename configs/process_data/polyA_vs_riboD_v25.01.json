@@ -6,7 +6,7 @@
         },
         {
             "compendia_id": "Tumor_Compendium_25.01_RiboD_01_2025",
-            "lib_prep_type": "ribodeplete"
+            "lib_prep_type": "ribodepletion"
         }
     ]
 }
