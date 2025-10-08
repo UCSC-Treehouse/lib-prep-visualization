@@ -1,5 +1,7 @@
 from pydantic import BaseModel, field_validator
 import re
+import json
+from pathlib import Path
 
 class CompendiaSource(BaseModel):
     """
@@ -37,3 +39,16 @@ class CompendiaListConfig(BaseModel):
     """
     
     compendia_list: list[CompendiaSource]
+
+def load_config(file_path: Path) -> CompendiaListConfig:
+    """
+    TODO this should use a generic and be in a tools.py util module.
+
+    Load a json config file and parse it into a DownloadListConfig object.
+    """
+    # Check that the file path exists
+    if not file_path.exists():
+        raise FileNotFoundError(f"Config file {file_path} does not exist.")
+    with open(file_path, 'r') as f:
+        config_data = json.load(f)
+    return CompendiaListConfig.model_validate(config_data)
