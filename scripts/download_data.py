@@ -6,6 +6,7 @@ import logging.config
 
 DATA_DIR = Path.cwd() / 'data' / str(lib_prep_tools.__version__)
 MANIFEST_PATH = DATA_DIR / 'download_manifest.json'
+DOWNLOAD_LOG = DATA_DIR / 'download.log'
 
 logger = logging.getLogger("download_data")
 
@@ -35,7 +36,7 @@ logging_config = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "detailed",
-            "filename": str(DATA_DIR / 'download.log'),
+            "filename": str(DOWNLOAD_LOG),
             "maxBytes": 10 * 1024 * 1024,  # 10MB
             "backupCount": 3
         }
@@ -52,11 +53,12 @@ def parse_args():
     return args.config
 
 def main():
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    DOWNLOAD_LOG.touch(exist_ok=True)
     logging.config.dictConfig(config=logging_config)
     config_path = parse_args()
     download_list_model = load_config(config_path)
     manifest_model = load_manifest(MANIFEST_PATH)
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
     try:
         download_compendia(download_list_model, manifest_model, DATA_DIR, str(lib_prep_tools.__version__))
     finally:
