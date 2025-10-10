@@ -3,6 +3,10 @@ import re
 import json
 from pathlib import Path
 
+import pandas as pd
+import scipy.sparse as sp
+import scanpy as sc
+
 class CompendiaSource(BaseModel):
     """
     Model for a single compendia entry in the process_data config.
@@ -70,3 +74,43 @@ def validate_compendia_dirs(config: CompendiaListConfig, base_path: Path) -> boo
     TODO This would be better off checking the manifest for 
     """
     return all(source.validate_id_dir(base_path) for source in config.compendia_list)
+
+def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_path: Path):
+    """
+    Generate a merged umap reduced HDF5 AnnData file from the given compendia sources using scanpy. Save the result to the output_path.
+    """
+    if not validate_compendia_dirs(config, data_path):
+        raise FileNotFoundError("One or more compendia_id directories do not exist under the given data_path.")
+
+    # Build one AnnData per compendia, store in list for merging
+    adata_list = []
+
+    for source in config.compendia_list:
+        comp_id = source.compendia_id
+        exp_path = data_path / comp_id / "expression.tsv.gz"
+        meta_path = data_path / comp_id / "metadata.tsv.gz"
+
+        if not exp_path.exists():
+            raise FileNotFoundError(f"Expression file not found for {comp_id}: {exp_path}")
+        if not meta_path.exists():
+            raise FileNotFoundError(f"Metadata file not found for {comp_id}: {meta_path}")
+
+        # load expression (genes x samples), transpose to samples x genes
+        exp = pd.read_csv(exp_path, sep="\t", index_col=0)
+        meta = pd.read_csv(meta_path, sep="\t", index_col=0)
+        # Add compendia_type to metadata
+        meta["compendia_type"] = source.lib_prep_type
+        meta["compendia_id"] = source.compendia_id
+        ad = sc.AnnData(exp.T, obs=meta)
+        adata_list.append(ad)
+
+    adata = adata_list[0].concatenate(adata_list[1:], batch_key="compendia_id", batch_categories=[s.compendia_id for s in config.compendia_list])
+
+    # Run neighbors and UMAP on raw expression (no PCA, no filtering)
+    sc.pp.neighbors(adata, use_rep="X")
+    sc.tl.umap(adata)
+
+    # Write AnnData to file
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    adata.write_h5ad(output_path)
+
