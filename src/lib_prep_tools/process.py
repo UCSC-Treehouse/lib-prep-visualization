@@ -59,3 +59,12 @@ def load_config(file_path: Path) -> CompendiaListConfig:
     with open(file_path, 'r') as f:
         config_data = json.load(f)
     return CompendiaListConfig.model_validate(config_data)
+
+def validate_compendia_dirs(config: CompendiaListConfig, base_path: Path) -> bool:
+    """
+    Validate that the config compendia_id directories exist under the given base path.
+
+    Returns:
+        bool: True if all compendia_id directories exist, False otherwise.
+    """
+    return all(source.validate_id_dir(base_path) for source in config.compendia_list)
