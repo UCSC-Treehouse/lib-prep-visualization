@@ -66,5 +66,7 @@ def validate_compendia_dirs(config: CompendiaListConfig, base_path: Path) -> boo
 
     Returns:
         bool: True if all compendia_id directories exist, False otherwise.
+
+    TODO This would be better off checking the manifest for 
     """
     return all(source.validate_id_dir(base_path) for source in config.compendia_list)
