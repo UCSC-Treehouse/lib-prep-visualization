@@ -30,6 +30,13 @@ class CompendiaSource(BaseModel):
             raise ValueError(f"lib_prep_type must be one of {accepted_values}")
         return v
     
+    def validate_id_dir(self, base_path: Path) -> bool:
+        """
+        Validate that the compendia_id directory for this source exists under the given base path.
+        """
+        dir_path = base_path / self.compendia_id
+        return dir_path.exists() and dir_path.is_dir()
+
 class CompendiaListConfig(BaseModel):
     """
     Top-level model for the process_data JSON config.
