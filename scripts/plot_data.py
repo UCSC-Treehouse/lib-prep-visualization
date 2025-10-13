@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+from lib_prep_tools.plot import load_plot_config
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Plot processed compendia data.")
@@ -9,7 +10,8 @@ def parse_args():
 
 def main():
     config_path = parse_args()
-    print(f"Config path: {config_path}")
+    plot_config = load_plot_config(config_path)
+    print(plot_config)
 
 if __name__ == "__main__":
     main()
