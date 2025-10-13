@@ -96,12 +96,20 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
             raise FileNotFoundError(f"Metadata file not found for {comp_id}: {meta_path}")
 
         # load expression (genes x samples), transpose to samples x genes
-        exp = pd.read_csv(exp_path, sep="\t", index_col=0)
+        exp = pd.read_csv(exp_path, sep="\t", index_col=0).T
         meta = pd.read_csv(meta_path, sep="\t", index_col=0)
         # Add compendia_type to metadata
         meta["compendia_type"] = source.lib_prep_type
         meta["compendia_id"] = source.compendia_id
-        ad = sc.AnnData(exp.T, obs=meta)
+        
+        if set(exp.index) != set(meta.index):
+            raise ValueError(f"Sample IDs in expression and metadata do not match for {comp_id}.")
+        
+        # Reindex metadata to match expression samples. It is much more effecient to match meta to exp than the other way around because the meta rows are much
+        # smaller than the expression rows.
+        meta = meta.reindex(exp.index)
+
+        ad = sc.AnnData(exp, obs=meta)
         adata_list.append(ad)
 
     adata = adata_list[0].concatenate(adata_list[1:], batch_key="compendia_id", batch_categories=[s.compendia_id for s in config.compendia_list])
