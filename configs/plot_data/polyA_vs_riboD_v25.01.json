@@ -1,0 +1,6 @@
+{
+    "src_adata_path": "processed/merged_compendia.h5ad",
+    "plot_title": "UMAP Labeled by Library Prep Method",
+    "meta_variable": "compendia_type",
+    "target_categories": ["polya", "ribodepletion"]
+}
