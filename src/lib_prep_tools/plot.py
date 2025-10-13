@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, ValidationError
+from pydantic import BaseModel, field_validator
 import json
 from pathlib import Path
 import scanpy as sc
@@ -17,7 +17,7 @@ class PlotConfig(BaseModel):
         # Make sure that the src_adata_path exists
         path = Path(v)
         if not path.exists():
-            raise ValidationError(f"src_adata_path {v} does not exist")
+            raise ValueError(f"src_adata_path {v} does not exist")
         return v
 
     @field_validator("src_adata_path")
@@ -25,7 +25,7 @@ class PlotConfig(BaseModel):
     def src_adata_path_must_be_h5ad(cls, v: str) -> str:
         # Make sure that the src_adata_path ends with .h5ad
         if not v.endswith(".h5ad"):
-            raise ValidationError("src_adata_path must be a path to a .h5ad file")
+            raise ValueError("src_adata_path must be a path to a .h5ad file")
         return v
 
 
