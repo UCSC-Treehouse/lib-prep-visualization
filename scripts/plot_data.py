@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from lib_prep_tools.plot import load_plot_config
+from lib_prep_tools.plot import load_plot_config, load_scanpy_adata, validate_meta_variable
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Plot processed compendia data.")
@@ -11,6 +11,8 @@ def parse_args():
 def main():
     config_path = parse_args()
     plot_config = load_plot_config(config_path)
+    adata = load_scanpy_adata(Path(plot_config.src_adata_path))
+    validate_meta_variable(adata, plot_config)
     print(plot_config)
 
 if __name__ == "__main__":
