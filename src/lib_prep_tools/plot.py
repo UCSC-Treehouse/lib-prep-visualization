@@ -2,7 +2,8 @@ from pydantic import BaseModel, field_validator, ValidationError
 import json
 from pathlib import Path
 import scanpy as sc
-
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 class PlotConfig(BaseModel):
     src_adata_path: str
@@ -66,3 +67,20 @@ def validate_meta_variable(adata: sc.AnnData, plot_config: PlotConfig) -> bool:
             if category not in existing_categories:
                 raise ValueError(f"target_category {category} does not exist in the meta_variable {plot_config.meta_variable}.")
     return True
+
+def quick_seaborn_plot(adata: sc.AnnData, plot_config: PlotConfig):
+
+    plt.figure(figsize=(10, 8))
+    ax = sns.scatterplot(
+        x=adata.obsm['X_umap'][:, 0],
+        y=adata.obsm['X_umap'][:, 1],
+        hue=adata.obs[plot_config.meta_variable],
+        palette="tab10",
+        alpha=0.7,
+        edgecolor="none"
+    )
+    plt.title(plot_config.plot_title)
+    plt.legend(title=plot_config.meta_variable)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    return plt

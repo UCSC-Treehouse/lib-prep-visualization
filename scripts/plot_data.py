@@ -1,6 +1,8 @@
 import argparse
 from pathlib import Path
-from lib_prep_tools.plot import load_plot_config, load_scanpy_adata, validate_meta_variable
+from lib_prep_tools.plot import load_plot_config, load_scanpy_adata, validate_meta_variable, quick_seaborn_plot
+
+FIGURE_DIR = Path.cwd() / 'figures'
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Plot processed compendia data.")
@@ -13,7 +15,9 @@ def main():
     plot_config = load_plot_config(config_path)
     adata = load_scanpy_adata(Path(plot_config.src_adata_path))
     validate_meta_variable(adata, plot_config)
-    print(plot_config)
+    FIGURE_DIR.mkdir(exist_ok=True)
+    plt = quick_seaborn_plot(adata, plot_config)
+    plt.savefig(FIGURE_DIR / f"{plot_config.plot_title.replace(' ', '_')}.png", dpi=1200)
 
 if __name__ == "__main__":
     main()
