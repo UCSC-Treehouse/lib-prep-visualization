@@ -68,6 +68,21 @@ def validate_meta_variable(adata: sc.AnnData, plot_config: PlotConfig) -> bool:
                 raise ValueError(f"target_category {category} does not exist in the meta_variable {plot_config.meta_variable}.")
     return True
 
+def init_figure(plot_title: str):
+    # figure size in inches
+    width, height = 10, 8
+
+    fig = plt.figure(figsize=(width, height))
+
+    # Create a single Axes
+    ax = plt.axes([0.1, 0.1, 0.8, 0.8])  # left, bottom, width, height (range 0 to 1)
+    ax.set_title(plot_title)
+    return fig, ax
+
+def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
+    fig, ax = init_figure(plot_config.plot_title)
+    return fig
+
 def quick_seaborn_plot(adata: sc.AnnData, plot_config: PlotConfig):
 
     plt.figure(figsize=(10, 8))
