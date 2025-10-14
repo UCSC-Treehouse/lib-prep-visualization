@@ -1,6 +1,6 @@
 {
     "src_adata_path": "processed/merged_compendia.h5ad",
     "plot_title": "UMAP Labeled by Patient Sex",
-    "meta_variable": "disease",
+    "meta_variable": "sex",
     "target_categories": ["male", "female"]
 }
