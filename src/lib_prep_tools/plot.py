@@ -5,11 +5,20 @@ import scanpy as sc
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+
+class ColorByConfig(BaseModel):
+    """
+    Model for the label_key config in the plot config. This will hold the meta_variable to color by and the target 
+    categories to assign individual colors.
+    """
+    meta_key: str
+    categories: list[str] = []
+
+
 class PlotConfig(BaseModel):
     src_adata_path: str
     plot_title: str
-    meta_variable: str
-    target_categories: list[str] = []
+    color_by: ColorByConfig
 
     @field_validator("src_adata_path")
     @classmethod
@@ -41,10 +50,7 @@ def load_plot_config(file_path: Path) -> PlotConfig:
     with file_path.open("r") as f:
         config_data = json.load(f)
     
-    # Parse the data into a PlotConfig object
-    plot_config = PlotConfig(**config_data)
-    
-    return plot_config
+    return PlotConfig.model_validate(config_data)
 
 def load_scanpy_adata(file_path: Path):
     """
@@ -53,19 +59,19 @@ def load_scanpy_adata(file_path: Path):
     adata = sc.read_h5ad(file_path)
     return adata
 
-def validate_meta_variable(adata: sc.AnnData, plot_config: PlotConfig) -> bool:
+def validate_meta_variable(adata: sc.AnnData, label_key_config: ColorByConfig) -> bool:
     """
     Validate that the given meta_variable exists in the AnnData object's obs dataframe.
     """
-    if plot_config.meta_variable not in adata.obs.columns:
-        raise ValueError(f"meta_variable {plot_config.meta_variable} does not exist in the AnnData object's obs dataframe.")
+    if label_key_config.meta_key not in adata.obs.columns:
+        raise ValueError(f"meta_variable {label_key_config.meta_key} does not exist in the AnnData object's obs dataframe.")
     
     # Ensure that the targeted categories exist in the meta_variable column
-    if plot_config.target_categories:
-        existing_categories = adata.obs[plot_config.meta_variable].unique().tolist()
-        for category in plot_config.target_categories:
+    if label_key_config.categories:
+        existing_categories = adata.obs[label_key_config.meta_key].unique().tolist()
+        for category in label_key_config.categories:
             if category not in existing_categories:
-                raise ValueError(f"target_category {category} does not exist in the meta_variable {plot_config.meta_variable}.")
+                raise ValueError(f"target_category {category} does not exist in the meta_variable {label_key_config.meta_key}.")
     return True
 
 def init_figure(plot_title: str):
