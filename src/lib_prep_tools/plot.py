@@ -4,6 +4,7 @@ from pathlib import Path
 import scanpy as sc
 import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 class ColorByConfig(BaseModel):
@@ -110,6 +111,25 @@ def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_
 
     return mapping
 
+def gen_colormap(display_categories: dict, base_palette: str = "viridis") -> dict:
+    """
+    Generate a color map for the given display categories using a seaborn color palette.
+    
+    Args:
+        display_categories: List of display category strings. {metadata_value: display_category}
+        base_palette: Name of the seaborn color palette to use.
+        
+    Returns:
+        color_map: Copy of display_categories dict but each value is now a tuple of the initial value and the assigned color.
+    """
+    # determine unique display categories while preserving deterministic order
+    unique_categories = pd.unique(list(display_categories.values())).tolist()
+
+    n_colors = len(unique_categories)
+    color_list = sns.color_palette(base_palette, n_colors=n_colors)
+    color_map = {cat: (cat, color_list[i]) for i, cat in enumerate(unique_categories)}
+    return color_map
+
 def init_figure(plot_title: str):
     # figure size in inches
     width, height = 10, 8
@@ -124,6 +144,7 @@ def init_figure(plot_title: str):
 def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     validate_color_by(adata, plot_config.color_by)
     display_categories = map_to_display_categories(adata, plot_config.color_by, other_label="other")
+    color_map = gen_colormap(display_categories)
     fig, ax = init_figure(plot_config.plot_title)
     return fig
 
