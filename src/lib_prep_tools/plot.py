@@ -59,7 +59,7 @@ def load_scanpy_adata(file_path: Path):
     adata = sc.read_h5ad(file_path)
     return adata
 
-def validate_meta_variable(adata: sc.AnnData, label_key_config: ColorByConfig) -> bool:
+def validate_color_by(adata: sc.AnnData, label_key_config: ColorByConfig) -> bool:
     """
     Validate that the given meta_variable exists in the AnnData object's obs dataframe.
     """
