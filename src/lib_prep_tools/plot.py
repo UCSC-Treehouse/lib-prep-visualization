@@ -122,7 +122,7 @@ def gen_colormap(display_categories: dict, base_palette: str = "viridis") -> dic
     Returns:
         color_map: Copy of display_categories dict but each value is now a tuple of the initial value and the assigned color.
     """
-    # determine unique display categories while preserving deterministic order
+    # determine unique display categories while preserving deterministic order. Suggested by Copilot to use pd.unique to preserve order.
     unique_categories = pd.unique(list(display_categories.values())).tolist()
 
     n_colors = len(unique_categories)
