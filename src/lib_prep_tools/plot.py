@@ -74,6 +74,42 @@ def validate_color_by(adata: sc.AnnData, label_key_config: ColorByConfig) -> boo
                 raise ValueError(f"target_category {category} does not exist in the meta_variable {label_key_config.meta_key}.")
     return True
 
+def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_label: str = "other",) -> dict:
+    """
+    Map each observed value in `adata.obs[color_by.meta_key]` to a display category.
+
+    Behavior:
+    - If an observed value is present in `color_by.categories`, it maps to itself.
+    - Otherwise it maps to `other_label`.
+    - The returned mapping is a dict: {observed_value: display_category}.
+
+    Args:
+        adata: AnnData containing the column to color by in `adata.obs`.
+        color_by: ColorByConfig containing `meta_key` and `categories` (the selected values).
+        other_label: Label used for all values not explicitly listed in `color_by.categories`.
+
+    Returns:
+        mapping: dict mapping each unique observed value to the display category string.
+
+    Raises:
+        KeyError: if `color_by.meta_key` is not present in `adata.obs`.
+    """
+    col = color_by.meta_key
+    if col not in adata.obs.columns:
+        raise KeyError(f"Column {col} not found in adata.obs")
+
+    observed = adata.obs[col].unique().tolist()
+    category_set = set(color_by.categories)
+
+    mapping = {}
+    for v in observed:
+        if v in category_set:
+            mapping[v] = v
+        else:
+            mapping[v] = other_label
+
+    return mapping
+
 def init_figure(plot_title: str):
     # figure size in inches
     width, height = 10, 8
@@ -86,6 +122,8 @@ def init_figure(plot_title: str):
     return fig, ax
 
 def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
+    validate_color_by(adata, plot_config.color_by)
+    display_categories = map_to_display_categories(adata, plot_config.color_by, other_label="other")
     fig, ax = init_figure(plot_config.plot_title)
     return fig
 
