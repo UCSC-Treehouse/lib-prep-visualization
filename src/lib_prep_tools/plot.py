@@ -158,7 +158,7 @@ def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: 
         adata: AnnData containing UMAP coordinates in `adata.obsm['X_umap']` and metadata in `adata.obs`.
         plot_config: PlotConfig containing the color_by configuration.
         display_categories: dict mapping display categories to lists of metadata values.
-        color_map: dict mapping display categories to RGB tuple colors      .
+        color_map: dict mapping display categories to RGB tuple colors.
         ax: Matplotlib Axes to plot on.
     """
     # Extract coordinates and metadata as arrays for vectorized access
