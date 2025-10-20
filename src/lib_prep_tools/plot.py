@@ -156,8 +156,9 @@ def init_figure(plot_title: str):
 def plot_points(adata: sc.AnnData, plot_config: PlotConfig, color_map: dict, ax: plt.Axes) -> None:
     """
     Plot the UMAP points from the AnnData object on the given Axes, coloring by the specified color map.
-    Itterate through each sample in the addata. For each sample, get the metadata value for the given meta_variable defined in the
-    plot_config. Cross reference that value with the color_map to get the display category and color. Plot the point with that color.
+    Group points by their metadata value and plot them together. This improves efficiency by reducing the number of plotting calls.
+    Groups are unique by the metadata value found in plot_config.color_by.meta_key. However, they are colored and labeled by the color_map
+    parameter which can assign multiple metadata values to the same display category.
 
     Args:
         adata: AnnData containing UMAP coordinates in `adata.obsm['X_umap']` and metadata in `adata.obs`.
