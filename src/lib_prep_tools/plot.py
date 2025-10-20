@@ -149,47 +149,42 @@ def init_figure(plot_title: str):
     ax.set_title(plot_title)
     return fig, ax
 
-def plot_points(adata: sc.AnnData, plot_config: PlotConfig, color_map: dict, ax: plt.Axes) -> None:
+def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: dict, color_map: dict, ax: plt.Axes) -> None:
     """
-    Plot the UMAP points from the AnnData object on the given Axes, coloring by the specified color map.
-    Group points by their metadata value and plot them together. This improves efficiency by reducing the number of plotting calls.
-    Groups are unique by the metadata value found in plot_config.color_by.meta_key. However, they are colored and labeled by the color_map
-    parameter which can assign multiple metadata values to the same display category.
+    Plot the UMAP points from the AnnData object on the given Axes. Points are grouped based on the display categories parameter
+    and colored according to the color map.
 
     Args:
         adata: AnnData containing UMAP coordinates in `adata.obsm['X_umap']` and metadata in `adata.obs`.
         plot_config: PlotConfig containing the color_by configuration.
-        color_map: dict mapping display categories to (category, color) tuples.
+        display_categories: dict mapping display categories to lists of metadata values.
+        color_map: dict mapping display categories to RGB tuple colors      .
         ax: Matplotlib Axes to plot on.
     """
     # Extract coordinates and metadata as arrays for vectorized access
     coords = adata.obsm['X_umap']
     meta_values = adata.obs[plot_config.color_by.meta_key].values
 
-    # Loop through unique metadata categories instead of every cell
-    for meta_value in np.unique(meta_values):
-        # Boolean mask for the current group. Masking a numpy array was suggested by Copilot as a way to improve efficiency.
-        mask = meta_values == meta_value
-        # Get display name and color from map
-        legend_label, color = color_map[meta_value]
-        # Plot all points for this group at once
+    for legend_label, group_meta_values in display_categories.items():
+        # Create a boolean mask for all metadata values that map to this legend label
+        mask = np.isin(meta_values, group_meta_values)
+        color = color_map[legend_label]
         ax.scatter(
             coords[mask, 0],
             coords[mask, 1],
-            s=6,
             c=[color],
             label=legend_label,
-            alpha=0.8,
-            linewidths=0,
+            alpha=1.0,
+            edgecolor="none",
+            s=30  # point size
         )
-
 
 def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     validate_color_by(adata, plot_config.color_by)
     display_categories = map_to_display_categories(adata, plot_config.color_by, other_label="other")
     color_map = gen_colormap(display_categories)
     fig, ax = init_figure(plot_config.plot_title)
-    plot_points(adata, plot_config, color_map, ax)
+    plot_points(adata, plot_config, display_categories, color_map, ax)
     return fig
 
 def quick_seaborn_plot(adata: sc.AnnData, plot_config: PlotConfig):
