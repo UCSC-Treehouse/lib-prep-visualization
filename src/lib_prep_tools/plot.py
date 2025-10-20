@@ -179,12 +179,27 @@ def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: 
             s=30  # point size
         )
 
+def add_legend(ax: plt.Axes) -> None:
+    """
+    Add a legend to the given Axes.
+    """
+    ax.legend(
+        title="Categories",
+        loc="best",
+        fontsize="small",
+        title_fontsize="medium",
+        frameon=True,
+        framealpha=0.9,
+        edgecolor="black",
+    )
+
 def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     validate_color_by(adata, plot_config.color_by)
     display_categories = map_to_display_categories(adata, plot_config.color_by, other_label="other")
     color_map = gen_colormap(display_categories)
     fig, ax = init_figure(plot_config.plot_title)
     plot_points(adata, plot_config, display_categories, color_map, ax)
+    add_legend(ax)
     return fig
 
 def quick_seaborn_plot(adata: sc.AnnData, plot_config: PlotConfig):
