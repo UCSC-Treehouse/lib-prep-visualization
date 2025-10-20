@@ -86,6 +86,16 @@ def load_extra_metadata(file_path: Path) -> pd.DataFrame:
     metadata_df = pd.read_csv(file_path, sep="\t", index_col=0)
     return metadata_df
 
+def validate_extra_metadata(adata: sc.AnnData, metadata_df: pd.DataFrame) -> bool:
+    """
+    Validate that the indices of the metadata DataFrame exist in the AnnData object's obs dataframe.
+    """
+    existing_ids = set(adata.obs.index.split()[0])
+    missing_ids = [idx for idx in metadata_df.index if idx not in adata.obs.index]
+    if missing_ids:
+        raise ValueError(f"The following IDs from the extra metadata are missing in the AnnData obs: {missing_ids}")
+    return True
+
 def validate_color_by(adata: sc.AnnData, label_key_config: ColorByConfig) -> bool:
     """
     Validate that the given meta_variable exists in the AnnData object's obs dataframe.
@@ -234,7 +244,9 @@ def add_legend(ax: plt.Axes) -> None:
     )
 
 def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
-    extra_metadata = load_extra_metadata(plot_config.custom_metadata)
+    if plot_config.custom_metadata:
+        extra_metadata = load_extra_metadata(plot_config.custom_metadata)
+        validate_extra_metadata(adata, extra_metadata)
     validate_color_by(adata, plot_config.color_by)
     display_categories = map_to_display_categories(adata, plot_config.color_by, other_label="other")
     color_map = gen_colormap(display_categories)
