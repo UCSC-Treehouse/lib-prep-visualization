@@ -95,6 +95,13 @@ def validate_extra_metadata(adata: sc.AnnData, metadata_df: pd.DataFrame) -> boo
         raise ValueError(f"The following IDs from the extra metadata are missing in the AnnData obs: {missing_ids}")
     return True
 
+def merge_extra_metadata(adata: sc.AnnData, metadata_df: pd.DataFrame) -> None:
+    """
+    Merge extra metadata from the given DataFrame into the AnnData object's obs dataframe.
+    The DataFrame's index should match the AnnData obs index.
+    """
+    adata.obs = adata.obs.join(metadata_df, how="left")
+
 def validate_color_by(adata: sc.AnnData, label_key_config: ColorByConfig) -> bool:
     """
     Validate that the given meta_variable exists in the AnnData object's obs dataframe.
@@ -246,6 +253,7 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     if plot_config.custom_metadata:
         extra_metadata = load_extra_metadata(plot_config.custom_metadata)
         validate_extra_metadata(adata, extra_metadata)
+        merge_extra_metadata(adata, extra_metadata)
     validate_color_by(adata, plot_config.color_by)
     display_categories = map_to_display_categories(adata, plot_config.color_by, other_label="other")
     color_map = gen_colormap(display_categories)
