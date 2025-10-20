@@ -90,7 +90,6 @@ def validate_extra_metadata(adata: sc.AnnData, metadata_df: pd.DataFrame) -> boo
     """
     Validate that the indices of the metadata DataFrame exist in the AnnData object's obs dataframe.
     """
-    existing_ids = set(adata.obs.index.split()[0])
     missing_ids = [idx for idx in metadata_df.index if idx not in adata.obs.index]
     if missing_ids:
         raise ValueError(f"The following IDs from the extra metadata are missing in the AnnData obs: {missing_ids}")
