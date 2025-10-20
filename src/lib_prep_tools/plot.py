@@ -146,6 +146,9 @@ def init_figure(plot_title: str):
 
     # Create a single Axes
     ax = plt.axes([0.1, 0.1, 0.8, 0.8])  # left, bottom, width, height (range 0 to 1)
+    # Remove axis ticks
+    ax.set_xticks([])
+    ax.set_yticks([])
     ax.set_title(plot_title)
     return fig, ax
 
