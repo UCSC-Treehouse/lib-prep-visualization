@@ -169,6 +169,10 @@ def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: 
         # Create a boolean mask for all metadata values that map to this legend label
         mask = np.isin(meta_values, group_meta_values)
         color = color_map[legend_label]
+        
+        # Plot the other label points behind the rest
+        zorder = 0 if legend_label == "other" else 1
+
         ax.scatter(
             coords[mask, 0],
             coords[mask, 1],
@@ -176,7 +180,8 @@ def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: 
             label=legend_label,
             alpha=1.0,
             edgecolor="none",
-            s=30  # point size
+            s=30,  # point size
+            zorder=zorder
         )
 
 def add_legend(ax: plt.Axes) -> None:
