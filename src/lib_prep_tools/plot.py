@@ -121,13 +121,24 @@ def gen_colormap(display_categories: dict, base_palette: str = "viridis") -> dic
         
     Returns:
         color_map: Copy of display_categories dict but each value is now a tuple of the initial value and the assigned color.
+        {metadata_value: (display_category, color)}
     """
-    # determine unique display categories while preserving deterministic order. Suggested by Copilot to use pd.unique to preserve order.
-    unique_categories = pd.unique(list(display_categories.values())).tolist()
+    # determine unique display categories while preserving deterministic order
+    unique_display_cats = pd.unique(list(display_categories.values())).tolist()
 
-    n_colors = len(unique_categories)
+    n_colors = len(unique_display_cats)
     color_list = sns.color_palette(base_palette, n_colors=n_colors)
-    color_map = {cat: (cat, color_list[i]) for i, cat in enumerate(unique_categories)}
+
+    # map display category -> color
+    display_to_color = {cat: color_list[i] for i, cat in enumerate(unique_display_cats)}
+
+    # build a mapping keyed by the original metadata observed values
+    # each value is a tuple: (display_category, color)
+    color_map = {
+        meta_value: (display_cat, display_to_color[display_cat])
+        for meta_value, display_cat in display_categories.items()
+    }
+
     return color_map
 
 def init_figure(plot_title: str):
