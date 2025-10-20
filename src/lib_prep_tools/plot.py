@@ -78,6 +78,14 @@ def load_scanpy_adata(file_path: Path):
     adata = sc.read_h5ad(file_path)
     return adata
 
+def load_extra_metadata(file_path: Path) -> pd.DataFrame:
+    """
+    Load extra metadata from a TSV file into a pandas DataFrame.
+    Assumes the first column is the index (e.g., sample IDs).
+    """
+    metadata_df = pd.read_csv(file_path, sep="\t", index_col=0)
+    return metadata_df
+
 def validate_color_by(adata: sc.AnnData, label_key_config: ColorByConfig) -> bool:
     """
     Validate that the given meta_variable exists in the AnnData object's obs dataframe.
@@ -226,6 +234,7 @@ def add_legend(ax: plt.Axes) -> None:
     )
 
 def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
+    extra_metadata = load_extra_metadata(plot_config.custom_metadata)
     validate_color_by(adata, plot_config.color_by)
     display_categories = map_to_display_categories(adata, plot_config.color_by, other_label="other")
     color_map = gen_colormap(display_categories)
