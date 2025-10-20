@@ -78,39 +78,44 @@ def validate_color_by(adata: sc.AnnData, label_key_config: ColorByConfig) -> boo
 
 def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_label: str = "other",) -> dict:
     """
-    Map each observed value in `adata.obs[color_by.meta_key]` to a display category.
+    Group observed metadata values into display (legend) categories.
+
+    Given an AnnData and a `ColorByConfig`, produce a mapping where keys are
+    the display/legend labels and values are lists of the raw observed
+    metadata values that should be shown under that legend label.
 
     Behavior:
-    - If an observed value is present in `color_by.categories`, it maps to itself.
-    - Otherwise it maps to `other_label`.
-    - The returned mapping is a dict: {observed_value: display_category}.
+    - If an observed value is present in `color_by.categories`, it is placed
+      under its own display label (the same string).
+    - Otherwise the observed value is placed under `other_label`.
+
+    The returned dict preserves deterministic ordering: user-specified
+    `color_by.categories` appear first in that order and `other_label` is appended when there are any
+    non-selected observed values.
 
     Args:
         adata: AnnData containing the column to color by in `adata.obs`.
-        color_by: ColorByConfig containing `meta_key` and `categories` (the selected values).
-        other_label: Label used for all values not explicitly listed in `color_by.categories`.
+        color_by: ColorByConfig containing `meta_key` and `categories`.
+        other_label: Label used for all values not explicitly listed in
+            `color_by.categories`.
 
     Returns:
-        mapping: dict mapping each unique observed value to the display category string.
-
-    Raises:
-        KeyError: if `color_by.meta_key` is not present in `adata.obs`.
+        dict: {display_label: [metadata_value, ...]}
     """
     col = color_by.meta_key
-    if col not in adata.obs.columns:
-        raise KeyError(f"Column {col} not found in adata.obs")
-
-    observed = adata.obs[col].unique().tolist()
+    # Preserve the user-provided category order; create empty lists for them
+    members: dict = {cat: [] for cat in color_by.categories}
     category_set = set(color_by.categories)
 
-    mapping = {}
+    # Iterate observed values in first-seen order and assign to buckets
+    observed = pd.unique(adata.obs[col]).tolist()
     for v in observed:
         if v in category_set:
-            mapping[v] = v
+            members.setdefault(v, []).append(v)
         else:
-            mapping[v] = other_label
+            members.setdefault(other_label, []).append(v)
 
-    return mapping
+    return members
 
 def gen_colormap(display_categories: dict, base_palette: str = "viridis") -> dict:
     """
