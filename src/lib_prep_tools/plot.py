@@ -201,20 +201,3 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     plot_points(adata, plot_config, display_categories, color_map, ax)
     add_legend(ax)
     return fig
-
-def quick_seaborn_plot(adata: sc.AnnData, plot_config: PlotConfig):
-
-    plt.figure(figsize=(10, 8))
-    ax = sns.scatterplot(
-        x=adata.obsm['X_umap'][:, 0],
-        y=adata.obsm['X_umap'][:, 1],
-        hue=adata.obs[plot_config.meta_variable],
-        palette="tab10",
-        alpha=0.7,
-        edgecolor="none"
-    )
-    plt.title(plot_config.plot_title)
-    plt.legend(title=plot_config.meta_variable)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    return plt
