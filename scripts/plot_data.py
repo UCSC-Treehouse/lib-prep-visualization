@@ -14,7 +14,6 @@ def main():
     config_path = parse_args()
     plot_config = load_plot_config(config_path)
     adata = load_scanpy_adata(Path(plot_config.src_adata_path))
-    validate_color_by(adata, plot_config.color_by)
     FIGURE_DIR.mkdir(exist_ok=True)
     fig = plot_umap(adata, plot_config)
     fig.savefig(FIGURE_DIR / f"{plot_config.plot_title.replace(' ', '_')}.png", dpi=1200)
