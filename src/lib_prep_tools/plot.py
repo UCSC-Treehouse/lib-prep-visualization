@@ -117,34 +117,25 @@ def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_
 
     return members
 
-def gen_colormap(display_categories: dict, base_palette: str = "viridis") -> dict:
+def gen_colormap(display_categories: dict, base_palette: str = "tab10") -> dict:
     """
-    Generate a color map for the given display categories using a seaborn color palette.
-    
+    Generate a color map for each display (legend) category.
+
     Args:
-        display_categories: List of display category strings. {metadata_value: display_category}
-        base_palette: Name of the seaborn color palette to use.
-        
+        display_categories: dict {display_label: [metadata_value, ...]}
+        base_palette: Name of a seaborn color palette (passed to `seaborn.color_palette`).
+
     Returns:
-        color_map: Copy of display_categories dict but each value is now a tuple of the initial value and the assigned color.
-        {metadata_value: (display_category, color)}
+        dict: Mapping display_label -> (color) where:
+            - color is a RGB tuple color from the seaborn palette
     """
-    # determine unique display categories while preserving deterministic order
-    unique_display_cats = pd.unique(list(display_categories.values())).tolist()
-
-    n_colors = len(unique_display_cats)
+    # display_categories is now expected to be {display_label: [meta_values]}
+    display_cats = list(display_categories.keys())
+    n_colors = len(display_cats)
     color_list = sns.color_palette(base_palette, n_colors=n_colors)
-
-    # map display category -> color
-    display_to_color = {cat: color_list[i] for i, cat in enumerate(unique_display_cats)}
-
-    # build a mapping keyed by the original metadata observed values
-    # each value is a tuple: (display_category, color)
-    color_map = {
-        meta_value: (display_cat, display_to_color[display_cat])
-        for meta_value, display_cat in display_categories.items()
-    }
-
+    color_map = {}
+    for i, disp in enumerate(display_cats):
+        color_map[disp] = color_list[i]
     return color_map
 
 def init_figure(plot_title: str):
