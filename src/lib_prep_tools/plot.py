@@ -20,7 +20,7 @@ class ColorByConfig(BaseModel):
 class PlotConfig(BaseModel):
     src_adata_path: str
     plot_title: str
-    custom_metadata: Path = None
+    custom_metadata: Path | None = None
     color_by: ColorByConfig
 
     @field_validator("src_adata_path")
