@@ -20,6 +20,7 @@ class ColorByConfig(BaseModel):
 class PlotConfig(BaseModel):
     src_adata_path: str
     plot_title: str
+    custom_metadata: Path = None
     color_by: ColorByConfig
 
     @field_validator("src_adata_path")
@@ -37,6 +38,22 @@ class PlotConfig(BaseModel):
         # Make sure that the src_adata_path ends with .h5ad
         if not v.endswith(".h5ad"):
             raise ValueError("src_adata_path must be a path to a .h5ad file")
+        return v
+    
+    @field_validator("custom_metadata")
+    @classmethod
+    def custom_metadata_must_exist(cls, v: Path) -> Path:
+        # If custom_metadata is provided, make sure that the path exists
+        if v is not None and not v.exists():
+            raise ValueError(f"custom_metadata path {v} does not exist")
+        return v
+    
+    @field_validator("custom_metadata")
+    @classmethod
+    def custom_metadata_field_correct_file_type(cls, v: Path) -> Path:
+        # If custom_metadata is provided, make sure that the file is a .tsv
+        if v is not None and not str(v).endswith(".tsv"):
+            raise ValueError("custom_metadata must be a path to a .tsv file")
         return v
 
 
