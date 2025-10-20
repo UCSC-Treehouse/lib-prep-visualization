@@ -107,6 +107,13 @@ def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_
     members: dict = {cat: [] for cat in color_by.categories}
     category_set = set(color_by.categories)
 
+    # If the categorys list is empty, all observed values map to themselves
+    if not category_set:
+        observed = pd.unique(adata.obs[col]).tolist()
+        for v in observed:
+            members.setdefault(v, []).append(v)
+        return members
+
     # Iterate observed values in first-seen order and assign to buckets
     observed = pd.unique(adata.obs[col]).tolist()
     for v in observed:
