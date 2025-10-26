@@ -2,9 +2,43 @@ import argparse
 from pathlib import Path
 import lib_prep_tools
 from lib_prep_tools.process import CompendiaListConfig, load_config, generate_hdf5_anndata
+import logging.config
 
 DATA_DIR = Path.cwd() / 'data' / str(lib_prep_tools.__version__)
 PROCESSED_DIR = Path.cwd() / 'processed'
+PROCESS_LOG = PROCESSED_DIR / 'process.log'
+
+logging_config = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "%(levelname)s: %(message)s"
+        },
+        "detailed": {
+            "format": "[%(levelname)s|%(module)s|%(lineno)d] %(asctime)s: %(message)s",
+            "datefmt": "%Y-%m-%dT%H:%M:%S%z"  # ISO 8601 with timezone
+        }
+    },
+    "handlers": {
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "level": "DEBUG",
+            "formatter": "detailed",
+            "filename": str(PROCESS_LOG),
+            "mode": "w"
+        }
+    },
+    "loggers": {
+        "root": {"level": "DEBUG", "handlers": ["stdout", "file"]},
+    }
+}
 
 
 def parse_args():
@@ -15,6 +49,9 @@ def parse_args():
 
 def main():
     config_path = parse_args()
+    PROCESS_LOG.parent.mkdir(parents=True, exist_ok=True)
+    PROCESS_LOG.touch(exist_ok=True)
+    logging.config.dictConfig(logging_config)
     process_list_model = load_config(config_path)
     generate_hdf5_anndata(process_list_model, DATA_DIR, PROCESSED_DIR / 'merged_compendia.h5ad')
 
