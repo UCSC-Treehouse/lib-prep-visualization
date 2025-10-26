@@ -2,10 +2,12 @@ from pydantic import BaseModel, field_validator
 import re
 import json
 from pathlib import Path
-
 import pandas as pd
 import scanpy as sc
 import anndata
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CompendiaSource(BaseModel):
     """
@@ -86,6 +88,7 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
     adata_list = []
 
     for source in config.compendia_list:
+        logger.info(f"Processing compendia_id: {source.compendia_id} of type {source.lib_prep_type}")
         comp_id = source.compendia_id
         exp_path = data_path / comp_id / "expression.tsv.gz"
         meta_path = data_path / comp_id / "metadata.tsv.gz"
@@ -96,8 +99,12 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
             raise FileNotFoundError(f"Metadata file not found for {comp_id}: {meta_path}")
 
         # load expression (genes x samples), transpose to samples x genes
+        logger.debug(f"Loading expression data from {exp_path}")
         exp = pd.read_csv(exp_path, sep="\t", index_col=0).T
+        logger.debug(f"Loaded expression data shape: {exp.shape}")
+        logger.debug(f"Loading metadata from {meta_path}")
         meta = pd.read_csv(meta_path, sep="\t", index_col=0)
+        logger.debug(f"Loaded metadata shape: {meta.shape}")
         # Add compendia_type to metadata
         meta["compendia_type"] = source.lib_prep_type
         meta["compendia_id"] = source.compendia_id
@@ -113,18 +120,22 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
         adata_list.append(ad)
 
     # Concatenate all AnnData objects
+    logger.info(f"Concatenating {len(adata_list)} AnnData objects")
     adata = anndata.concat(
         adata_list,
         label="compendia_id",
         keys=[s.compendia_id for s in config.compendia_list],
         index_unique=None,
     )
-
+    logger.debug(f"Total concatenated AnnData shape: {adata.shape}")
+    
+    logger.info(f"Running UMAP reduction.")
     # Run neighbors and UMAP on raw expression (no PCA, no filtering)
     sc.pp.neighbors(adata, use_rep="X")
     sc.tl.umap(adata)
 
     # Write AnnData to file
+    logger.info(f"Writing AnnData to {output_path}")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     adata.write_h5ad(output_path)
 
