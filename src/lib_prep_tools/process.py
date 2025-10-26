@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 
 import pandas as pd
-import scipy.sparse as sp
 import scanpy as sc
+import anndata
 
 class CompendiaSource(BaseModel):
     """
@@ -112,7 +112,13 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
         ad = sc.AnnData(exp, obs=meta)
         adata_list.append(ad)
 
-    adata = adata_list[0].concatenate(adata_list[1:], batch_key="compendia_id", batch_categories=[s.compendia_id for s in config.compendia_list], index_unique=None)
+    # Concatenate all AnnData objects
+    adata = anndata.concat(
+        adata_list,
+        label="compendia_id",
+        keys=[s.compendia_id for s in config.compendia_list],
+        index_unique=None,
+    )
 
     # Run neighbors and UMAP on raw expression (no PCA, no filtering)
     sc.pp.neighbors(adata, use_rep="X")
