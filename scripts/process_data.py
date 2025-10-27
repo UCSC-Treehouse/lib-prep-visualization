@@ -29,7 +29,7 @@ logging_config = {
         },
         "file": {
             "class": "logging.FileHandler",
-            "level": "DEBUG",
+            "level": "INFO",
             "formatter": "detailed",
             "filename": str(PROCESS_LOG),
             "mode": "w"

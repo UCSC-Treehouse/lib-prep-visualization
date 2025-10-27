@@ -99,12 +99,12 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
             raise FileNotFoundError(f"Metadata file not found for {comp_id}: {meta_path}")
 
         # load expression (genes x samples), transpose to samples x genes
-        logger.debug(f"Loading expression data from {exp_path}")
+        logger.info(f"Loading expression data from {exp_path}")
         exp = pd.read_csv(exp_path, sep="\t", index_col=0).T
-        logger.debug(f"Loaded expression data shape: {exp.shape}")
-        logger.debug(f"Loading metadata from {meta_path}")
+        logger.info(f"Loaded expression data shape: {exp.shape}")
+        logger.info(f"Loading metadata from {meta_path}")
         meta = pd.read_csv(meta_path, sep="\t", index_col=0)
-        logger.debug(f"Loaded metadata shape: {meta.shape}")
+        logger.info(f"Loaded metadata shape: {meta.shape}")
         # Add compendia_type to metadata
         meta["compendia_type"] = source.lib_prep_type
         meta["compendia_id"] = source.compendia_id
@@ -127,7 +127,7 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
         keys=[s.compendia_id for s in config.compendia_list],
         index_unique=None,
     )
-    logger.debug(f"Total concatenated AnnData shape: {adata.shape}")
+    logger.info(f"Total concatenated AnnData shape: {adata.shape}")
     
     logger.info(f"Running UMAP reduction.")
     # Run neighbors and UMAP on raw expression (no PCA, no filtering)
