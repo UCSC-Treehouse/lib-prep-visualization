@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import pandas as pd
 import numpy as np
+import re
 
 OTHER_LABEL = "other"
 
@@ -19,6 +20,16 @@ class ColorByConfig(BaseModel):
     categories: list[str] = []
     color_map: dict[str, str] = {}
     
+    @field_validator("color_map")
+    @classmethod
+    def color_map_values_are_hex(cls, v: dict[str, str]) -> dict[str, str]:
+        # Make sure that all values in the color_map are valid hex color strings
+        hex_color_pattern = r"^#[0-9A-Fa-f]{6}$"
+        for color in v.values():
+            if not isinstance(color, str) or not re.match(hex_color_pattern, color):
+                raise ValueError(f"Color map value {color} is not a valid hex color string.")
+        return v
+
     @model_validator(mode="after")
     def color_map_must_have_categories(self):
         """
