@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 import json
 from pathlib import Path
 import scanpy as sc
@@ -16,7 +16,20 @@ class ColorByConfig(BaseModel):
     """
     meta_key: str
     categories: list[str] = []
-
+    color_map: dict[str, str] = {}
+    
+    @model_validator(mode="after")
+    def color_map_must_have_categories(self):
+        """
+        Ensure every key in `color_map` (except the reserved OTHER_LABEL) appears in the
+        `categories` list. This is a cross-field check so we validate it after model creation.
+        """
+        for color_key in self.color_map:
+            if color_key == OTHER_LABEL:
+                continue
+            if color_key not in self.categories:
+                raise ValueError(f"color_map key {color_key} is not in categories list.")
+        return self
 
 class PlotConfig(BaseModel):
     src_adata_path: str
