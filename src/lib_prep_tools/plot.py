@@ -290,14 +290,21 @@ def add_legend(ax: plt.Axes) -> None:
     )
 
 def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
+    # If custom metadata is provided, load and merge it into the AnnData object
     if plot_config.custom_metadata:
         extra_metadata = load_extra_metadata(plot_config.custom_metadata)
         validate_extra_metadata(adata, extra_metadata)
         merge_extra_metadata(adata, extra_metadata)
+    # Validate that the ColorByConfig is compatible with the AnnData object
     validate_color_by(adata, plot_config.color_by)
-    display_categories = legend_to_meta_values(adata, plot_config.color_by, other_label=OTHER_LABEL)
-    color_map = gen_colormap(display_categories, plot_config.color_by.color_map)
+    # Map each legend label to the corresponding metadata values.
+    legend_to_meta_map = legend_to_meta_values(adata, plot_config.color_by, other_label=OTHER_LABEL)
+    # Generate a color map for the legend labels.
+    color_map = gen_colormap(legend_to_meta_map, plot_config.color_by.color_map)
+    # Init a matplotlib figure and axes
     fig, ax = init_figure(plot_config.plot_title)
-    plot_points(adata, plot_config, display_categories, color_map, ax)
+    # Plot the UMAP points
+    plot_points(adata, plot_config, legend_to_meta_map, color_map, ax)
+    # Build the legend into the plot
     add_legend(ax)
     return fig
