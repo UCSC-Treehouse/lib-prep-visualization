@@ -109,8 +109,9 @@ def load_plot_config(file_path: Path) -> PlotConfig:
 
 def load_scanpy_adata(file_path: Path):
     """
-    Load a scanpy AnnData object from the given file path.
+    Load a AnnData object from the given file path.
     """
+    logger.info(f"Loading AnnData object from {file_path}.")
     adata = sc.read_h5ad(file_path)
     return adata
 
@@ -291,8 +292,10 @@ def add_legend(ax: plt.Axes) -> None:
     )
 
 def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
+    logger.info(f"Starting plot for {plot_config.plot_title}.")
     # If custom metadata is provided, load and merge it into the AnnData object
     if plot_config.custom_metadata:
+        logger.info(f"{plot_config.plot_title}: Adding custom metadata to AnnData object.")
         extra_metadata = load_extra_metadata(plot_config.custom_metadata)
         validate_extra_metadata(adata, extra_metadata)
         merge_extra_metadata(adata, extra_metadata)
@@ -303,8 +306,10 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     # Generate a color map for the legend labels.
     color_map = gen_colormap(legend_to_meta_map, plot_config.color_by.color_map)
     # Init a matplotlib figure and axes
+    logger.info(f"{plot_config.plot_title}: Initializing figure.")
     fig, ax = init_figure(plot_config.plot_title)
     # Plot the UMAP points
+    logger.info(f"{plot_config.plot_title}: Plotting points.")
     plot_points(adata, plot_config, legend_to_meta_map, color_map, ax)
     # Build the legend into the plot
     add_legend(ax)
