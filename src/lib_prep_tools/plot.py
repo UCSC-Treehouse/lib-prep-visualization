@@ -8,6 +8,7 @@ import matplotlib.colors as mcolors
 import pandas as pd
 import numpy as np
 import re
+from . import logger
 
 OTHER_LABEL = "other"
 

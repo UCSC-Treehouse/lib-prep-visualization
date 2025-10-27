@@ -5,9 +5,8 @@ from pathlib import Path
 import pandas as pd
 import scanpy as sc
 import anndata
-import logging
+from . import logger
 
-logger = logging.getLogger(__name__)
 
 class CompendiaSource(BaseModel):
     """

@@ -7,8 +7,7 @@ from datetime import datetime
 import re
 import json
 import requests
-import logging
-
+from . import logger
 import lib_prep_tools
 
 # Manifest Dataset Status Options
@@ -16,7 +15,6 @@ STATUS_INCOMPLETE = "incomplete"
 STATUS_SUCCESS = "success"
 STATUS_FAILED = "failed"
 
-logger = logging.getLogger(__name__)
 
 class CompendiaDownloadConfig(BaseModel):
     compendia_id: str
