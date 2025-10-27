@@ -219,6 +219,9 @@ def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: 
     for legend_label, group_meta_values in display_categories.items():
         # Create a boolean mask for all metadata values that map to this legend label
         mask = np.isin(meta_values, group_meta_values)
+        # np.isin does not do nan = nan comparison. Include those if needed.
+        if any(pd.isna(v) for v in group_meta_values):
+            mask = mask | pd.isna(meta_values)
         color = color_map[legend_label]
         
         # Plot the other label points behind the rest
