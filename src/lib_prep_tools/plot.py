@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
+OTHER_LABEL = "other"
 
 class ColorByConfig(BaseModel):
     """
@@ -117,7 +118,7 @@ def validate_color_by(adata: sc.AnnData, label_key_config: ColorByConfig) -> boo
                 raise ValueError(f"target_category {category} does not exist in the meta_variable {label_key_config.meta_key}.")
     return True
 
-def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_label: str = "other",) -> dict:
+def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_label: str = OTHER_LABEL,) -> dict:
     """
     Group observed metadata values into display (legend) categories.
 
@@ -225,7 +226,7 @@ def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: 
         color = color_map[legend_label]
         
         # Plot the other label points behind the rest
-        zorder = 0 if legend_label == "other" else 1
+        zorder = 0 if legend_label == OTHER_LABEL else 1
 
         ax.scatter(
             coords[mask, 0],
@@ -258,7 +259,7 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
         validate_extra_metadata(adata, extra_metadata)
         merge_extra_metadata(adata, extra_metadata)
     validate_color_by(adata, plot_config.color_by)
-    display_categories = map_to_display_categories(adata, plot_config.color_by, other_label="other")
+    display_categories = map_to_display_categories(adata, plot_config.color_by, other_label=OTHER_LABEL)
     color_map = gen_colormap(display_categories)
     fig, ax = init_figure(plot_config.plot_title)
     plot_points(adata, plot_config, display_categories, color_map, ax)
