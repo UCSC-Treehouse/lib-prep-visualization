@@ -3,6 +3,11 @@
     "plot_title": "UMAP PolyA and RiboD Medulloblastoma and Synovial Sarcoma",
     "color_by": {
         "meta_key": "disease",
-        "categories": ["medulloblastoma", "synovial sarcoma"]
+        "categories": ["medulloblastoma", "synovial sarcoma"],
+        "color_map": {
+            "medulloblastoma": "#d4c5b0",
+            "synovial sarcoma": "#b7595f",
+            "other": "#d5d5d5"
+        }
     }
 }
