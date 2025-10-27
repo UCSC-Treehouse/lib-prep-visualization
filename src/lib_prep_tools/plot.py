@@ -4,6 +4,7 @@ from pathlib import Path
 import scanpy as sc
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 import pandas as pd
 import numpy as np
 
@@ -188,8 +189,8 @@ def gen_colormap(display_categories: dict, base_palette: str = "tab10") -> dict:
         base_palette: Name of a seaborn color palette (passed to `seaborn.color_palette`).
 
     Returns:
-        dict: Mapping display_label -> (color) where:
-            - color is a RGB tuple color from the seaborn palette
+        dict: Mapping display_label -> color where:
+            - color is a hex string (e.g. "#1f77b4") derived from the seaborn palette
     """
     # display_categories is now expected to be {display_label: [meta_values]}
     display_cats = list(display_categories.keys())
@@ -197,7 +198,8 @@ def gen_colormap(display_categories: dict, base_palette: str = "tab10") -> dict:
     color_list = sns.color_palette(base_palette, n_colors=n_colors)
     color_map = {}
     for i, disp in enumerate(display_cats):
-        color_map[disp] = color_list[i]
+        # convert RGB tuple to hex string so callers can pass the color directly to matplotlib
+        color_map[disp] = mcolors.to_hex(color_list[i])
     return color_map
 
 def init_figure(plot_title: str):
@@ -244,7 +246,7 @@ def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: 
         ax.scatter(
             coords[mask, 0],
             coords[mask, 1],
-            c=[color],
+            color=color,
             label=legend_label,
             alpha=1.0,
             edgecolor="none",
