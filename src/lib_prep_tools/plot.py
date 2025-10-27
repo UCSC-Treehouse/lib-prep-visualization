@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 import json
 from pathlib import Path
 import scanpy as sc
@@ -18,7 +18,7 @@ class ColorByConfig(BaseModel):
     """
     meta_key: str
     categories: list[str] = []
-    color_map: dict[str, str] = {}
+    color_map: dict[str, str] = Field(default_factory=dict)
     
     @field_validator("color_map")
     @classmethod
