@@ -6,8 +6,7 @@
         "meta_key": "custom_attribute",
         "categories": ["group_a"],
         "color_map": {
-            "group_a": "#1f77b4",
-            "other": "#ff7f0e"
+            "other": "#d5d5d5"
         }
     }
 }
