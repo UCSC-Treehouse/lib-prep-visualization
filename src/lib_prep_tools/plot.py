@@ -152,7 +152,7 @@ def validate_color_by(adata: sc.AnnData, label_key_config: ColorByConfig) -> boo
                 raise ValueError(f"target_category {category} does not exist in the meta_variable {label_key_config.meta_key}.")
     return True
 
-def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_label: str = OTHER_LABEL,) -> dict:
+def legend_to_meta_values(adata: sc.AnnData, color_by: ColorByConfig, other_label: str = OTHER_LABEL,) -> dict:
     """
     Group observed metadata values into display (legend) categories.
 
@@ -164,10 +164,7 @@ def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_
     - If an observed value is present in `color_by.categories`, it is placed
       under its own display label (the same string).
     - Otherwise the observed value is placed under `other_label`.
-
-    The returned dict preserves deterministic ordering: user-specified
-    `color_by.categories` appear first in that order and `other_label` is appended when there are any
-    non-selected observed values.
+    - If `color_by.categories` is empty, all observed values map to themselves.
 
     Args:
         adata: AnnData containing the column to color by in `adata.obs`.
@@ -176,29 +173,29 @@ def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_
             `color_by.categories`.
 
     Returns:
-        dict: {display_label: [metadata_value, ...]}
+        dict: {display_label: [metadata_value1, metadata_value2, ...]}
     """
     col = color_by.meta_key
     # Preserve the user-provided category order; create empty lists for them
-    members: dict = {cat: [] for cat in color_by.categories}
+    legend_to_meta_values: dict = {cat: [] for cat in color_by.categories}
     category_set = set(color_by.categories)
 
     # If the categorys list is empty, all observed values map to themselves
     if not category_set:
         observed = pd.unique(adata.obs[col]).tolist()
         for v in observed:
-            members.setdefault(v, []).append(v)
-        return members
+            legend_to_meta_values.setdefault(v, []).append(v)
+        return legend_to_meta_values
 
     # Iterate observed values in first-seen order and assign to buckets
     observed = pd.unique(adata.obs[col]).tolist()
     for v in observed:
         if v in category_set:
-            members.setdefault(v, []).append(v)
+            legend_to_meta_values.setdefault(v, []).append(v)
         else:
-            members.setdefault(other_label, []).append(v)
+            legend_to_meta_values.setdefault(other_label, []).append(v)
 
-    return members
+    return legend_to_meta_values
 
 def gen_colormap(display_categories_dict: dict, base_color_map: dict[str, str] = {}, base_palette: str = "tab10") -> dict:
     """
@@ -298,7 +295,7 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
         validate_extra_metadata(adata, extra_metadata)
         merge_extra_metadata(adata, extra_metadata)
     validate_color_by(adata, plot_config.color_by)
-    display_categories = map_to_display_categories(adata, plot_config.color_by, other_label=OTHER_LABEL)
+    display_categories = legend_to_meta_values(adata, plot_config.color_by, other_label=OTHER_LABEL)
     color_map = gen_colormap(display_categories, plot_config.color_by.color_map)
     fig, ax = init_figure(plot_config.plot_title)
     plot_points(adata, plot_config, display_categories, color_map, ax)
