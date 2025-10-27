@@ -191,26 +191,30 @@ def map_to_display_categories(adata: sc.AnnData, color_by: ColorByConfig, other_
 
     return members
 
-def gen_colormap(display_categories: dict, base_palette: str = "tab10") -> dict:
+def gen_colormap(display_categories_dict: dict, base_color_map: dict[str, str] = {}, base_palette: str = "tab10") -> dict:
     """
     Generate a color map for each display (legend) category.
 
+    Uses colors from a base color map when provided for a display label,
+    and fills in any remaining labels using a seaborn palette.
+
     Args:
         display_categories: dict {display_label: [metadata_value, ...]}
-        base_palette: Name of a seaborn color palette (passed to `seaborn.color_palette`).
+        base_color_map: dict {display_label: hex_color_string}. Precondition: all keys exist in display_categories.
+        base_palette: Name of a seaborn color palette for generating extra colors (passed to `seaborn.color_palette`).
 
     Returns:
-        dict: Mapping display_label -> color where:
-            - color is a hex string (e.g. "#1f77b4") derived from the seaborn palette
+        dict: Mapping display_label -> hex color string
     """
-    # display_categories is now expected to be {display_label: [meta_values]}
-    display_cats = list(display_categories.keys())
-    n_colors = len(display_cats)
-    color_list = sns.color_palette(base_palette, n_colors=n_colors)
-    color_map = {}
-    for i, disp in enumerate(display_cats):
-        # convert RGB tuple to hex string so callers can pass the color directly to matplotlib
-        color_map[disp] = mcolors.to_hex(color_list[i])
+    display_categories = list(display_categories_dict.keys())
+    color_map: dict[str, str] = base_color_map.copy()
+
+    # Determine which labels still need colors
+    unassigned = [d for d in display_categories if d not in color_map]
+    if unassigned:
+        palette = sns.color_palette(base_palette, n_colors=len(unassigned))
+        for i, label in enumerate(unassigned):
+            color_map[label] = mcolors.to_hex(palette[i])
     return color_map
 
 def init_figure(plot_title: str):
@@ -286,7 +290,7 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
         merge_extra_metadata(adata, extra_metadata)
     validate_color_by(adata, plot_config.color_by)
     display_categories = map_to_display_categories(adata, plot_config.color_by, other_label=OTHER_LABEL)
-    color_map = gen_colormap(display_categories)
+    color_map = gen_colormap(display_categories, plot_config.color_by.color_map)
     fig, ax = init_figure(plot_config.plot_title)
     plot_points(adata, plot_config, display_categories, color_map, ax)
     add_legend(ax)
