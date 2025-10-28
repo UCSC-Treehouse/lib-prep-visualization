@@ -10,67 +10,52 @@ conda env create -f environment.yaml
 conda activate lib-prep-visualization
 ```
 
-Make sure you have [conda](https://www.anaconda.com/download) installed.
+Ensure you have conda installed: https://www.anaconda.com/download
 
-# Scripts
+## Project scripts
 
-This project features three scripts:
-- `scripts/download_data.py`: Downloads gzipped datasets.
-- `scripts/process_data.py`: Merges the downloaded datasets and performs UMAP dimensionality reduction.
-- `scripts/plot_data.py`: Generates matplotlib visualizations from the processed data.
+This repository includes three main scripts:
 
-Each script accepts a command-line argument for a json configuration file that specifies parameters. Example configuration files are provided in the `config/` directory.
+- `scripts/download_data.py` — downloads gzipped expression and metadata files.
+- `scripts/process_data.py` — merges expression/metadata and runs UMAP.
+- `scripts/plot_data.py` — creates figures from the processed data.
 
-Here is an example of how to run each script:
+Each script accepts a `--config <config_file>.json` argument. Example configs are provided in the `config/` directory.
+
+General usage:
 
 ```bash
 python scripts/<script_name>.py --config <config_file>.json
 ```
 
-## Download Data
+## Download data
 
-### Quick Start
+### Configuration format
 
-To download example datasets, run the following command:
-
-```bash
-python scripts/download_data.py --config <config_file>.json
-```
-
-<config_file>.json should point to a configuration file structured as follows:
-```json
-[
-    {
-        "compendia_id": <unique directory name safe string>,
-        "expression_url": <url string>,
-        "metadata_url": <url string>
-    },
-    {...}
-]
-```
-
-### Implementation Details
-
-The download data script accepts a configuration file specifying a list of online compendia to download.
-Structure of the configuration file:
+The download script expects a JSON array of compendia objects. Example:
 
 ```json
 [
     {
-        "compendia_id": <string>,
-        "expression_url": <string>,
-        "metadata_url": <string>
+        "compendia_id": "Tumor_Compendium_25.01_PolyA_01_2025",
+        "expression_url": "https://example.org/path/to/expression.tsv.gz",
+        "metadata_url": "https://example.org/path/to/metadata.tsv.gz"
     },
-    {...}
+    {
+        "compendia_id": "another_compendia",
+        "expression_url": "https://example.org/path/to/expression2.tsv.gz",
+        "metadata_url": "https://example.org/path/to/metadata2.tsv.gz"
+    }
 ]
 ```
 
-Each compendia download target is a json object with three fields:
-- `compendia_id`: A unique identifier for the compendia. This must be directory name safe.
-- `expression_url`: URL to download the expression data `.tsv` or `.tsv.gz`.
-- `metadata_url`: URL to download the metadata `.tsv` or `.tsv.gz`.
+- `compendia_id`: unique, directory-name-safe identifier used for the output folder.
+- `expression_url`: URL to the expression file (`.tsv` or `.tsv.gz`).
+- `metadata_url`: URL to the metadata file (`.tsv` or `.tsv.gz`).
 
-When the script runs it sets up a output directory structure like this:
+### What the download step produces
+
+When run, the script creates the following directory layout under `data/`:
 
 ```
 data/
@@ -82,7 +67,7 @@ data/
         download.log
 ```
 
-The script tracks all of it's file downloads in the `data/<version>/download_manifest.json` file.
+The script tracks all of its file downloads in the `data/<version>/download_manifest.json` file.
 
 Here is an example of the download manifest structure:
 
@@ -108,22 +93,20 @@ Here is an example of the download manifest structure:
 }
 ```
 
-Each file in the compendia has it's own manifest entry with the following fields:
+Each file in the compendia has its own manifest entry with the following fields:
 - `last_download`: Timestamp of the last download attempt.
-- `md5checksum`: Not implemented yet.
-- `file_size`: Not implemented yet.
-- `status`: Status of the download attempt. Either "success", "failed", or "incomplete".
-- `software_version`: Version of the download script used for the download.
+- `md5checksum`: Not yet implemented.
+- `file_size`: Not yet implemented.
+- `status`: Status of the download attempt: one of "success", "failed", or "incomplete".
+- `software_version`: Version of the download script used.
 
 New files will be downloaded and added to the manifest. Existing files will be skipped under these conditions:
 - The compendia exists in the `download_manifest.json` file.
-- The `status` field the specific target file is "success".
+- The `status` field for the specific target file is "success".
 - The `software_version` field matches the current version of the download script.
 
-It is important to note that expression files and 
-metadata files are treated separately. Downloading a new expression file will not automatically trigger a download of the corresponding metadata file.
+Expression files and metadata files are treated separately. Downloading a new expression file does not automatically trigger a download of the corresponding metadata file.
 
-Files are first downloaded into a temporary directory. Compendia files are often large and downloads can be interrupted. Downloading into a 
-temporary directory helps prevent overwriting existing files with incomplete downloads. Once a file is fully downloaded, it is moved from the temporary directory to the final destination.
+Files are first downloaded into a temporary directory because compendia files are often large and downloads can be interrupted. Downloading into a temporary directory helps prevent overwriting existing files with incomplete downloads. Once a file is fully downloaded, it is moved from the temporary directory to the final destination.
 
-Steps of the download are logged to `data/<version>/download.log`.
+Log entries for downloads are appended to `data/<version>/download.log`.
