@@ -30,7 +30,7 @@ python scripts/<script_name>.py --config <config_file>.json
 
 ## Download data
 
-The download script retrieves expression and metadata files from specified URLs and organizes them into a structured directory layout.
+The `scripts/download_data.py` script retrieves expression and metadata files from specified URLs and organizes them into a structured directory layout.
 These files are typically large, so the script is designed to handle interrupted downloads gracefully. Files will be prepared 
 for downstream processing.
 
@@ -117,8 +117,7 @@ Log entries for downloads are appended to `data/<version>/download.log`.
 
 ## Process data
 
-The process script merges multiple compendia expression and metadata files into a single Anndata object and runs UMAP for dimensionality reduction. This script will prepare data for plotting. 
-The output is stored in a .hd5ad file which is compatible with the scanpy library and the UCSC Cell Browser.
+The `scripts/process_data.py` script merges multiple compendia expression and metadata files into a single Anndata object and runs UMAP for dimensionality reduction. This script will prepare data for plotting. The output is stored in a .hd5ad file which is compatible with the scanpy library and the UCSC Cell Browser.
 
 ### Configuration format
 
