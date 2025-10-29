@@ -30,6 +30,10 @@ python scripts/<script_name>.py --config <config_file>.json
 
 ## Download data
 
+The download script retrieves expression and metadata files from specified URLs and organizes them into a structured directory layout.
+These files are typically large, so the script is designed to handle interrupted downloads gracefully. Files will be prepared 
+for downstream processing.
+
 ### Configuration format
 
 The download script expects a JSON array of compendia objects. Example:
@@ -53,7 +57,7 @@ The download script expects a JSON array of compendia objects. Example:
 - `expression_url`: URL to the expression file (`.tsv` or `.tsv.gz`).
 - `metadata_url`: URL to the metadata file (`.tsv` or `.tsv.gz`).
 
-### What the download step produces
+### Download script methods
 
 When run, the script creates the following directory layout under `data/`:
 
@@ -110,3 +114,49 @@ Expression files and metadata files are treated separately. Downloading a new ex
 Files are first downloaded into a temporary directory because compendia files are often large and downloads can be interrupted. Downloading into a temporary directory helps prevent overwriting existing files with incomplete downloads. Once a file is fully downloaded, it is moved from the temporary directory to the final destination.
 
 Log entries for downloads are appended to `data/<version>/download.log`.
+
+## Process data
+
+The process script merges multiple compendia expression and metadata files into a single Anndata object and runs UMAP for dimensionality reduction. This script will prepare data for plotting. 
+The output is stored in a .hd5ad file which is compatible with the scanpy library and the UCSC Cell Browser.
+
+### Configuration format
+
+The configuration expects a JSON object with a list of compendia IDs to merge and process. Example:
+
+```json
+{
+    "compendia_list": [
+        {
+            "compendia_id": "Tumor_Compendium_25.01_PolyA_01_2025",
+            "lib_prep_type": "polya"
+        },
+        {
+            "compendia_id": "Tumor_Compendium_25.01_RiboD_01_2025",
+            "lib_prep_type": "ribodepletion"
+        }
+    ]
+}
+```
+
+- `compendia_id`: unique identifier matching a downloaded compendia.
+- `lib_prep_type`: library preparation type, either "polya" or "ribodepletion".
+
+### Process script methods
+
+For each compendia in the list, the process script will:
+1. Load the expression and metadata files from the corresponding `data/<version>/<compendia_id>/` directory into Pandas Dataframes.
+2. Transpose the expression dataframe so that genes are in columns and samples are in rows.
+3. Column "compendia_type" is added to the metadata dataframe, populated with the `lib_prep_type` value from the config.
+5. The expression and metdata dataframes are used to create a Anndata object.
+
+Read more about Anndata here: https://anndata.readthedocs.io/en/stable/
+
+Once each compendia from the config has been loaded into an Anndata object, the script will concatenate all of the Anndata objects into a single Anndata object.
+This is preformed using the `anndata.concat()` method from the Anndata library, which concatenates row-wise (i.e., samples are stacked, genes are aligned).
+
+The script then computes the neighbor graph and UMAP using the `scanpy` library and storing the results in the Anndata object.
+
+Finally, the processed Anndata object is saved to `processed/processed_data.hd5ad`.
+
+Logs for the script are saved to `processed/process.log`.
