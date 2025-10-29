@@ -25,12 +25,12 @@ This repository includes three main scripts:
 - `scripts/process_data.py` — merges expression/metadata and runs UMAP.
 - `scripts/plot_data.py` — creates figures from the processed data.
 
-Each script accepts a `--config <config_file>.json` argument. Example configs are provided in the `config/` directory.
+Each script accepts a `--config config_file.json` argument. Example configs are provided in the `config/` directory.
 
 General usage:
 
 ```bash
-python scripts/<script_name>.py --config <config_file>.json
+python scripts/script_name.py --config config_file.json
 ```
 
 ## Download data
