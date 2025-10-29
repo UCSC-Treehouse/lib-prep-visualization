@@ -1,5 +1,5 @@
 # lib-prep-visualization
-This project is a visualization tool for comparing RNA-seq expression data across different library preparation methods using UMAP. Use this repository to download RNA-seq expression and metadata files, process them into a unified format, run UMAP for dimensionality reduction, and create cluster visualizations of the results.
+This project is a visualization tool for gene expression data across different library preparation methods using UMAP. Use this repository to download gene expression and clinical files, process them into a unified format, run UMAP for dimensionality reduction, and create cluster visualizations of the results.
 
 ## Development Environment Setup
 
