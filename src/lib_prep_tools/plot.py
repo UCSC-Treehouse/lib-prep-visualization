@@ -18,7 +18,7 @@ class ColorByConfig(BaseModel):
     categories to assign individual colors.
     """
     meta_key: str
-    categories: list[str] = []
+    categories: list[str] = Field(default_factory=list)
     color_map: dict[str, str] = Field(default_factory=dict)
     
     @field_validator("color_map")
