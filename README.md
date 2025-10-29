@@ -147,8 +147,8 @@ The configuration expects a JSON object with a list of compendia IDs to merge an
 For each compendia in the list, the process script will:
 1. Load the expression and metadata files from the corresponding `data/<version>/<compendia_id>/` directory into Pandas Dataframes.
 2. Transpose the expression dataframe so that genes are in columns and samples are in rows.
-3. Column "compendia_type" is added to the metadata dataframe, populated with the `lib_prep_type` value from the config.
-5. The expression and metdata dataframes are used to create a Anndata object.
+3. Add column "compendia_type" to the metadata dataframe, populated with the `lib_prep_type` value from the config.
+5. Create an Anndata object from the expression and metadata dataframes.
 
 Read more about Anndata here: https://anndata.readthedocs.io/en/stable/
 
