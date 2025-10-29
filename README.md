@@ -163,13 +163,13 @@ Logs for the script are saved to `processed/process.log`.
 
 ## Plot Data
 
-The plot data script creates matplotlib figures from the processed Anndata object created by the process script.
+The `scripts/plot_data.py` script creates matplotlib figures from the processed Anndata object created by the process script.
 Like the other scripts, it accepts a `--config <config_file>.json` argument. Figures are saved to the `plots/` directory
 as `.png` files.
 
 ### Configuration format
 
-The plot data script expects a JSON object specifying plotting parameters. Example:
+This script expects a JSON object specifying plotting parameters. Example:
 
 ```json
 {
