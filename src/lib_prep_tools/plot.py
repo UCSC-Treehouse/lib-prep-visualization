@@ -32,18 +32,6 @@ class ColorByConfig(BaseModel):
                 raise ValueError(f"Color map value {color} is not a valid hex color string.")
         return v
 
-    @model_validator(mode="after")
-    def color_map_must_have_categories(self):
-        """
-        Ensure every key in `color_map` (except the reserved OTHER_LABEL) appears in the
-        `categories` list. This is a cross-field check so we validate it after model creation.
-        """
-        for color_key in self.color_map:
-            if color_key == OTHER_LABEL:
-                continue
-            if color_key not in self.categories:
-                raise ValueError(f"color_map key {color_key} is not in categories list.")
-        return self
 
 class PlotConfig(BaseModel):
     """
@@ -153,6 +141,19 @@ def validate_color_by(adata: sc.AnnData, label_key_config: ColorByConfig) -> boo
             if category not in existing_categories:
                 raise ValueError(f"target_category {category} does not exist in the meta_variable {label_key_config.meta_key}.")
     return True
+
+def correct_base_colormap(color_map: dict[str, str], legend_labels: list[str]) -> dict:
+    """
+    Correct a color map so that only keys that exist in legend_labels are kept.
+    """
+    corrected_map = {}
+    for color_map_label in color_map:
+        if color_map_label in legend_labels:
+            corrected_map[color_map_label] = color_map[color_map_label]
+        else:
+            logger.warning(f"Color map label {color_map_label} not found in legend labels; skipping.")
+
+    return corrected_map
 
 def legend_to_meta_values(adata: sc.AnnData, color_by: ColorByConfig, other_label: str = OTHER_LABEL,) -> dict:
     """
@@ -303,8 +304,10 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     validate_color_by(adata, plot_config.color_by)
     # Map each legend label to the corresponding metadata values.
     legend_to_meta_map = legend_to_meta_values(adata, plot_config.color_by, other_label=OTHER_LABEL)
+    # Validate the entries of the configuration color map against the legend labels
+    corrected_color_map = correct_base_colormap(plot_config.color_by.color_map, list(legend_to_meta_map.keys()))
     # Generate a color map for the legend labels.
-    color_map = gen_colormap(legend_to_meta_map, plot_config.color_by.color_map)
+    color_map = gen_colormap(legend_to_meta_map, corrected_color_map)
     # Init a matplotlib figure and axes
     logger.info(f"{plot_config.plot_title}: Initializing figure.")
     fig, ax = init_figure(plot_config.plot_title)
