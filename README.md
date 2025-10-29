@@ -1,6 +1,11 @@
 # lib-prep-visualization
 This project is a visualization tool for gene expression data across different library preparation methods using UMAP. Use this repository to download gene expression and clinical files, process them into a unified format, run UMAP for dimensionality reduction, and create cluster visualizations of the results.
 
+This project includes a python package, `lib_prep_tools`, along with several scripts to perform the following tasks:
+1. Download expression and metadata files from specified URLs.
+2. Process and merge the downloaded files into a single Anndata object and run UMAP.
+3. Create visualizations from the processed data.
+
 ## Development Environment Setup
 
 To create a development environment using conda:
