@@ -58,7 +58,8 @@ python scripts/plot_data.py --config configs/plot_data/medulloblastoma_vs_synovi
 
 The output visualization will be saved in the `figures/` directory as `UMAP_Medulloblastoma_and_Synovial_Sarcoma.png`.
 
-Finally, we will use a config which assigns custom metadata labels that group medulloblastoma and synovial sarcoma samples by their library preparation method.
+Finally, we will use a config which assigns custom metadata labels that group medulloblastoma and synovial sarcoma samples by their library preparation method. The custom labels can be found
+in `configs/custom_metadata/libprep_disease_mb_synsarc.tsv`
 
 ```bash
 python scripts/plot_data.py --config configs/plot_data/polya_ribod_medulloblastoma_synovial_sarcoma.json
