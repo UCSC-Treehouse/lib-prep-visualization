@@ -139,12 +139,14 @@ The configuration expects a JSON object with a list of compendia IDs to merge an
             "compendia_id": "Tumor_Compendium_25.01_RiboD_01_2025",
             "lib_prep_type": "ribodepletion"
         }
-    ]
+    ],
+    "seed": 20
 }
 ```
 
 - `compendia_id`: unique identifier matching a downloaded compendia.
 - `lib_prep_type`: library preparation type, either "polya" or "ribodepletion".
+- `seed`: Optional. Integer random seed for UMAP reproducibility.
 
 ### Process script methods
 
@@ -159,7 +161,8 @@ Read more about Anndata here: https://anndata.readthedocs.io/en/stable/
 Once each compendia from the config has been loaded into an Anndata object, the script will concatenate all of the Anndata objects into a single Anndata object.
 This is preformed using the `anndata.concat()` method from the Anndata library, which concatenates row-wise (i.e., samples are stacked, genes are aligned).
 
-The script then computes the neighbor graph and UMAP using the `scanpy` library and storing the results in the Anndata object.
+The script then computes the neighbor graph and UMAP using the `scanpy` library and storing the results in the Anndata object. Both are seeded with the `seed` value from the config for reproducibility.
+If no seed is provided in the config, a default value of 42 is used.
 
 Finally, the processed Anndata object is saved to `processed/processed_data.hd5ad`.
 
