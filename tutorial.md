@@ -11,6 +11,8 @@ git clone https://github.com/UCSC-Treehouse/lib-prep-visualization.git
 cd lib-prep-visualization
 ```
 
+Ensure you have conda installed: https://www.anaconda.com/download
+
 Create and activate a Conda environment with the required dependencies and the `lib-prep-tools` package installed:
 
 ```bash
