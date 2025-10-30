@@ -1,6 +1,6 @@
 {
     "src_adata_path": "processed/merged_compendia.h5ad",
-    "plot_title": "UMAP PolyA and RiboD Medulloblastoma and Synovial Sarcoma",
+    "plot_title": "UMAP Medulloblastoma and Synovial Sarcoma",
     "color_by": {
         "meta_key": "disease",
         "categories": ["medulloblastoma", "synovial sarcoma"],
