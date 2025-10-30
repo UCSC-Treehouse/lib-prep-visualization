@@ -6,6 +6,8 @@ import pandas as pd
 import scanpy as sc
 import anndata
 from . import logger
+import random
+import numpy as np
 
 
 class CompendiaSource(BaseModel):
@@ -51,6 +53,14 @@ class CompendiaListConfig(BaseModel):
     """
     
     compendia_list: list[CompendiaSource]
+    seed: int = 42  # Random seed for reproducibility
+
+    @field_validator("seed")
+    @classmethod
+    def seed_must_be_integer(cls, v):
+        if not isinstance(v, int):
+            raise ValueError("Seed must be an integer.")
+        return v
 
 def load_config(file_path: Path) -> CompendiaListConfig:
     """
@@ -130,8 +140,8 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
     
     logger.info(f"Running UMAP reduction.")
     # Run neighbors and UMAP on raw expression (no PCA, no filtering)
-    sc.pp.neighbors(adata, use_rep="X")
-    sc.tl.umap(adata)
+    sc.pp.neighbors(adata, use_rep="X", random_state=config.seed)
+    sc.tl.umap(adata, random_state=config.seed)
 
     # Write AnnData to file
     logger.info(f"Writing AnnData to {output_path}")
