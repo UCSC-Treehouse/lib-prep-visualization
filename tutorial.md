@@ -14,7 +14,7 @@ cd lib-prep-visualization
 Create and activate a Conda environment with the required dependencies and the `lib-prep-tools` package installed:
 
 ```bash
-conda env create -f environment.yml
+conda env create -f environment.yaml
 conda activate lib-prep-visualization
 ```
 
