@@ -159,7 +159,7 @@ def download_file_with_manifest_update(url: HttpUrl, target_path: Path, manifest
 
 def download_compendia(download_list_config: DownloadListConfig, download_manifest: DownloadManifest, data_dir: Path, version: str) -> DownloadManifest:
     for compendia_download_config in download_list_config.root:
-        logger.info(f"Processing compendia: {compendia_download_config.compendia_id}")
+        logger.info(f"Downloading compendia: {compendia_download_config.compendia_id}")
         compendia_id = compendia_download_config.compendia_id
         target_dir = data_dir / compendia_id
         target_dir.mkdir(parents=True, exist_ok=True)
