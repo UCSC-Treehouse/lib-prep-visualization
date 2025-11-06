@@ -1,8 +1,0 @@
-{
-    "src_adata_path": "processed/merged_compendia.h5ad",
-    "plot_title": "UMAP Labeled by Patient Sex",
-    "color_by": {
-        "meta_key": "sex",
-        "categories": []
-    }
-}
