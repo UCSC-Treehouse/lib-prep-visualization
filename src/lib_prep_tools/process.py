@@ -143,6 +143,9 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
     sc.pp.neighbors(adata, use_rep="X", random_state=config.seed)
     sc.tl.umap(adata, random_state=config.seed)
 
+    adata.X = None  # Drop expression matrix to save space
+    adata.obsp = None  # also drop neighbor graph
+
     # Write AnnData to file
     logger.info(f"Writing AnnData to {output_path}")
     output_path.parent.mkdir(parents=True, exist_ok=True)
