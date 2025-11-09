@@ -96,6 +96,8 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
     # Build one AnnData per compendia, store in list for merging
     adata_list = []
 
+    merged_adata = anndata.AnnData()
+
     for source in config.compendia_list:
         logger.info(f"Processing compendia_id: {source.compendia_id} of type {source.lib_prep_type}")
         comp_id = source.compendia_id
@@ -126,28 +128,26 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
         meta = meta.reindex(exp.index)
 
         ad = sc.AnnData(exp, obs=meta)
-        adata_list.append(ad)
+        
+        merged_adata = anndata.concat(
+            [merged_adata, ad],
+            label="compendia_id",
+            keys=[s.compendia_id for s in config.compendia_list],
+            index_unique=None,
+        )
 
-    # Concatenate all AnnData objects
-    logger.info(f"Concatenating {len(adata_list)} AnnData objects")
-    adata = anndata.concat(
-        adata_list,
-        label="compendia_id",
-        keys=[s.compendia_id for s in config.compendia_list],
-        index_unique=None,
-    )
-    logger.info(f"Total concatenated AnnData shape: {adata.shape}")
+    logger.info(f"Total concatenated AnnData shape: {merged_adata.shape}")
     
     logger.info(f"Running UMAP reduction.")
     # Run neighbors and UMAP on raw expression (no PCA, no filtering)
-    sc.pp.neighbors(adata, use_rep="X", random_state=config.seed)
-    sc.tl.umap(adata, random_state=config.seed)
+    sc.pp.neighbors(merged_adata, use_rep="X", random_state=config.seed)
+    sc.tl.umap(merged_adata, random_state=config.seed)
 
-    adata.X = None  # Drop expression matrix to save space
-    adata.obsp = None  # also drop neighbor graph
+    merged_adata.X = None  # Drop expression matrix to save space
+    merged_adata.obsp = None  # also drop neighbor graph
 
     # Write AnnData to file
     logger.info(f"Writing AnnData to {output_path}")
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    adata.write_h5ad(output_path)
+    merged_adata.write_h5ad(output_path)
 
