@@ -44,16 +44,25 @@ logging_config = {
 def parse_args():
     parser = argparse.ArgumentParser(description="Process and merge compendia datasets based on a configuration file.")
     parser.add_argument('--config', type=Path, required=True, help='Path to the process configuration JSON file.')
+    parser.add_argument(
+        '--data-dir',
+        type=Path,
+        default=DATA_DIR,
+        help=(
+            "Path to the directory containing downloaded data. "
+            "The directory must match the output formatting of the download_data script."
+        ),
+    )
     args = parser.parse_args()
-    return args.config
+    return args.config, args.data_dir
 
 def main():
-    config_path = parse_args()
+    config_path, data_dir = parse_args()
     PROCESS_LOG.parent.mkdir(parents=True, exist_ok=True)
     PROCESS_LOG.touch(exist_ok=True)
     logging.config.dictConfig(logging_config)
     process_list_model = load_config(config_path)
-    generate_hdf5_anndata(process_list_model, DATA_DIR, PROCESSED_DIR / 'merged_compendia.h5ad')
+    generate_hdf5_anndata(process_list_model, data_dir, PROCESSED_DIR / 'merged_compendia.h5ad')
 
     # Further processing logic would go here
     pass
