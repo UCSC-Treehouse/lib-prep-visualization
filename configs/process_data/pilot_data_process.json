@@ -1,0 +1,12 @@
+{
+    "compendia_list": [
+        {
+            "compendia_id": "pilot_set1",
+            "lib_prep_type": "polya"
+        },
+        {
+            "compendia_id": "pilot_set2",
+            "lib_prep_type": "ribodepletion"
+        }
+    ]
+}
