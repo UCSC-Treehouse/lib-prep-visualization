@@ -93,6 +93,7 @@ def generate_h5ad_anndata(config: CompendiaListConfig, data_path: Path, output_p
     if not validate_compendia_dirs(config, data_path):
         raise FileNotFoundError("One or more compendia_id directories do not exist under the given data_path.")
 
+    # Running anndata concatenation object. After loading each compendia, we will merge it into this object.
     merged_adata = None
 
     for source in config.compendia_list:
