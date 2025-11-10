@@ -130,6 +130,7 @@ def generate_h5ad_anndata(config: CompendiaListConfig, data_path: Path, output_p
         exp, meta = None, None  # free memory
 
         # Merge the compendia into the larger AnnData object
+        logger.info(f"Merging compendia_id {comp_id} into the main AnnData object.")
         if merged_adata:
             merged_adata = anndata.concat(
                 [merged_adata, ad],
