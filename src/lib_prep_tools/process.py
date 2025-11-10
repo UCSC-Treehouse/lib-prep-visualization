@@ -46,12 +46,24 @@ class CompendiaListConfig(BaseModel):
     """
     Top-level model for the process_data JSON config.
     Attributes:
+        out_dir_name (Path): Directory name for the output data.
         compendia_list (list[CompendiaSource]): List of compendia sources to merge.
         ...More attributes on how to merge the data... (TBD)
     """
     
+    out_dir_name: str
     compendia_list: list[CompendiaSource]
     seed: int = 42  # Random seed for reproducibility
+
+    @field_validator("out_dir_name")
+    @classmethod
+    def directory_name_safe(cls, v: str) -> str:
+        # Make sure that the out_dir_name is directory name safe. Precaution to make sure that no funny business happens with directory names.
+        if not re.match(r"^[\w\-.]+$", v):
+            raise ValueError(
+                "out_dir_name must be directory name safe (alphanumeric, dash, underscore, dot)"
+            )
+        return v
 
     @field_validator("seed")
     @classmethod
