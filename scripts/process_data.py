@@ -28,11 +28,12 @@ logging_config = {
             "stream": "ext://sys.stdout"
         },
         "file": {
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.RotatingFileHandler",
             "level": "INFO",
             "formatter": "detailed",
             "filename": str(PROCESS_LOG),
-            "mode": "w"
+            "maxBytes": 10 * 1024 * 1024,  # 10MB
+            "backupCount": 3
         }
     },
     "loggers": {
