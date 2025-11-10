@@ -6,8 +6,6 @@ import pandas as pd
 import scanpy as sc
 import anndata
 from . import logger
-import random
-import numpy as np
 
 
 class CompendiaSource(BaseModel):
