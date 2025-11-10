@@ -1,0 +1,7 @@
+{
+    "src_adata_path": "processed/merged_compendia.h5ad",
+    "plot_title": "Pilot Data UMAP Labeled by Disease",
+    "color_by": {
+        "meta_key": "disease"
+    }
+}
