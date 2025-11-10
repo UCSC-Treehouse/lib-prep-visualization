@@ -93,10 +93,7 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
     if not validate_compendia_dirs(config, data_path):
         raise FileNotFoundError("One or more compendia_id directories do not exist under the given data_path.")
 
-    # Build one AnnData per compendia, store in list for merging
-    adata_list = []
-
-    merged_adata = anndata.AnnData()
+    merged_adata = None
 
     for source in config.compendia_list:
         logger.info(f"Processing compendia_id: {source.compendia_id} of type {source.lib_prep_type}")
@@ -127,14 +124,23 @@ def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_p
         # smaller than the expression rows.
         meta = meta.reindex(exp.index)
 
+        # Create AnnData object from the current processing compendia
         ad = sc.AnnData(exp, obs=meta)
         
-        merged_adata = anndata.concat(
-            [merged_adata, ad],
-            label="compendia_id",
-            keys=[s.compendia_id for s in config.compendia_list],
-            index_unique=None,
-        )
+        exp, meta = None, None  # free memory
+
+        # Merge the compendia into the larger AnnData object
+        if merged_adata:
+            merged_adata = anndata.concat(
+                [merged_adata, ad],
+                label="compendia_id",
+                keys=[s.compendia_id for s in config.compendia_list],
+                index_unique=None,
+            )
+        else:
+            merged_adata = ad
+
+        ad = None  # free memory
 
     logger.info(f"Total concatenated AnnData shape: {merged_adata.shape}")
     
