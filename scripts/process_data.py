@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 import lib_prep_tools
-from lib_prep_tools.process import CompendiaListConfig, load_config, generate_hdf5_anndata
+from lib_prep_tools.process import CompendiaListConfig, load_config, generate_h5ad_anndata
 import logging.config
 
 DATA_DIR = Path.cwd() / 'data' / str(lib_prep_tools.__version__)
@@ -62,7 +62,7 @@ def main():
     PROCESS_LOG.touch(exist_ok=True)
     logging.config.dictConfig(logging_config)
     process_list_model = load_config(config_path)
-    generate_hdf5_anndata(process_list_model, data_dir, PROCESSED_DIR / 'merged_compendia.h5ad')
+    generate_h5ad_anndata(process_list_model, data_dir, PROCESSED_DIR / 'merged_compendia.h5ad')
 
     # Further processing logic would go here
     pass
