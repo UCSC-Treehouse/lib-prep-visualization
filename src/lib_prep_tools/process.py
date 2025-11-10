@@ -86,7 +86,7 @@ def validate_compendia_dirs(config: CompendiaListConfig, base_path: Path) -> boo
     """
     return all(source.validate_id_dir(base_path) for source in config.compendia_list)
 
-def generate_hdf5_anndata(config: CompendiaListConfig, data_path: Path, output_path: Path):
+def generate_h5ad_anndata(config: CompendiaListConfig, data_path: Path, output_path: Path):
     """
     Generate a merged umap reduced HDF5 AnnData file from the given compendia sources using scanpy. Save the result to the output_path.
     """
