@@ -100,6 +100,9 @@ def generate_h5ad_anndata(config: CompendiaListConfig, data_path: Path, output_p
     """
     Generate a merged umap reduced HDF5 AnnData file from the given compendia sources using scanpy. Save the result to the output_path.
     """
+    
+    logger.info(f"Building AnnData for {config.out_dir_name}.")
+    
     if not validate_compendia_dirs(config, data_path):
         raise FileNotFoundError("One or more compendia_id directories do not exist under the given data_path.")
 
