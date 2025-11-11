@@ -122,14 +122,18 @@ Log entries for downloads are appended to `data/<version>/download.log`.
 
 ## Process data
 
-The `scripts/process_data.py` script merges multiple compendia expression and metadata files into a single Anndata object and runs UMAP for dimensionality reduction. This script will prepare data for plotting. The output is stored in a .hd5ad file which is compatible with the scanpy library and the UCSC Cell Browser.
+The `scripts/process_data.py` script merges multiple compendia expression and metadata files into a single AnnData object and runs UMAP for dimensionality reduction. This script prepares the data for plotting. The output is stored in an `.h5ad` file, which is compatible with the Scanpy library and the UCSC Cell Browser.
 
-### Configuration format
+The script accepts the following command-line arguments:
 
-The configuration expects a JSON object with a list of compendia IDs to merge and process. Example:
+- `--config <config_file>.json`: Path to a configuration file specifying compendia to merge and processing parameters.  
+- `--data-dir <path>` *(optional)*: Root directory where compendia data files are stored. Defaults to `data/<version>/` if not provided.  
+  This argument can be used to run the script with the included pilot dataset or with any other locally stored dataset.  
+  The directory must follow the same structure produced by the `download_data` script.
 
 ```json
 {
+    "out_dir_name": "data/Tumor_Compendium_25.01_01_2025/",
     "compendia_list": [
         {
             "compendia_id": "Tumor_Compendium_25.01_PolyA_01_2025",
@@ -144,6 +148,7 @@ The configuration expects a JSON object with a list of compendia IDs to merge an
 }
 ```
 
+- `out_dir_name`: output sub-directory of the `processed/` directory where the processed data will be saved.
 - `compendia_id`: unique identifier matching a downloaded compendia.
 - `lib_prep_type`: library preparation type, either "polya" or "ribodepletion".
 - `seed`: Optional. Integer random seed for UMAP reproducibility.
