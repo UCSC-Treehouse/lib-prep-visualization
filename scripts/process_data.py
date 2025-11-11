@@ -28,11 +28,12 @@ logging_config = {
             "stream": "ext://sys.stdout"
         },
         "file": {
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.RotatingFileHandler",
             "level": "INFO",
             "formatter": "detailed",
             "filename": str(PROCESS_LOG),
-            "mode": "w"
+            "maxBytes": 10 * 1024 * 1024,  # 10MB
+            "backupCount": 3
         }
     },
     "loggers": {
@@ -62,7 +63,9 @@ def main():
     PROCESS_LOG.touch(exist_ok=True)
     logging.config.dictConfig(logging_config)
     process_list_model = load_config(config_path)
-    generate_h5ad_anndata(process_list_model, data_dir, PROCESSED_DIR / 'merged_compendia.h5ad')
+    output_dir = PROCESSED_DIR / process_list_model.out_dir_name
+    output_dir.mkdir(parents=True, exist_ok=True)
+    generate_h5ad_anndata(process_list_model, data_dir, output_dir / 'merged_compendia.h5ad')
 
     # Further processing logic would go here
     pass

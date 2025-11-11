@@ -1,4 +1,5 @@
 {
+    "out_dir_name": "pilot_data",
     "compendia_list": [
         {
             "compendia_id": "pilot_set1",

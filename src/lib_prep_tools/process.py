@@ -46,12 +46,24 @@ class CompendiaListConfig(BaseModel):
     """
     Top-level model for the process_data JSON config.
     Attributes:
+        out_dir_name (Path): Directory name for the output data.
         compendia_list (list[CompendiaSource]): List of compendia sources to merge.
         ...More attributes on how to merge the data... (TBD)
     """
     
+    out_dir_name: str
     compendia_list: list[CompendiaSource]
     seed: int = 42  # Random seed for reproducibility
+
+    @field_validator("out_dir_name")
+    @classmethod
+    def directory_name_safe(cls, v: str) -> str:
+        # Make sure that the out_dir_name is directory name safe. Precaution to make sure that no funny business happens with directory names.
+        if not re.match(r"^[\w\-.]+$", v):
+            raise ValueError(
+                "out_dir_name must be directory name safe (alphanumeric, dash, underscore, dot)"
+            )
+        return v
 
     @field_validator("seed")
     @classmethod
@@ -88,6 +100,9 @@ def generate_h5ad_anndata(config: CompendiaListConfig, data_path: Path, output_p
     """
     Generate a merged umap reduced HDF5 AnnData file from the given compendia sources using scanpy. Save the result to the output_path.
     """
+    
+    logger.info(f"Building AnnData for {config.out_dir_name}.")
+    
     if not validate_compendia_dirs(config, data_path):
         raise FileNotFoundError("One or more compendia_id directories do not exist under the given data_path.")
 
