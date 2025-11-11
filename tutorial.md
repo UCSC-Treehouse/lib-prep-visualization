@@ -38,7 +38,7 @@ The downloaded compendia files will be saved in the `data/` directory.
 Run the following command to merge all of the downloaded compendia and run the UMAP algorithm:
 
 ```bash
-python scripts/process_data.py --config configs/process_data/polyA_vs_riboD_v25.01.json
+python scripts/process_data.py --config configs/process_data/polyA_vs_riboD_v25-01/polyA_vs_riboD_v25.01.json
 ```
 
 The processed data with UMAP results will be saved in the `processed/polyA_vs_riboD_v25-01/` directory as `processed_data.hd5ad`.
@@ -47,7 +47,7 @@ The processed data with UMAP results will be saved in the `processed/polyA_vs_ri
 Run the following command generate a visualization coloring on library preparation method:
 
 ```bash
-python scripts/plot_data.py --config configs/plot_data/polyA_vs_riboD_v25.01.json
+python scripts/plot_data.py --config configs/plot_data/polyA_vs_riboD_v25-01/polyA_vs_riboD_v25.01.json
 ```
 
 The output visualization will be saved in the `figures/` directory as `UMAP_Labeled_by_Library_Prep_Method.png`.
@@ -55,7 +55,7 @@ The output visualization will be saved in the `figures/` directory as `UMAP_Labe
 Next, plot a figure labeling medulloblastoma samples and synovial sarcoma samples. This time we will use a custom color palette instead of the default seaborn color palette.
 
 ```bash
-python scripts/plot_data.py --config configs/plot_data/medulloblastoma_vs_synovial_sarcoma.json
+python scripts/plot_data.py --config configs/plot_data/polyA_vs_riboD_v25-01/medulloblastoma_vs_synovial_sarcoma.json
 ```
 
 The output visualization will be saved in the `figures/` directory as `UMAP_Medulloblastoma_and_Synovial_Sarcoma.png`.
@@ -64,7 +64,7 @@ Finally, we will use a config which assigns custom metadata labels that group me
 in `configs/custom_metadata/libprep_disease_mb_synsarc.tsv`
 
 ```bash
-python scripts/plot_data.py --config configs/plot_data/polya_ribod_medulloblastoma_synovial_sarcoma.json
+python scripts/plot_data.py --config configs/plot_data/polyA_vs_riboD_v25-01/polya_ribod_medulloblastoma_synovial_sarcoma.json
 ```
 
 The output visualization will be saved in the `figures/` directory as `UMAP_PolyA_and_Ribodepletion_Medulloblastoma_and_Synovial_Sarcoma.png`.
