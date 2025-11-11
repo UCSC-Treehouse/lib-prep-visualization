@@ -41,7 +41,7 @@ Run the following command to merge all of the downloaded compendia and run the U
 python scripts/process_data.py --config configs/process_data/polyA_vs_riboD_v25.01.json
 ```
 
-The processed data with UMAP results will be saved in the `processed/` directory as `processed_data.hd5ad`.
+The processed data with UMAP results will be saved in the `processed/polyA_vs_riboD_v25-01/` directory as `processed_data.hd5ad`.
 
 ## Step 4: Visualize UMAP Results
 Run the following command generate a visualization coloring on library preparation method:
