@@ -185,7 +185,7 @@ This script expects a JSON object specifying plotting parameters. Example:
 
 ```json
 {
-    "src_adata_path": "processed/merged_compendia.h5ad",
+    "src_adata_path": "processed/sub_dir_name/merged_compendia.h5ad",
     "plot_title": "Plot Title",
     "out_dir_name": "fig_sub_dir",
     "custom_metadata": "table.tsv",
