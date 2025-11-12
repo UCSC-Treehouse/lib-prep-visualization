@@ -3,6 +3,10 @@
     "plot_title": "PolyA UMAP Labeled by Compendia Type",
     "out_dir_name": "polyA_v25-01",
     "color_by": {
-        "meta_key": "compendia_type"
+        "meta_key": "compendia_type",
+        "categories": ["polya"],
+        "color_map": {
+            "polya": "#1f77b4"
+        }
     }
 }

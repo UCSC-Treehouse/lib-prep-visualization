@@ -3,6 +3,10 @@
     "plot_title": "RiboD UMAP Labeled by Compendia Type",
     "out_dir_name": "riboD_v25-01",
     "color_by": {
-        "meta_key": "compendia_type"
+        "meta_key": "compendia_type",
+        "categories": ["ribodepletion"],
+        "color_map": {
+            "ribodepletion": "#ff7f0e"
+        }
     }
 }
