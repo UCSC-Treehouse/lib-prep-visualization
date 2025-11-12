@@ -187,6 +187,7 @@ This script expects a JSON object specifying plotting parameters. Example:
 {
     "src_adata_path": "processed/merged_compendia.h5ad",
     "plot_title": "Plot Title",
+    "out_dir_name": "fig_sub_dir",
     "custom_metadata": "table.tsv",
     "color_by": {
         "meta_key": "metadata column name",
@@ -202,6 +203,7 @@ This script expects a JSON object specifying plotting parameters. Example:
 ```
 - `src_adata_path`: Path to the processed Anndata file.
 - `plot_title`: Title for the plot.
+- `out_dir_name`: Subdirectory within the `plots/` directory where the figure will be saved.
 - `custom_metadata`: Optional. Path to a TSV file with additional metadata to merge into the Anndata object. See below for the required format.
 - `color_by`: JSON object specifying how to assign legend colors to points in the plot.
 - `meta_key`: Column name in the Anndata metadata used to color points. This column can optionally come from the `custom_metadata` file.
