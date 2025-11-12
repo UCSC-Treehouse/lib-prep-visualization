@@ -53,7 +53,9 @@ def main():
     plot_config = load_plot_config(config_path)
     adata = load_scanpy_adata(Path(plot_config.src_adata_path))
     fig = plot_umap(adata, plot_config)
-    fig.savefig(FIGURE_DIR / f"{plot_config.plot_title.replace(' ', '_')}.png", dpi=1200)
+    fig_out_fp = FIGURE_DIR / plot_config.out_dir_name / f"{plot_config.plot_title.replace(' ', '_')}.png"
+    fig_out_fp.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(fig_out_fp, dpi=1200)
 
 if __name__ == "__main__":
     main()
