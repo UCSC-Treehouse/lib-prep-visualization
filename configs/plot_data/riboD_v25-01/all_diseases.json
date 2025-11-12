@@ -1,0 +1,8 @@
+{
+    "src_adata_path": "processed/riboD_v25-01/merged_compendia.h5ad",
+    "plot_title": "RiboD UMAP Labeled by Disease",
+    "out_dir_name": "riboD_v25-01",
+    "color_by": {
+        "meta_key": "disease"
+    }
+}

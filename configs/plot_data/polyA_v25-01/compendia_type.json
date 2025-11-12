@@ -1,0 +1,8 @@
+{
+    "src_adata_path": "processed/polyA_v25-01/merged_compendia.h5ad",
+    "plot_title": "PolyA UMAP Labeled by Compendia Type",
+    "out_dir_name": "polyA_v25-01",
+    "color_by": {
+        "meta_key": "compendia_type"
+    }
+}
