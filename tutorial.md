@@ -50,7 +50,7 @@ Run the following command generate a visualization coloring on library preparati
 python scripts/plot_data.py --config configs/plot_data/polyA_vs_riboD_v25-01/polyA_vs_riboD_v25.01.json
 ```
 
-The output visualization will be saved in the `figures/` directory as `UMAP_Labeled_by_Library_Prep_Method.png`.
+The output visualization will be saved in the `figures/polyA_vs_riboD_v25-01` directory as `UMAP_Labeled_by_Library_Prep_Method.png`.
 
 Next, plot a figure labeling medulloblastoma samples and synovial sarcoma samples. This time we will use a custom color palette instead of the default seaborn color palette.
 
@@ -58,7 +58,7 @@ Next, plot a figure labeling medulloblastoma samples and synovial sarcoma sample
 python scripts/plot_data.py --config configs/plot_data/polyA_vs_riboD_v25-01/medulloblastoma_vs_synovial_sarcoma.json
 ```
 
-The output visualization will be saved in the `figures/` directory as `UMAP_Medulloblastoma_and_Synovial_Sarcoma.png`.
+The output visualization will be saved in the `figures/polyA_vs_riboD_v25-01` directory as `UMAP_Medulloblastoma_and_Synovial_Sarcoma.png`.
 
 Finally, we will use a config which assigns custom metadata labels that group medulloblastoma and synovial sarcoma samples by their library preparation method. The custom labels can be found
 in `configs/custom_metadata/libprep_disease_mb_synsarc.tsv`
@@ -67,4 +67,4 @@ in `configs/custom_metadata/libprep_disease_mb_synsarc.tsv`
 python scripts/plot_data.py --config configs/plot_data/polyA_vs_riboD_v25-01/polya_ribod_medulloblastoma_synovial_sarcoma.json
 ```
 
-The output visualization will be saved in the `figures/` directory as `UMAP_PolyA_and_Ribodepletion_Medulloblastoma_and_Synovial_Sarcoma.png`.
+The output visualization will be saved in the `figures/polyA_vs_riboD_v25-01` directory as `UMAP_PolyA_and_Ribodepletion_Medulloblastoma_and_Synovial_Sarcoma.png`.
