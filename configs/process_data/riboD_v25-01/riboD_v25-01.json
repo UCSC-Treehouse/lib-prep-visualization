@@ -1,0 +1,9 @@
+{
+    "out_dir_name": "riboD_v25-01",
+    "compendia_list": [
+        {
+            "compendia_id": "Tumor_Compendium_25.01_RiboD_01_2025",
+            "lib_prep_type": "ribodepletion"
+        }
+    ]
+}
