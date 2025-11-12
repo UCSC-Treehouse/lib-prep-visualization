@@ -44,6 +44,7 @@ class PlotConfig(BaseModel):
     """
     src_adata_path: str
     plot_title: str
+    out_dir_name: str
     custom_metadata: Path | None = None
     color_by: ColorByConfig
 
@@ -64,6 +65,16 @@ class PlotConfig(BaseModel):
             raise ValueError("src_adata_path must be a path to a .h5ad file")
         return v
     
+    @field_validator("out_dir_name")
+    @classmethod
+    def directory_name_safe(cls, v: str) -> str:
+        # Make sure that the out_dir_name is directory name safe. Precaution to make sure that no funny business happens with directory names.
+        if not re.match(r"^[\w\-.]+$", v):
+            raise ValueError(
+                "out_dir_name must be directory name safe (alphanumeric, dash, underscore, dot)"
+            )
+        return v
+
     @field_validator("custom_metadata")
     @classmethod
     def custom_metadata_must_exist(cls, v: Path) -> Path:
