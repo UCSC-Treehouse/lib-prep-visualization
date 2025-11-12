@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from lib_prep_tools.plot import load_plot_config, load_scanpy_adata, validate_color_by, plot_umap
+from lib_prep_tools.plot import load_plot_config, load_scanpy_adata, save_figure, plot_umap
 import logging.config
 
 FIGURE_DIR = Path.cwd() / 'figures'
@@ -53,9 +53,7 @@ def main():
     plot_config = load_plot_config(config_path)
     adata = load_scanpy_adata(Path(plot_config.src_adata_path))
     fig = plot_umap(adata, plot_config)
-    fig_out_fp = FIGURE_DIR / plot_config.out_dir_name / f"{plot_config.plot_title.replace(' ', '_')}.png"
-    fig_out_fp.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(fig_out_fp, dpi=1200)
+    save_figure(fig, FIGURE_DIR, plot_config)
 
 if __name__ == "__main__":
     main()

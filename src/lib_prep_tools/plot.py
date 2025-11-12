@@ -328,3 +328,24 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     # Build the legend into the plot
     add_legend(ax)
     return fig
+
+
+def save_figure(fig: plt.Figure, base_out_dir: Path, plot_config: PlotConfig, dpi: int = 1200) -> Path:
+    """
+    Save the given figure to the output file path with the specified DPI.
+
+    Args:
+        fig: Matplotlib Figure to save.
+        base_out_dir: Base output directory Path.
+        plot_config: PlotConfig containing the out_dir_name and plot_title.
+        dpi: Dots per inch for the saved figure.
+
+    Returns:
+        Path to the saved figure file.
+    """
+    base_out_dir.mkdir(parents=True, exist_ok=True)
+    fig_out_fp = base_out_dir / plot_config.out_dir_name / f"{plot_config.plot_title.replace(' ', '_')}.png"
+    fig_out_fp.parent.mkdir(parents=True, exist_ok=True)
+    logger.info(f"Saving figure to {fig_out_fp} with DPI {dpi}.")
+    fig.savefig(fig_out_fp, dpi=dpi)
+    return fig_out_fp
