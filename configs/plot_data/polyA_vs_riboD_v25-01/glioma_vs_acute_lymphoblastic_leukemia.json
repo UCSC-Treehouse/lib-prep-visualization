@@ -1,0 +1,17 @@
+{
+    "src_adata_path": "processed/polyA_vs_riboD_v25-01/merged_compendia.h5ad",
+    "plot_title": "UMAP PolyA and RiboD Glioma vs Acute Lymphoblastic Leukemia",
+    "out_dir_name": "polyA_vs_riboD_v25-01",
+    "custom_metadata": "configs/custom_metadata/polyA_vs_riboD_v25-01/glioma_vs_acute_lymphoblastic_leukemia.tsv",
+    "color_by": {
+        "meta_key": "prep_disease",
+        "categories": ["PolyA glioma", "PolyA acute lymphoblastic leukemia", "RiboD glioma", "RiboD acute lymphoblastic leukemia"],
+        "color_map": {
+            "PolyA glioma": "#EEEE0D",
+            "PolyA acute lymphoblastic leukemia": "#00AAFF",
+            "RiboD glioma": "#43a10d",
+            "RiboD acute lymphoblastic leukemia": "#01324a",
+            "other": "#d5d5d5"
+        }
+    }
+}

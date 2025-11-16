@@ -1,0 +1,17 @@
+{
+    "src_adata_path": "processed/polyA_v25-01/merged_compendia.h5ad",
+    "plot_title": "PolyA UMAP Glioma vs Acute Lymphoblastic Leukemia",
+    "out_dir_name": "polyA_v25-01",
+    "color_by": {
+        "meta_key": "disease",
+        "categories": [
+            "glioma",
+            "acute lymphoblastic leukemia"
+        ],
+        "color_map": {
+            "glioma": "#EEEE0D",
+            "acute lymphoblastic leukemia": "#00AAFF",
+            "other": "#D5D5D5"
+        }
+    }
+}
