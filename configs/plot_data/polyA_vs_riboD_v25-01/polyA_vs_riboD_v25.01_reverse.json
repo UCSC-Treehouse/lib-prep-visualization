@@ -1,0 +1,13 @@
+{
+    "src_adata_path": "processed/polyA_vs_riboD_v25-01/merged_compendia.h5ad",
+    "plot_title": "UMAP Labeled by Library Prep Method Reverse Plotting Order",
+    "out_dir_name": "polyA_vs_riboD_v25-01",
+    "color_by": {
+        "meta_key": "compendia_type",
+        "categories": ["ribodepletion", "polya"],
+        "color_map": {
+            "polya": "#1f77b4",
+            "ribodepletion": "#ff7f0e"
+        }
+    }
+}
