@@ -1,0 +1,12 @@
+{
+    "src_adata_path": "processed/matched_polyA_riboD/merged_compendia.h5ad",
+    "plot_title": "PolyA Reduced Samples UMAP Labeled by Compendia Type",
+    "out_dir_name": "matched_polyA_riboD",
+    "color_by": {
+        "meta_key": "compendia_type",
+        "categories": ["polyA"],
+        "color_map": {
+            "ribodepletion": "#ff7f0e"
+        }
+    }
+}
