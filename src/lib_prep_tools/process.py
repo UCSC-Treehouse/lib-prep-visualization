@@ -47,11 +47,13 @@ class CompendiaListConfig(BaseModel):
     Top-level model for the process_data JSON config.
     Attributes:
         out_dir_name (Path): Directory name for the output data.
+        sample_subset (Path, optional): Path to a file containing a subset of samples to include in the merged compendium.
         compendia_list (list[CompendiaSource]): List of compendia sources to merge.
-        ...More attributes on how to merge the data... (TBD)
+        seed (int): Random seed for reproducibility.
     """
     
     out_dir_name: str
+    sample_subset: str = None
     compendia_list: list[CompendiaSource]
     seed: int = 42  # Random seed for reproducibility
 
@@ -62,6 +64,15 @@ class CompendiaListConfig(BaseModel):
         if not re.match(r"^[\w\-.]+$", v):
             raise ValueError(
                 "out_dir_name must be directory name safe (alphanumeric, dash, underscore, dot)"
+            )
+        return v
+
+    @field_validator("sample_subset")
+    @classmethod
+    def sample_subset_safe(cls, v: str) -> str:
+        if v and not Path(v).exists():
+            raise ValueError(
+                "sample_subset must be a valid file path"
             )
         return v
 
@@ -95,6 +106,57 @@ def validate_compendia_dirs(config: CompendiaListConfig, base_path: Path) -> boo
     TODO This would be better off checking the manifest for 
     """
     return all(source.validate_id_dir(base_path) for source in config.compendia_list)
+
+def validate_subsamples(merged_adata: anndata.AnnData, subset_ids: set) -> bool:
+    """
+    Validate that all sample IDs in the subset exist in the merged AnnData object.
+    
+    Args:
+        merged_adata: AnnData object to check against
+        subset_ids: Set of sample IDs to validate
+
+    Returns:
+        bool: True if all sample IDs in the subset exist in the merged AnnData object, False otherwise.
+
+    This function was initially written by GithubCopilot using the docstring as a prompt and then iterated on by hand.
+    """
+    missing_ids = subset_ids - set(merged_adata.obs_names)
+    
+    if missing_ids:
+        missing_count = len(missing_ids)
+        if missing_count <= 10:
+            logger.warning(f"Found {missing_count} sample IDs in subset file that are not in the merged AnnData object: {missing_ids}")
+        else:
+            sample_missing = list(missing_ids)[:10]
+            logger.warning(f"Found {missing_count} sample IDs in subset file that are not in the merged AnnData object: {sample_missing} ... {missing_count - 10} more.")
+        return False
+    
+    return True
+
+def filter_samples_by_subset(merged_adata: anndata.AnnData, subset_file: str) -> anndata.AnnData:
+    """
+    Filter an AnnData object to only include samples from a subset file.
+    
+    Args:
+        merged_adata: AnnData object to filter
+        subset_file: Path to a file containing sample IDs (one per line, no header)
+    
+    Returns:
+        Filtered AnnData object
+
+    This function was initially written by GithubCopilot using the docstring as a prompt and then iterated on by hand.
+    """
+    logger.info(f"Filtering merged AnnData to only include samples from subset file: {subset_file}")
+    subset_df = pd.read_csv(subset_file, header=None, names=["sample_id"])
+    subset_ids = set(subset_df["sample_id"]) # convert to set to avoid duplicate sample_id lookups
+    if not validate_subsamples(merged_adata, subset_ids):
+        logger.warning("Subset validation failed. Skipping subsetting of AnnData object.")
+        return merged_adata  # return unfiltered if validation fails
+    initial_count = merged_adata.n_obs
+    filtered_adata = merged_adata[merged_adata.obs_names.isin(subset_ids)].copy()
+    final_count = filtered_adata.n_obs
+    logger.info(f"Filtered samples from {initial_count} to {final_count} based on subset file.")
+    return filtered_adata
 
 def generate_h5ad_anndata(config: CompendiaListConfig, data_path: Path, output_path: Path):
     """
@@ -159,6 +221,10 @@ def generate_h5ad_anndata(config: CompendiaListConfig, data_path: Path, output_p
 
     logger.info(f"Total concatenated AnnData shape: {merged_adata.shape}")
     
+    # If sample_subset is provided, filter the merged_adata to only include those samples
+    if config.sample_subset:
+        merged_adata = filter_samples_by_subset(merged_adata, config.sample_subset)
+
     logger.info(f"Running UMAP reduction.")
     # Run neighbors and UMAP on raw expression (no PCA, no filtering)
     sc.pp.neighbors(merged_adata, use_rep="X", random_state=config.seed)
