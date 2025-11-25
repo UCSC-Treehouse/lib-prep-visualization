@@ -47,11 +47,13 @@ class CompendiaListConfig(BaseModel):
     Top-level model for the process_data JSON config.
     Attributes:
         out_dir_name (Path): Directory name for the output data.
+        sample_subset (Path, optional): Path to a file containing a subset of samples to include in the merged compendium.
         compendia_list (list[CompendiaSource]): List of compendia sources to merge.
-        ...More attributes on how to merge the data... (TBD)
+        seed (int): Random seed for reproducibility.
     """
     
     out_dir_name: str
+    sample_subset: str = None
     compendia_list: list[CompendiaSource]
     seed: int = 42  # Random seed for reproducibility
 
@@ -62,6 +64,15 @@ class CompendiaListConfig(BaseModel):
         if not re.match(r"^[\w\-.]+$", v):
             raise ValueError(
                 "out_dir_name must be directory name safe (alphanumeric, dash, underscore, dot)"
+            )
+        return v
+
+    @field_validator("sample_subset")
+    @classmethod
+    def sample_subset_safe(cls, v: str) -> str:
+        if v and not Path(v).exists():
+            raise ValueError(
+                "sample_subset must be a valid file path"
             )
         return v
 
