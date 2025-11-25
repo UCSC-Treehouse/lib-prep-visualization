@@ -107,6 +107,32 @@ def validate_compendia_dirs(config: CompendiaListConfig, base_path: Path) -> boo
     """
     return all(source.validate_id_dir(base_path) for source in config.compendia_list)
 
+def validate_subsamples(merged_adata: anndata.AnnData, subset_ids: set) -> bool:
+    """
+    Validate that all sample IDs in the subset exist in the merged AnnData object.
+    
+    Args:
+        merged_adata: AnnData object to check against
+        subset_ids: Set of sample IDs to validate
+
+    Returns:
+        bool: True if all sample IDs in the subset exist in the merged AnnData object, False otherwise.
+
+    This function was initially written by GithubCopilot using the docstring as a prompt and then iterated on by hand.
+    """
+    missing_ids = subset_ids - set(merged_adata.obs_names)
+    
+    if missing_ids:
+        missing_count = len(missing_ids)
+        if missing_count <= 10:
+            logger.warning(f"Found {missing_count} sample IDs in subset file that are not in the merged AnnData object: {missing_ids}")
+        else:
+            sample_missing = list(missing_ids)[:10]
+            logger.warning(f"Found {missing_count} sample IDs in subset file that are not in the merged AnnData object: {sample_missing} ... {missing_count - 10} more.")
+        return False
+    
+    return True
+
 def filter_samples_by_subset(merged_adata: anndata.AnnData, subset_file: str) -> anndata.AnnData:
     """
     Filter an AnnData object to only include samples from a subset file.
@@ -123,6 +149,9 @@ def filter_samples_by_subset(merged_adata: anndata.AnnData, subset_file: str) ->
     logger.info(f"Filtering merged AnnData to only include samples from subset file: {subset_file}")
     subset_df = pd.read_csv(subset_file, header=None, names=["sample_id"])
     subset_ids = set(subset_df["sample_id"]) # convert to set to avoid duplicate sample_id lookups
+    if not validate_subsamples(merged_adata, subset_ids):
+        logger.warning("Subset validation failed. Skipping subsetting of AnnData object.")
+        return merged_adata  # return unfiltered if validation fails
     initial_count = merged_adata.n_obs
     filtered_adata = merged_adata[merged_adata.obs_names.isin(subset_ids)].copy()
     final_count = filtered_adata.n_obs
