@@ -1,0 +1,12 @@
+{
+    "out_dir_name": "pilot_data",
+    "metadata_label": "disease",
+    "compendia_list": [
+        {
+            "compendia_id": "pilot_set1"
+        },
+        {
+            "compendia_id": "pilot_set2"
+        }
+    ]
+}
