@@ -118,7 +118,7 @@ def filter_samples_by_subset(merged_adata: anndata.AnnData, subset_file: str) ->
     Returns:
         Filtered AnnData object
 
-    This function was initially written by GithubCopilot using the docstring as a prompt and then iterated on.
+    This function was initially written by GithubCopilot using the docstring as a prompt and then iterated on by hand.
     """
     logger.info(f"Filtering merged AnnData to only include samples from subset file: {subset_file}")
     subset_df = pd.read_csv(subset_file, header=None, names=["sample_id"])
