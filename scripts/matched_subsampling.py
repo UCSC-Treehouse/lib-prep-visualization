@@ -16,6 +16,7 @@ class MSConfig(BaseModel):
     out_dir_name: str
     metadata_label: str
     compendia_set: set[str]
+    seed: int = 42
 
     @field_validator("out_dir_name")
     def validate_out_dir_name(cls, v):
