@@ -15,7 +15,7 @@ class MSConfig(BaseModel):
 
     out_dir_name: str
     metadata_label: str
-    compendia_list: list[str]
+    compendia_set: set[str]
 
     @field_validator("out_dir_name")
     def validate_out_dir_name(cls, v):
@@ -23,8 +23,14 @@ class MSConfig(BaseModel):
             raise ValueError("out_dir_name must be a non-empty string")
         return v
     
-    def validate_compendia_list(self, base_path: Path) -> bool:
-        for compendia_id in self.compendia_list:
+    @field_validator("compendia_set")
+    def validate_compendia_set_unique(cls, v):
+        if len(v) < 2:
+            raise ValueError("compendia_set must contain at least two compendia unique IDs")
+        return v
+
+    def validate_compendia_dirs_exist(self, base_path: Path) -> bool:
+        for compendia_id in self.compendia_set:
             dir_path = base_path / compendia_id
             if not dir_path.exists() or not dir_path.is_dir():
                 return False
@@ -57,7 +63,7 @@ def load_ms_config(config_fp: Path) -> MSConfig:
     with open(config_fp, "r") as f:
         config_data = json.load(f)
     config = MSConfig.model_validate(config_data)
-    if not config.validate_compendia_list(DATA_DIR):
+    if not config.validate_compendia_dirs_exist(DATA_DIR):
         raise ValueError("One or more compendia in compendia_list do not exist in the data directory.")
     return config
 
