@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
 from pathlib import Path
+import argparse
 
 class MSConfig(BaseModel):
     """
@@ -24,9 +25,21 @@ class MSConfig(BaseModel):
         return True
 
 
-def main():
-    pass
+def parse_args() -> Path:
+    """
+    Parse command line arguments to get the config file path.
 
+    Returns:
+        Path: Path to the input JSON config file given by --config argument.
+    """
+    parser = argparse.ArgumentParser(description="Matched Subsampling Script")
+    parser.add_argument("--config", type=str, required=True, help="Path to the input JSON config file")
+    config_path = Path(parser.parse_args().config)
+    return config_path
+
+
+def main():
+    config_fp = parse_args()
 
 if __name__ == "__main__":
     main()
