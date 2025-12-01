@@ -44,15 +44,24 @@ def parse_args() -> Path:
     Parse command line arguments to get the config file path.
 
     Returns:
-        Path: Path to the input JSON config file given by --config argument.
+        tuple[Path, Path]: Tuple containing the path to the input JSON config file and the data directory.
     """
     parser = argparse.ArgumentParser(description="Matched Subsampling Script")
     parser.add_argument("--config", type=str, required=True, help="Path to the input JSON config file")
-    config_path = Path(parser.parse_args().config)
-    return config_path
+    parser.add_argument(
+        '--data-dir',
+        type=Path,
+        default=DATA_DIR,
+        help=(
+            "Path to the directory containing downloaded data. "
+            "The directory must match the output formatting of the download_data script."
+        )
+    )
+    args = parser.parse_args()
+    return args.config, args.data_dir
 
 
-def load_ms_config(config_fp: Path) -> MSConfig:
+def load_ms_config(base_path: Path, config_fp: Path) -> MSConfig:
     """
     Load and validate the matched subsampling configuration from a JSON file.
 
@@ -65,7 +74,7 @@ def load_ms_config(config_fp: Path) -> MSConfig:
     with open(config_fp, "r") as f:
         config_data = json.load(f)
     config = MSConfig.model_validate(config_data)
-    if not config.validate_compendia_dirs_exist(DATA_DIR):
+    if not config.validate_compendia_dirs_exist(base_path):
         raise ValueError("One or more compendia in compendia_list do not exist in the data directory.")
     return config
 
@@ -87,9 +96,9 @@ def load_metadata(base_dir: Path, compendia_id: str) -> pd.DataFrame:
 
 
 def main():
-    config_fp = parse_args()
-    ms_config = load_ms_config(config_fp)
-    meta_df_dict = {comp_id: load_metadata(DATA_DIR, comp_id) for comp_id in ms_config.compendia_set}
+    config_fp, data_dir = parse_args()
+    ms_config = load_ms_config(data_dir, config_fp)
+    meta_df_dict = {comp_id: load_metadata(data_dir, comp_id) for comp_id in ms_config.compendia_set}
     return
 
 if __name__ == "__main__":
