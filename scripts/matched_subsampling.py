@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
 from pathlib import Path
+import pandas as pd 
 import argparse
 import json
 
@@ -68,9 +69,28 @@ def load_ms_config(config_fp: Path) -> MSConfig:
         raise ValueError("One or more compendia in compendia_list do not exist in the data directory.")
     return config
 
+
+def load_metadata(base_dir: Path, compendia_id: str) -> pd.DataFrame:
+    """
+    Load metadata for a given compendia ID.
+
+    Args:
+        base_dir (Path): Base directory where compendia data is stored.
+        compendia_id (str): The compendia unique identifier.
+
+    Returns:
+        pd.DataFrame: Metadata DataFrame for the specified compendia.
+    """
+    metadata_fp = base_dir / compendia_id / "metadata.tsv.gz"
+    metadata_df = pd.read_csv(metadata_fp, sep='\t', compression='infer')
+    return metadata_df
+
+
 def main():
     config_fp = parse_args()
     ms_config = load_ms_config(config_fp)
+    meta_df_dict = {comp_id: load_metadata(DATA_DIR, comp_id) for comp_id in ms_config.compendia_set}
+    return
 
 if __name__ == "__main__":
     main()
