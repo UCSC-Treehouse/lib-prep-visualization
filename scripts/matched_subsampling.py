@@ -107,8 +107,11 @@ def validate_metadata_labels(meta_df_dict: dict[str, pd.DataFrame], label: str) 
 
 def main():
     config_fp, data_dir = parse_args()
+    # Load and validate matched subsampling config
     ms_config = load_ms_config(data_dir, config_fp)
+    # Read in metadata for all compendia in the config set
     meta_df_dict = {comp_id: load_metadata(data_dir, comp_id) for comp_id in ms_config.compendia_set}
+    # Validate that the metadata label exists in all compendia metadata
     if not validate_metadata_labels(meta_df_dict, ms_config.metadata_label):
         raise ValueError(f"Metadata label '{ms_config.metadata_label}' not found in all compendia metadata.")
     return
