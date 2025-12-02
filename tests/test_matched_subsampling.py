@@ -35,6 +35,10 @@ metadata_7 = pd.DataFrame({
     "age": [1, 2, 3, 4],
 })
 
+metadata_8 = pd.DataFrame({
+    "sample_id": ["S25", "S26", "S27"],
+    "disease": ["A", "B", "B"],
+})
 
 def test_two_compendia_matching_entries():
     """
@@ -67,6 +71,30 @@ def test_two_compendia_no_matching_entries():
     meta_df_dict = {
         "compendia_1": metadata_1,
         "compendia_4": metadata_4,
+    }
+    result = compute_min_sample_counts(meta_df_dict, "disease")
+    expected = {}
+    assert result == expected
+
+def test_two_compendia_different_sizes():
+    """
+    Test when the two compendia have different numbers of samples.
+    """
+    meta_df_dict = {
+        "compendia_1": metadata_1,
+        "compendia_8": metadata_8,
+    }
+    result = compute_min_sample_counts(meta_df_dict, "disease")
+    expected = {"A": 1, "B": 2}
+    assert result == expected
+
+def test_two_compendia_missing_label():
+    """
+    Test when one compendia is missing the specified metadata label.
+    """
+    meta_df_dict = {
+        "compendia_1": metadata_1,
+        "compendia_7": metadata_7,
     }
     result = compute_min_sample_counts(meta_df_dict, "disease")
     expected = {}
