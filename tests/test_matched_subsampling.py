@@ -45,3 +45,18 @@ def test_two_compendia_matching_entries():
         "B": 2,
     }
     assert result == expected
+
+def test_two_compendia_with_one_unique_entry():
+    """
+    Test when one compendia has a unique disease entry not found in the other.
+    """
+    meta_df_dict = {
+        "compendia_1": metadata_1,
+        "compendia_3": metadata_3,
+    }
+    result = compute_min_sample_counts(meta_df_dict, "disease")
+    expected = {
+        "A": 1,
+        "B": 2,
+    }
+    assert result == expected
