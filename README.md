@@ -238,3 +238,41 @@ The plot script performs the following steps:
 4. Generate a color map for the legend labels based on the `color_by` configuration.
 5. Create a matplotlib figure plotting UMAP coordinates colored by the specified metadata.
 6. Save the figure to the `plots/` directory as a `.png` file named after the `plot_title`.
+
+## Matched Subsampling Script
+
+The `scripts/matched_subsampling.py` script performs a count-matched subsampling of samples across multiple compendia based on a specified metadata label.
+This is useful for creating balanced datasets for comparison, such as matching disease distributions across different library preparation method compendia.
+
+The script accepts the following command-line arguments:
+- `--config <config_file>.json`: Path to a configuration file specifying subsampling parameters. Example configs are provided in the `config/matched_subsampling/` directory.  
+- `--data-dir <path>` *(optional)*: Root directory where compendia data files are stored. Defaults to `data/<version>/` if not provided.  
+  This argument can be used to run the script with the included pilot dataset or with any other locally stored dataset.  
+  The directory must follow the same structure produced by the `download_data` script.
+
+### Configuration format
+
+The matched subsampling script expects a JSON object specifying subsampling parameters. Example:
+
+```json
+{
+    "out_dir_name": "dir_name",
+    "metadata_label": "disease",
+    "compendia_set": ["compendia_id1", "compendia_id2"]
+}
+```
+- `out_dir_name`: output sub-directory of the `matched_subsamples/` directory where the subset sample IDs will be saved.
+- `metadata_label`: Column name in the metadata files used for matching sample counts across compendia.
+- `compendia_set`: List of compendia IDs to include in the matched subsampling. These IDs must correspond to downloaded compendia in the data directory.
+
+### Matched Subsampling script methods
+
+The matched subsampling script performs the following steps:
+1. For each compendia in the `compendia_set`, load the corresponding metadata file into a Pandas DataFrame.
+2. Determine the unique values and their counts for the specified `metadata_label` across all compendia.
+3. Identify the minimum count for each label value across the compendia.
+4. For each compendia, randomly sample sample ids for each label value according to the minimum counts determined in the previous step.
+5. Combine the sampled sample ids from all compendia into a single list.
+6. Save the combined list of sampled sample ids to a TSV file at `matched_subsamples/{out_dir_name}/subset_samples.tsv`, with one sample ID per line.
+
+*Note*: Metadata column entries that are not present in all compendia will be ignored during subsampling to ensure consistent matching across datasets.
