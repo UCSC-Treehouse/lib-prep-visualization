@@ -20,6 +20,16 @@ metadata_3 = pd.DataFrame({
     "disease": ["A", "B", "B", "C"],
 })
 
+metadata_4 = pd.DataFrame({
+    "sample_id": ["S13", "S14", "S15", "S16"],
+    "disease": ["D", "D", "E", "E"],
+})
+
+metadata_5 = pd.DataFrame({
+    "sample_id": ["S17", "S18", "S19", "S20"],
+    "disease": ["A", "B", "B", "B"],
+})
+
 
 def test_two_compendia_matching_entries():
     """
