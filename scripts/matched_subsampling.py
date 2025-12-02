@@ -105,6 +105,36 @@ def validate_metadata_labels(meta_df_dict: dict[str, pd.DataFrame], label: str) 
     return True
 
 
+def compute_min_sample_counts(meta_df_dict: dict[str, pd.DataFrame], column_label: str) -> dict[str, int]:
+    """
+    Generate a dictionary mapping each unique column entry to the minimum number of samples 
+    in a single metadata df that have that label value.
+    
+    For example, if column_label='disease' and 'neuroblastoma' appears 100 times in compendia A 
+    and 50 times in compendia B, the result will include {'neuroblastoma': 50}.
+    
+    Args:
+        meta_df_dict: Dictionary mapping compendia IDs to their metadata DataFrames
+        column_label: The metadata column name to analyze
+        
+    Returns:
+        Dictionary mapping label values to their minimum count across all compendia
+
+    This function was initially written by GithubCopilot using the docstring as a prompt and then iterated on by hand.
+    """
+
+    label_counts: dict[str, list[int]] = {}
+    for meta_df in meta_df_dict.values():
+        value_counts = meta_df[column_label].value_counts()
+        for label_value, count in value_counts.items():
+            if label_value not in label_counts:
+                label_counts[label_value] = []
+            label_counts[label_value].append(count)
+    
+    min_sample_counts = {label_value: min(counts) for label_value, counts in label_counts.items()}
+    return min_sample_counts
+
+
 def main():
     config_fp, data_dir = parse_args()
     # Load and validate matched subsampling config
