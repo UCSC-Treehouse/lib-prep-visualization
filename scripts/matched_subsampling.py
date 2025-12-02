@@ -3,7 +3,6 @@ from pathlib import Path
 import pandas as pd 
 import argparse
 import json
-import random
 
 import lib_prep_tools
 
