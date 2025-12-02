@@ -1,0 +1,33 @@
+{
+    "src_adata_path": "processed/polyA_riboD_disease_matched/merged_compendia.h5ad",
+    "plot_title": "RiboD and PolyA UMAP Disease Counts Matched Colored by 10 Most Sampled Diseases",
+    "out_dir_name": "polyA_riboD_disease_matched",
+    "color_by": {
+        "meta_key": "disease",
+        "categories": [
+            "glioma",
+            "acute lymphoblastic leukemia",
+            "medulloblastoma",
+            "ependymoma",
+            "acute myeloid leukemia",
+            "neuroblastoma",
+            "wilms tumor",
+            "atypical teratoid/rhabdoid tumor",
+            "osteosarcoma",
+            "craniopharyngioma"
+        ],
+        "color_map": {
+            "glioma": "#EEEE0D",
+            "acute lymphoblastic leukemia": "#00AAFF",
+            "medulloblastoma": "#0B3861",
+            "ependymoma": "#723f6f",
+            "acute myeloid leukemia": "#fec266",
+            "neuroblastoma": "#FFAAFF",
+            "wilms tumor": "#005500",
+            "atypical teratoid/rhabdoid tumor": "#610B21",
+            "osteosarcoma": "#CEF6CE",
+            "craniopharyngioma": "#4e483c",
+            "other": "#D5D5D5"
+        }
+    }
+}

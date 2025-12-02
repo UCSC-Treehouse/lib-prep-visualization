@@ -1,4 +1,4 @@
-disease	age	sex
+th_dataset_id	disease	age	sex
 SAMPLE_001	glioma	4	Male
 SAMPLE_002	glioma	3	Female
 SAMPLE_003	glioma	5	Male
