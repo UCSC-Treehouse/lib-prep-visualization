@@ -1,5 +1,5 @@
 {
-    "out_dir_name": "polyA_riboD_v25-01_disease_subsampling",
+    "out_dir_name": "polyA_riboD_disease_matched",
     "metadata_label": "disease",
     "compendia_set": ["Tumor_Compendium_25.01_PolyA_01_2025", "Tumor_Compendium_25.01_RiboD_01_2025"]
 }
