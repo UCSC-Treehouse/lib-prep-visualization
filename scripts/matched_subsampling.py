@@ -3,15 +3,16 @@ from pathlib import Path
 import pandas as pd 
 import argparse
 import json
+import random
 
 import lib_prep_tools
 
 DATA_DIR = Path.cwd() / 'data' / str(lib_prep_tools.__version__)
-MS_BASE_DIR = Path.cwd() / 'matched_subsampled'
+MS_BASE_DIR = Path.cwd() / 'matched_subsamples'
 
 class MSConfig(BaseModel):
     """
-    Matched Sampleing input json config
+    Matched Sampling input json config
     """
 
     out_dir_name: str
@@ -156,6 +157,40 @@ def compute_min_sample_counts(meta_df_dict: dict[str, pd.DataFrame], column_labe
     return min_sample_counts
 
 
+def create_sample_subset_list(meta_df_dict: dict[str, pd.DataFrame], column_name: str, min_sample_counts: dict[str, int], seed: int) -> list[str]:
+    """
+    Create a list of sample IDs by selecting a random subset of samples based on the minimum sample counts per column entry.
+
+    Args:
+        meta_df_dict: Dictionary mapping compendia IDs to their metadata DataFrames
+        column_name: The metadata column name to use for subsampling
+        min_sample_counts: Dictionary mapping column entry values to their minimum count across all compendia
+        seed: Random seed for reproducibility
+    """
+    subset_sample_ids = []
+    for _, meta_df in meta_df_dict.items():
+        for label_value, count in min_sample_counts.items():
+            # Filter metadata df to only include rows with the current label value
+            matching_samples = meta_df[meta_df[column_name] == label_value]
+            # Randomly sample the required number of samples for this label value
+            sampled_ids = matching_samples.sample(n=count, random_state=seed).index.tolist()
+            subset_sample_ids.extend(sampled_ids)
+    return subset_sample_ids
+
+
+def write_sample_subset_file(sample_ids: list[str], output_fp: Path):
+    """
+    Write the list of sample IDs to a subset file.
+
+    Args:
+        sample_ids: List of sample IDs to write
+        output_fp: Path to the output subset file
+    """
+    with open(output_fp, "w") as f:
+        for sample_id in sample_ids:
+            f.write(f"{sample_id}\n")
+
+
 def main():
     config_fp, data_dir = parse_args()
     # Load and validate matched subsampling config
@@ -167,7 +202,11 @@ def main():
         raise ValueError(f"Metadata label '{ms_config.metadata_label}' not found in all compendia metadata.")
     # Compute minimum sample counts for each unique entry in the specified metadata column
     min_sample_counts = compute_min_sample_counts(meta_df_dict, ms_config.metadata_label)
-    return
+    sample_list = create_sample_subset_list(meta_df_dict, ms_config.metadata_label, min_sample_counts, ms_config.seed)
+    # Write sample IDs to output file
+    output_dir = MS_BASE_DIR / ms_config.out_dir_name / "subset_samples.tsv"
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    write_sample_subset_file(sample_list, output_dir)
 
 if __name__ == "__main__":
     main()
