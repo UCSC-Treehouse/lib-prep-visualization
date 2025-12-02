@@ -22,6 +22,9 @@ metadata_3 = pd.DataFrame({
 
 
 def test_two_compendia_matching_entries():
+    """
+    Test the simplest case where both compendia have the same disease entries.
+    """
     meta_df_dict = {
         "compendia_1": metadata_1,
         "compendia_2": metadata_2,
