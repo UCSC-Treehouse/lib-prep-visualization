@@ -120,18 +120,39 @@ def compute_min_sample_counts(meta_df_dict: dict[str, pd.DataFrame], column_labe
     Returns:
         Dictionary mapping label values to their minimum count across all compendia
 
-    This function was initially written by GithubCopilot using the docstring as a prompt and then iterated on by hand.
+    GithubCopilot:
+    Context: tests/test_matched_subsampling.py
+    Prompt: "Implement this function using the docstring and tests as a guide"
+
+    Itterated by hand afterwards. In-line comments added by hand.
     """
 
+    # Dictionary of every unique entry for a given metdata column across all compendia to a list of counts. Each compendia that contains at least 1 instance of that entry will contribute a count to the list.
+    # If key "A" has a list value of [10, 5, 20], that means 3 compendia have at least one instance of "A" in the specified column, with counts of 10, 5, and 20 respectively.
     label_counts: dict[str, list[int]] = {}
+    
+    # Build label_counts dictionary using each compendia's metadata
     for meta_df in meta_df_dict.values():
+        # If a column is missing from a metadata df, then the min_sample_counts must be empty so can return early
+        if column_label not in meta_df.columns:
+            return {}
+        # Get value counts for the specified column in the current metadata df
         value_counts = meta_df[column_label].value_counts()
+        # Update label_counts with counts from the current metadata df
         for label_value, count in value_counts.items():
             if label_value not in label_counts:
                 label_counts[label_value] = []
             label_counts[label_value].append(count)
     
-    min_sample_counts = {label_value: min(counts) for label_value, counts in label_counts.items()}
+    # Only include column entries that appear in ALL compendia (have counts from all dataframes). If metdata_df_1 has "A" and "B", and metadata_df_2 has "B" and "C",
+    # then only "B" will be included in the result because it's counts list will have length 2 (one from each compendia), while "A" and "C" will only have length 1.
+    num_compendia_with_entry = sum(1 for df in meta_df_dict.values() if column_label in df.columns)
+    min_sample_counts = {
+        label_value: min(counts) 
+        for label_value, counts in label_counts.items() 
+        if len(counts) == num_compendia_with_entry
+    }
+    
     return min_sample_counts
 
 
