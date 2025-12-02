@@ -90,7 +90,7 @@ def test_two_compendia_different_sizes():
 
 def test_two_compendia_missing_label():
     """
-    Test when one compendia is missing the specified metadata label.
+    Test when one compendia is missing the specified metadata label. metadata_7 lacks 'disease' column.
     """
     meta_df_dict = {
         "compendia_1": metadata_1,
