@@ -173,7 +173,7 @@ def create_sample_subset_list(meta_df_dict: dict[str, pd.DataFrame], column_name
             # Filter metadata df to only include rows with the current label value
             matching_samples = meta_df[meta_df[column_name] == label_value]
             # Randomly sample the required number of samples for this label value
-            sampled_ids = matching_samples.sample(n=count, random_state=seed).index.tolist()
+            sampled_ids = matching_samples.sample(n=count, random_state=seed)['th_dataset_id'].tolist()
             subset_sample_ids.extend(sampled_ids)
     return subset_sample_ids
 
