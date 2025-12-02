@@ -165,6 +165,8 @@ def main():
     # Validate that the metadata label exists in all compendia metadata
     if not validate_metadata_labels(meta_df_dict, ms_config.metadata_label):
         raise ValueError(f"Metadata label '{ms_config.metadata_label}' not found in all compendia metadata.")
+    # Compute minimum sample counts for each unique entry in the specified metadata column
+    min_sample_counts = compute_min_sample_counts(meta_df_dict, ms_config.metadata_label)
     return
 
 if __name__ == "__main__":
