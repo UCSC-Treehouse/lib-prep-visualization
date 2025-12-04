@@ -2,7 +2,7 @@
 
 This tutorial will guide you through the steps to run the Lib Prep Visualization pipeline locally using a Conda environment. Follow the instructions below to set up your environment, install dependencies, and execute the pipeline.
 
-## Step 1: Set up environment
+## Set up environment
 
 Clone the repository to your local machine and navigate to the project directory:
 
@@ -20,7 +20,9 @@ conda env create -f environment.yaml
 conda activate lib-prep-visualization
 ```
 
-## Step 2 (Optional): Download Treehouse Tumor Compendia
+## Quick Start Guide
+
+### Step 1 (Optional): Download Treehouse Tumor Compendia
 
 This tutorial will use a pilot dataset distributed with the repository. However, if you wish to download the full UCSC Treehouse tumor compendia, follow the instructions in this step.
 
@@ -35,7 +37,7 @@ python scripts/download_data.py --config configs/download_data/polyA_vs_riboD_v2
 
 The downloaded compendia files will be saved in the `data/` directory.
 
-## Step 3: Process Data and Run UMAP Algorithm
+### Step 2: Process Data and Run UMAP Algorithm
 
 Run the following command to merge all of the downloaded compendia and run the UMAP algorithm:
 
@@ -45,7 +47,7 @@ python scripts/process_data.py --config configs/process_data/pilot_data/pilot_da
 
 The processed data with UMAP results will be saved in the `processed/pilot_data/` directory as `processed_data.hd5ad`.
 
-## Step 4: Visualize UMAP Results
+### Step 3: Visualize UMAP Results
 Run the following command generate a visualization coloring on library preparation method:
 
 ```bash
@@ -71,3 +73,21 @@ python scripts/plot_data.py --config configs/plot_data/pilot_data/pilot_disease_
 ```
 
 The output visualization will be saved in the `figures/pilot_data` directory as `Pilot_Data_UMAP_Custom_Colormap_by_Disease.png`.
+
+## Advanced Features
+
+### Restricting Samples included in UMAP
+
+You can hand select the samples to include in the UMAP analysis when running the `process_data.py` script. The following example selects 10 glioma and 10 synovial sarcoma samples. The list of sample ids are stored in a TSV file refrerenced in the configuration file.
+
+```bash
+python scripts/process_data.py --config configs/process_data/pilot_data/10_glioma_10_synovial_sarcoma.json --data-dir pilot_data
+```
+
+To visualize the UMAP results for these selected samples, run the following command:
+
+```bash
+python scripts/plot_data.py --config configs/plot_data/pilot_data/10_glioma_10_synovial_sarcoma.json
+```
+
+### Metadata Count-matched Subsampling
