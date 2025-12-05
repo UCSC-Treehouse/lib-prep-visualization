@@ -86,13 +86,14 @@ python scripts/process_data.py --config configs/process_data/pilot_data/10_gliom
 
 The output processed data with UMAP results for the selected samples will be saved in the `processed/pilot_data_glioma_ss` directory as `merged_compendia.hd5ad`.
 
-To visualize the UMAP results for this subset of samples, run the following command:
+To visualize the UMAP results for this subset of samples, run the following commands:
 
 ```bash
-python scripts/plot_data.py --config configs/plot_data/pilot_data/10_glioma_10_synovial_sarcoma.json
+python scripts/plot_data.py --config configs/plot_data/pilot_data_glioma_ss/compendia_type.json
+python scripts/plot_data.py --config configs/plot_data/pilot_data_glioma_ss/disease.json
 ```
 
-The output visualization will be saved in the `figures/pilot_data_glioma_ss` directory as `Pilot_Data_UMAP_10_Glioma_&_10_Synovial_Sarcoma_Samples.png`.
+The output visualizations will be saved in the `figures/pilot_data_glioma_ss` directory.
 
 
 ### Metadata Count-matched Subsampling
