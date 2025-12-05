@@ -84,10 +84,44 @@ You can hand select the samples to include in the UMAP analysis when running the
 python scripts/process_data.py --config configs/process_data/pilot_data/10_glioma_10_synovial_sarcoma.json --data-dir pilot_data
 ```
 
+The output processed data with UMAP results for the selected samples will be saved in the `processed/pilot_data_glioma_ss` directory as `merged_compendia.hd5ad`.
+
 To visualize the UMAP results for this subset of samples, run the following command:
 
 ```bash
 python scripts/plot_data.py --config configs/plot_data/pilot_data/10_glioma_10_synovial_sarcoma.json
 ```
 
+The output visualization will be saved in the `figures/pilot_data_glioma_ss` directory as `Pilot_Data_UMAP_10_Glioma_&_10_Synovial_Sarcoma_Samples.png`.
+
+
 ### Metadata Count-matched Subsampling
+
+Sometimes one compendia may have significantly more samples than another compendia. In such cases, it is desirable to match the sample counts coming from each compendia based on a specific metadata. For example, if one compendia has more samples for disease types than another compendia, we may want to subsample the larger compendia to match the counts of each disease type in the smaller compendia. 
+
+The `matched_subsampling.py` script performs count-matched subsampling based on a specified metadata column across multiple compendia and returns a list of sample IDs to include in the analysis. The output sample list can then be provided to the `process_data.py` script to generate UMAP results for the count-matched subsampled data.
+
+The following example performs count-matched subsampling based on the `disease` metadata column when merging two input compendia.
+
+```bash
+python scripts/matched_subsampling.py --config configs/matched_subsampling/pilot_data/disease.json --data-dir pilot_data
+```
+
+The output sample list will be saved in the `matched_subsamples/pilot_data_disease_matched` directory as `subset_samples.tsv`.
+
+Now we can run the `process_data.py` script using the output sample list to generate UMAP results for the count-matched subsampled data. Remember that the sample list is referenced in the configuration file.
+
+```bash
+python scripts/process_data.py --config configs/process_data/pilot_data/disease_matched.json --data-dir pilot_data
+```
+
+The output processed data with UMAP results for the count-matched subsampled disease data will be saved in the `processed/pilot_data_disease_matched` directory as `merged_compendia.hd5ad`.
+
+To visualize the UMAP results for this count-matched subsampled data, run the following commands:
+
+```bash
+python scripts/plot_data.py --config configs/plot_data/pilot_data_disease_matched/compendia_type.json
+python scripts/plot_data.py --config configs/plot_data/pilot_data_disease_matched/disease.json
+```
+
+View the output visualizations in the `figures/pilot_data_disease_matched` directory.
