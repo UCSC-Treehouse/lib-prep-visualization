@@ -76,15 +76,15 @@ The output visualization will be saved in the `figures/pilot_data` directory as 
 
 ## Advanced Features
 
-### Restricting Samples included in UMAP
+### List Samples to Include in UMAP Analysis
 
-You can hand select the samples to include in the UMAP analysis when running the `process_data.py` script. The following example selects 10 glioma and 10 synovial sarcoma samples. The list of sample ids are stored in a TSV file refrerenced in the configuration file.
+You can hand select the samples to include in the UMAP analysis when running the `process_data.py` script. The following example selects 10 glioma and 10 synovial sarcoma samples from the two input compendia. The list of sample ids are provided to the `process_data.py` script through a `.tsv` file refrerenced in the configuration file.
 
 ```bash
 python scripts/process_data.py --config configs/process_data/pilot_data/10_glioma_10_synovial_sarcoma.json --data-dir pilot_data
 ```
 
-To visualize the UMAP results for these selected samples, run the following command:
+To visualize the UMAP results for this subset of samples, run the following command:
 
 ```bash
 python scripts/plot_data.py --config configs/plot_data/pilot_data/10_glioma_10_synovial_sarcoma.json
