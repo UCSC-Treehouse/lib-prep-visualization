@@ -1,6 +1,6 @@
 {
-    "out_dir_name": "pilot_data",
-    "sample_subset": "matched_subsamples/pilot_data/subset_samples.tsv",
+    "out_dir_name": "pilot_data_disease_matched",
+    "sample_subset": "matched_subsamples/pilot_data_disease_matched/subset_samples.tsv",
     "compendia_list": [
         {
             "compendia_id": "pilot_set1",
