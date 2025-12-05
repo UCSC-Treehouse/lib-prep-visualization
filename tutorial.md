@@ -45,7 +45,7 @@ Run the following command to merge all of the downloaded compendia and run the U
 python scripts/process_data.py --config configs/process_data/pilot_data/pilot_data_process.json --data-dir pilot_data
 ```
 
-The processed data with UMAP results will be saved in the `processed/pilot_data/` directory as `processed_data.hd5ad`.
+The processed data with UMAP results will be saved in the `processed/pilot_data/` directory as `merged_compendia.hd5ad`.
 
 ### Step 3: Visualize UMAP Results
 Run the following command generate a visualization coloring on library preparation method:
