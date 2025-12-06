@@ -1,6 +1,6 @@
 {
-    "out_dir_name": "pilot_data",
-    "sample_subset": "matched_subsamples/pilot_data/subset_samples.tsv",
+    "out_dir_name": "pilot_data_glioma_ss",
+    "sample_subset": "configs/custom_metadata/pilot_data/10_glioma_10_synovial_sarcoma.tsv",
     "compendia_list": [
         {
             "compendia_id": "pilot_set1",
