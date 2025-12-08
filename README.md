@@ -174,6 +174,38 @@ If the `sample_subset` option is provided in the config, the script filters the 
 The script then computes the neighbor graph and UMAP using the `scanpy` library and storing the results in the Anndata object. Both are seeded with the `seed` value from the config for reproducibility.
 If no seed is provided in the config, a default value of 42 is used.
 
+The following parameters are used to generate the neighbor graph with `scanpy.pp.neighbors()`:
+
+- `n_neighbors=15`
+- `n_pcs=None`
+- `use_rep="X"`
+- `knn=True`
+- `method="umap"`
+- `transformer=None`
+- `metric="euclidean"`
+- `metric_kwds={}`
+- `random_state=<seed from config, default 42>`
+- `key_added=None`
+- `copy=False`
+
+The following parameters are used to generate the UMAP embedding with `scanpy.tl.umap()`:
+
+- `min_dist=0.5`
+- `spread=1.0`
+- `n_components=2`
+- `maxiter=None`
+- `alpha=1.0`
+- `gamma=1.0`
+- `negative_sample_rate=5`
+- `init_pos="spectral"`
+- `random_state=<seed from config, default 42>`
+- `a=None`
+- `b=None`
+- `method="umap"`
+- `key_added=None`
+- `neighbors_key="neighbors"`
+- `copy=False`
+
 Finally, the processed Anndata object is saved to `processed/{out_dir_name}/merged_compendia.h5ad`.
 
 Logs for the script are saved to `processed/process.log`.
