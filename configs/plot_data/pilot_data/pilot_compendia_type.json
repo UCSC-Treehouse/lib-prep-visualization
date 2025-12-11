@@ -5,5 +5,11 @@
     "color_by": {
         "meta_key": "compendia_type",
         "categories": ["polya", "ribodepletion"]
+    },
+    "legend": {
+        "title": "Library Prep Method",
+        "alignment": "left",
+        "frameon": true,
+        "vertical_position": "top"
     }
 }
