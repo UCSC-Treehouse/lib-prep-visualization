@@ -2,7 +2,7 @@
     "src_adata_path": "processed/polyA_vs_riboD_v25-01/merged_compendia.h5ad",
     "plot_title": "UMAP PolyA and Ribodepletion Medulloblastoma and Synovial Sarcoma",
     "out_dir_name": "polyA_vs_riboD_v25-01",
-    "custom_metadata": "configs/custom_metadata/libprep_disease_mb_synsarc.tsv",
+    "custom_metadata": "configs/plot_data/polyA_vs_riboD_v25-01/mb_synsarc_metadata.tsv",
     "color_by": {
         "meta_key": "cohort",
         "categories": ["polya_medulloblastoma", "ribodeplete_medulloblastoma", "polya_synovial_sarcoma", "ribodeplete_synovial_sarcoma"],
