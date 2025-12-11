@@ -319,3 +319,14 @@ The matched subsampling script performs the following steps:
 6. Save the combined list of sampled sample ids to a TSV file at `matched_subsamples/{out_dir_name}/subset_samples.tsv`, with one sample ID per line.
 
 *Note*: Metadata column entries that are not present in all compendia will be ignored during subsampling to ensure consistent matching across datasets.
+
+## Testing
+
+This repository includes a pytest-based test suite. To run tests use the following command:
+
+*Make sure to activate the conda environment before running the tests*
+
+```bash
+pytest
+```
+This will execute all the test cases defined in the `tests/` directory.
