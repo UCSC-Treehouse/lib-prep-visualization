@@ -33,6 +33,38 @@ class ColorByConfig(BaseModel):
         return v
 
 
+class LegendConfig(BaseModel):
+    """
+    Model configuration parameters for a plot legend.
+
+    Attributes:
+        title (str | None): Optional title for the legend. If not provided, the legend will not have a title.
+        alignment (str): Alignment of elements inside of the legend. Default is "left".
+        frameon (bool): Whether to draw a frame around the legend. Default is False.
+        vertical_position (str): Vertical position (top, center, bottom) of the legend relative to the plot. Default is "top".
+    """
+    title: str | None = None
+    alignment: str = "left"
+    frameon: bool = False
+    vertical_position: str = "top"
+
+    @field_validator("alignment")
+    @classmethod
+    def alignment_values(cls, v: str) -> str:
+        # Make sure that the alignment is one of the allowed values
+        if v not in ["left", "right", "center"]:
+            raise ValueError("alignment must be one of 'left', 'right', or 'center'")
+        return v
+
+    @field_validator("vertical_position")
+    @classmethod
+    def vertical_position_values(cls, v: str) -> str:
+        # Make sure that the vertical_position is one of the allowed values
+        if v not in ["top", "center", "bottom"]:
+            raise ValueError("vertical_position must be one of 'top', 'center', or 'bottom'")
+        return v
+
+
 class PlotConfig(BaseModel):
     """
     Top level model for the plot config JSON.
@@ -47,6 +79,7 @@ class PlotConfig(BaseModel):
     out_dir_name: str
     custom_metadata: Path | None = None
     color_by: ColorByConfig
+    legend: LegendConfig | None = LegendConfig()
 
     @field_validator("src_adata_path")
     @classmethod
@@ -289,16 +322,34 @@ def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: 
             zorder=zorder
         )
 
-def add_legend(ax: plt.Axes) -> None:
+def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
     """
     Add a legend to the given Axes.
+
+    Args:
+        ax: Matplotlib Axes to add the legend to.
+        legend_config: LegendConfig containing customizations for the legend.
     """
+
+    anchor_pos = (1.02, 1)  # Default to top-right position
+    loc = "upper left"
+    if legend_config.vertical_position == "center":
+        anchor_pos = (1.02, 0.5)  # Places it to the right, outside
+        loc = "center left"
+    elif legend_config.vertical_position == "bottom":
+        anchor_pos = (1.02, 0)  # Places it to the right, outside
+        loc = "lower left"
+
     ax.legend(
-        title="Categories",
-        loc="best",
+        title=legend_config.title,
+        alignment=legend_config.alignment,
+        loc=loc,
+        bbox_to_anchor=anchor_pos,  # Places it to the right, outside
+        borderaxespad=0,
         fontsize="small",
         title_fontsize="medium",
-        frameon=True,
+        frameon=legend_config.frameon,
+        fancybox=False,
         framealpha=0.9,
         edgecolor="black",
     )
@@ -326,7 +377,8 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     logger.info(f"{plot_config.plot_title}: Plotting points.")
     plot_points(adata, plot_config, legend_to_meta_map, color_map, ax)
     # Build the legend into the plot
-    add_legend(ax)
+    if plot_config.legend:
+        add_legend(ax, plot_config.legend)
     return fig
 
 
@@ -347,5 +399,5 @@ def save_figure(fig: plt.Figure, base_out_dir: Path, plot_config: PlotConfig, dp
     fig_out_fp = base_out_dir / plot_config.out_dir_name / f"{plot_config.plot_title.replace(' ', '_')}.png"
     fig_out_fp.parent.mkdir(parents=True, exist_ok=True)
     logger.info(f"Saving figure to {fig_out_fp} with DPI {dpi}.")
-    fig.savefig(fig_out_fp, dpi=dpi)
+    fig.savefig(fig_out_fp, dpi=dpi, bbox_inches='tight')
     return fig_out_fp

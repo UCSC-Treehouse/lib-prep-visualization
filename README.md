@@ -236,6 +236,12 @@ This script expects a JSON object specifying plotting parameters. Example:
             "other": "#808080"
         }
     }
+    "legend": {
+        "title": "Legend Title",
+        "alignment": "left",
+        "frameon": false,
+        "vertical_position": "top"
+    }
 }
 ```
 - `src_adata_path`: Path to the processed Anndata file.
@@ -243,9 +249,14 @@ This script expects a JSON object specifying plotting parameters. Example:
 - `out_dir_name`: Subdirectory within the `plots/` directory where the figure will be saved.
 - `custom_metadata`: Optional. Path to a TSV file with additional metadata to merge into the Anndata object. See below for the required format.
 - `color_by`: JSON object specifying how to assign legend colors to points in the plot.
-- `meta_key`: Column name in the Anndata metadata used to color points. This column can optionally come from the `custom_metadata` file.
-- `categories`: Optional. List of values within the `meta_key` column of the metadata dataframe to assign colors to; these values will appear in the figure legend. Any values present but not specified in this list will be assigned the "other" color. If omitted, all unique values in the `meta_key` column will be assigned colors and included in the legend.
-- `color_map`: Optional. Dictionary mapping each legend label to a hex color code. The `other` key is used to color any categories not explicitly listed. Legend labels not present in the `color_map` will be assigned default colors from a seaborn color palette.
+    - `meta_key`: Column name in the Anndata metadata used to color points. This column can optionally come from the `custom_metadata` file.
+    - `categories`: Optional. List of values within the `meta_key` column of the metadata dataframe to assign colors to; these values will appear in the figure legend. Any values present but not specified in this list will be assigned the "other" color. If omitted, all unique values in the `meta_key` column will be assigned colors and included in the legend.
+    -   `color_map`: Optional. Dictionary mapping each legend label to a hex color code. The `other` key is used to color any categories not explicitly listed. Legend labels not present in the `color_map` will be assigned default colors from a seaborn color palette.
+- `legend`: Optional. JSON object specifying legend parameters.
+    - `title`: Optional. Title for the legend. If omitted, no title will be displayed.
+    - `alignment`: Optional. Alignment of the legend within the figure. Default is "left".
+    - `frameon`: Optional. Boolean indicating whether to draw a frame around the legend. Default is false.
+    - `vertical_position`: Optional. Vertical alignment of the legend within the figure: "top", "center", or "bottom". Default is "top".
 
 ### Custom metadata format
 If you use the `custom_metadata` option in the plot config, the TSV file must be parseable by pandas into a DataFrame (for example, with pandas.read_csv(..., sep='\t', index_col=0)). The first column should contain sample IDs and will be used as the DataFrame index; the remaining columns must have headers. Example:
