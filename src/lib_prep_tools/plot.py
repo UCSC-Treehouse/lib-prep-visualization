@@ -54,7 +54,7 @@ class PlotConfig(BaseModel):
     out_dir_name: str
     custom_metadata: Path | None = None
     color_by: ColorByConfig
-    legend: LegendConfig = LegendConfig()
+    legend: LegendConfig | None = LegendConfig()
 
     @field_validator("src_adata_path")
     @classmethod
