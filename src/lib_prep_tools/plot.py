@@ -336,7 +336,8 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     logger.info(f"{plot_config.plot_title}: Plotting points.")
     plot_points(adata, plot_config, legend_to_meta_map, color_map, ax)
     # Build the legend into the plot
-    add_legend(ax)
+    if plot_config.legend:
+        add_legend(ax)
     return fig
 
 
