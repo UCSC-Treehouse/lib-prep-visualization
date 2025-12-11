@@ -297,11 +297,16 @@ def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: 
             zorder=zorder
         )
 
-def add_legend(ax: plt.Axes) -> None:
+def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
     """
     Add a legend to the given Axes.
+
+    Args:
+        ax: Matplotlib Axes to add the legend to.
+        legend_config: LegendConfig containing customizations for the legend.
     """
     ax.legend(
+        title=legend_config.title,
         loc="upper left",
         bbox_to_anchor=(1.02, 1),  # Places it to the right, outside
         borderaxespad=0,
@@ -337,7 +342,7 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     plot_points(adata, plot_config, legend_to_meta_map, color_map, ax)
     # Build the legend into the plot
     if plot_config.legend:
-        add_legend(ax)
+        add_legend(ax, plot_config.legend)
     return fig
 
 
