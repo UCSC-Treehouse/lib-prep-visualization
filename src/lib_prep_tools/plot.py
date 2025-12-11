@@ -295,7 +295,8 @@ def add_legend(ax: plt.Axes) -> None:
     """
     ax.legend(
         title="Categories",
-        loc="best",
+        loc="upper left",
+        bbox_to_anchor=(1.02, 1),  # Places it to the right, outside
         fontsize="small",
         title_fontsize="medium",
         frameon=True,
