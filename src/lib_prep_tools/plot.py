@@ -348,5 +348,5 @@ def save_figure(fig: plt.Figure, base_out_dir: Path, plot_config: PlotConfig, dp
     fig_out_fp = base_out_dir / plot_config.out_dir_name / f"{plot_config.plot_title.replace(' ', '_')}.png"
     fig_out_fp.parent.mkdir(parents=True, exist_ok=True)
     logger.info(f"Saving figure to {fig_out_fp} with DPI {dpi}.")
-    fig.savefig(fig_out_fp, dpi=dpi)
+    fig.savefig(fig_out_fp, dpi=dpi, bbox_inches='tight')
     return fig_out_fp
