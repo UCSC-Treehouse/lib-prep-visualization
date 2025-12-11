@@ -88,14 +88,14 @@ Here is an example of the download manifest structure:
             "md5checksum": "",
             "file_size": 0,
             "status": "success",
-            "software_version": "0.0.0"
+            "software_version": "x.x.x"
         },
         "metadata": {
             "last_download": "0000-00-00T00:00:00.000000",
             "md5checksum": "",
             "file_size": 0,
             "status": "failed",
-            "software_version": "0.0.0"
+            "software_version": "x.x.x"
         }
     }, 
     "another_compendia": {...}
