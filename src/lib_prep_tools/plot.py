@@ -39,9 +39,10 @@ class LegendConfig(BaseModel):
 
     Attributes:
         title (str | None): Optional title for the legend. If not provided, the legend will not have a title.
+        frameon (bool): Whether to draw a frame around the legend. Default is False.
     """
     title: str | None = None
-
+    frameon: bool = False
 
 class PlotConfig(BaseModel):
     """
@@ -315,7 +316,7 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
         borderaxespad=0,
         fontsize="small",
         title_fontsize="medium",
-        frameon=False,
+        frameon=legend_config.frameon,
         fancybox=False,
         framealpha=0.9,
         edgecolor="black",
