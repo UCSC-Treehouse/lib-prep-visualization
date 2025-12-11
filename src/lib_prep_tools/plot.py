@@ -40,9 +40,20 @@ class LegendConfig(BaseModel):
     Attributes:
         title (str | None): Optional title for the legend. If not provided, the legend will not have a title.
         frameon (bool): Whether to draw a frame around the legend. Default is False.
+        alignment (str): Alignment of elements inside of the legend. Default is "left".
     """
     title: str | None = None
     frameon: bool = False
+    alignment: str = "left"
+
+    @field_validator("alignment")
+    @classmethod
+    def alignment_values(cls, v: str) -> str:
+        # Make sure that the alignment is one of the allowed values
+        if v not in ["left", "right", "center"]:
+            raise ValueError("alignment must be one of 'left', 'right', or 'center'")
+        return v
+
 
 class PlotConfig(BaseModel):
     """
@@ -311,6 +322,7 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
     """
     ax.legend(
         title=legend_config.title,
+        alignment=legend_config.alignment,
         loc="upper left",
         bbox_to_anchor=(1.02, 1),  # Places it to the right, outside
         borderaxespad=0,
