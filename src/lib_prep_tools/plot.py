@@ -33,6 +33,13 @@ class ColorByConfig(BaseModel):
         return v
 
 
+class LegendConfig(BaseModel):
+    """
+    Model configuration parameters for a plot legend.
+    """
+    title: str | None = None
+
+
 class PlotConfig(BaseModel):
     """
     Top level model for the plot config JSON.
@@ -47,6 +54,7 @@ class PlotConfig(BaseModel):
     out_dir_name: str
     custom_metadata: Path | None = None
     color_by: ColorByConfig
+    legend: LegendConfig = LegendConfig()
 
     @field_validator("src_adata_path")
     @classmethod
