@@ -294,13 +294,12 @@ def add_legend(ax: plt.Axes) -> None:
     Add a legend to the given Axes.
     """
     ax.legend(
-        title="Categories",
         loc="upper left",
         bbox_to_anchor=(1.02, 1),  # Places it to the right, outside
         borderaxespad=0,
         fontsize="small",
         title_fontsize="medium",
-        frameon=True,
+        frameon=False,
         fancybox=False,
         framealpha=0.9,
         edgecolor="black",
