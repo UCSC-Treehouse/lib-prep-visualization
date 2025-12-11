@@ -300,6 +300,7 @@ def add_legend(ax: plt.Axes) -> None:
         fontsize="small",
         title_fontsize="medium",
         frameon=True,
+        fancybox=False,
         framealpha=0.9,
         edgecolor="black",
     )
