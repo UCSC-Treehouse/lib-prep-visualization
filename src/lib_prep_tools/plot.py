@@ -45,6 +45,7 @@ class LegendConfig(BaseModel):
     title: str | None = None
     frameon: bool = False
     alignment: str = "left"
+    vertical_position: str = "top"
 
     @field_validator("alignment")
     @classmethod
@@ -52,6 +53,14 @@ class LegendConfig(BaseModel):
         # Make sure that the alignment is one of the allowed values
         if v not in ["left", "right", "center"]:
             raise ValueError("alignment must be one of 'left', 'right', or 'center'")
+        return v
+
+    @field_validator("vertical_position")
+    @classmethod
+    def vertical_position_values(cls, v: str) -> str:
+        # Make sure that the vertical_position is one of the allowed values
+        if v not in ["top", "center", "bottom"]:
+            raise ValueError("vertical_position must be one of 'top', 'center', or 'bottom'")
         return v
 
 
@@ -320,11 +329,21 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
         ax: Matplotlib Axes to add the legend to.
         legend_config: LegendConfig containing customizations for the legend.
     """
+
+    anchor_pos = (1.02, 1)  # Default to top-right position
+    loc = "upper left"
+    if legend_config.vertical_position == "center":
+        anchor_pos = (1.02, 0.5)  # Places it to the right, outside
+        loc = "center left"
+    elif legend_config.vertical_position == "bottom":
+        anchor_pos = (1.02, 0)  # Places it to the right, outside
+        loc = "lower left"
+
     ax.legend(
         title=legend_config.title,
         alignment=legend_config.alignment,
-        loc="upper left",
-        bbox_to_anchor=(1.02, 1),  # Places it to the right, outside
+        loc=loc,
+        bbox_to_anchor=anchor_pos,  # Places it to the right, outside
         borderaxespad=0,
         fontsize="small",
         title_fontsize="medium",
