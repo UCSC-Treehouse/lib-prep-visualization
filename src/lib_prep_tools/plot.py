@@ -39,12 +39,13 @@ class LegendConfig(BaseModel):
 
     Attributes:
         title (str | None): Optional title for the legend. If not provided, the legend will not have a title.
-        frameon (bool): Whether to draw a frame around the legend. Default is False.
         alignment (str): Alignment of elements inside of the legend. Default is "left".
+        frameon (bool): Whether to draw a frame around the legend. Default is False.
+        vertical_position (str): Vertical position (top, center, bottom) of the legend relative to the plot. Default is "top".
     """
     title: str | None = None
-    frameon: bool = False
     alignment: str = "left"
+    frameon: bool = False
     vertical_position: str = "top"
 
     @field_validator("alignment")
