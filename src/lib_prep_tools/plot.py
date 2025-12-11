@@ -36,6 +36,9 @@ class ColorByConfig(BaseModel):
 class LegendConfig(BaseModel):
     """
     Model configuration parameters for a plot legend.
+
+    Attributes:
+        title (str | None): Optional title for the legend. If not provided, the legend will not have a title.
     """
     title: str | None = None
 
