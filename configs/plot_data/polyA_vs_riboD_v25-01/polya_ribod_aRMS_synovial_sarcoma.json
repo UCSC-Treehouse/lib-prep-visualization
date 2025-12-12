@@ -2,7 +2,7 @@
     "src_adata_path": "processed/polyA_vs_riboD_v25-01/merged_compendia.h5ad",
     "plot_title": "UMAP PolyA and Ribodepletion Alveolar Rhabdomyosarcoma and Synovial Sarcoma",
     "out_dir_name": "polyA_vs_riboD_v25-01",
-    "custom_metadata": "configs/custom_metadata/filtered_SS_aRMS_list.tsv",
+    "custom_metadata": "configs/plot_data/polyA_vs_riboD_v25-01/filtered_SS_aRMS_list.tsv",
     "color_by": {
         "meta_key": "disease_and_prep",
         "categories": ["SS_riboD", "SS_polyA", "aRMS_riboD", "aRMS_polyA"],
