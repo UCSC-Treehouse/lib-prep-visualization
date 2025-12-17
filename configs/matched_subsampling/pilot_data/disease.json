@@ -1,0 +1,5 @@
+{
+    "out_dir_name": "pilot_data_disease_matched",
+    "metadata_label": "disease",
+    "compendia_set": ["pilot_set1", "pilot_set2"]
+}

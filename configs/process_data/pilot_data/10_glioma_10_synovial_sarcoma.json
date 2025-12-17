@@ -1,0 +1,14 @@
+{
+    "out_dir_name": "pilot_data_glioma_ss",
+    "sample_subset": "configs/process_data/pilot_data/10_glioma_10_synovial_sarcoma.tsv",
+    "compendia_list": [
+        {
+            "compendia_id": "pilot_set1",
+            "lib_prep_type": "polya"
+        },
+        {
+            "compendia_id": "pilot_set2",
+            "lib_prep_type": "ribodepletion"
+        }
+    ]
+}

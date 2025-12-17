@@ -1,0 +1,13 @@
+{
+    "src_adata_path": "processed/pilot_data_glioma_ss/merged_compendia.h5ad",
+    "plot_title": "Pilot Data UMAP 10 Glioma & 10 Synovial Sarcoma Samples",
+    "out_dir_name": "pilot_data_glioma_ss",
+    "color_by": {
+        "meta_key": "disease",
+        "categories": ["glioma", "synovial sarcoma"],
+        "color_map": {
+            "glioma": "#EEEE0D",
+            "synovial sarcoma": "#b7595f"
+        }
+    }
+}

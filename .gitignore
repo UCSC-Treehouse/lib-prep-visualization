@@ -1,0 +1,11 @@
+# Ignore packaging files
+*.egg-info
+
+# Ignore Python cache files
+__pycache__/
+
+# Project folders
+data/
+processed/
+figures/
+matched_subsamples/

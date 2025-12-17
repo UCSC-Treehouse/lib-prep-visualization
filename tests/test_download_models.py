@@ -1,0 +1,177 @@
+import pytest
+from pydantic import ValidationError
+import lib_prep_tools
+from lib_prep_tools.download import CompendiaDownloadConfig, DownloadListConfig, ManifestFileStatusEntry, DownloadManifest, STATUS_INCOMPLETE, STATUS_SUCCESS
+
+"""
+Unit tests for pydantic models in lib_prep_tools.download
+"""
+
+def test_compendia_download_config_valid_config():
+    valid_config = {
+        "compendia_id": "compendia_1",
+        "expression_url": "http://example.com/expression",
+        "metadata_url": "http://example.com/metadata"
+    }
+    config = CompendiaDownloadConfig(**valid_config)
+    assert config.compendia_id == "compendia_1"
+    assert str(config.expression_url) == "http://example.com/expression"
+    assert str(config.metadata_url) == "http://example.com/metadata"
+
+
+@pytest.mark.parametrize("invalid_config", [
+{
+        "compendia_id": "compendia/1",  # Invalid character '/'
+        "expression_url": "http://example.com/expression",
+        "metadata_url": "http://example.com/metadata"
+    },
+    {
+        "compendia_id": "compendia*1",  # Invalid character '*'
+        "expression_url": "http://example.com/expression",
+        "metadata_url": "http://example.com/metadata"
+    },
+    {
+        "compendia_id": "compendia?1",  # Invalid character '?'
+        "expression_url": "http://example.com/expression",
+        "metadata_url": "http://example.com/metadata"
+    },
+    {
+        "compendia_id": "compendia<1",  # Invalid character '<'
+        "expression_url": "http://example.com/expression",
+        "metadata_url": "http://example.com/metadata"
+    },
+    {
+        "compendia_id": "compendia>1",  # Invalid character '   >'
+        "expression_url": "http://example.com/expression",
+        "metadata_url": "http://example.com/metadata"
+    },
+    {
+        "compendia_id": "compendia 1",  # Invalid character ' '
+        "expression_url": "http://example.com/expression",
+        "metadata_url": "http://example.com/metadata"
+    }
+])
+def test_compendia_downlopad_config_invalid_compendia_ids(invalid_config):
+    with pytest.raises(ValidationError):
+        CompendiaDownloadConfig(**invalid_config)
+
+
+def test_compendia_download_config_invalid_expression_url():
+    invalid_config = {
+        "compendia_id": "compendia_1",
+        "expression_url": "not_a_url",  # Invalid URL
+        "metadata_url": "http://example.com/metadata"
+    }
+    with pytest.raises(ValidationError):
+        CompendiaDownloadConfig(**invalid_config)
+
+
+def test_compendia_download_config_invalid_metadata_url():
+    invalid_config = {
+        "compendia_id": "compendia_1",
+        "expression_url": "http://example.com/expression",
+        "metadata_url": "not_a_url"  # Invalid URL
+    }
+    with pytest.raises(ValidationError):
+        CompendiaDownloadConfig(**invalid_config)
+
+
+def test_download_list_config_valid_config():
+    valid_config = [
+        {
+            "compendia_id": "compendia_1",
+            "expression_url": "http://example.com/expression1",
+            "metadata_url": "http://example.com/metadata1"
+        },
+        {
+            "compendia_id": "compendia_2",
+            "expression_url": "http://example.com/expression2",
+            "metadata_url": "http://example.com/metadata2"
+        }
+    ]
+    config = DownloadListConfig(root=valid_config)
+    assert len(config.root) == 2
+    for compendia_download_config in config.root:
+        assert isinstance(compendia_download_config, CompendiaDownloadConfig)
+
+
+def test_download_list_config_invalid_compendia():
+    invalid_config = [      
+        {
+            "compendia_id": "compendia_1",
+            "expression_url": "http://example.com/expression1",
+            "metadata_url": "http://example.com/metadata1"
+        },
+        {
+            "compendia_id": "compendia/2",  # Invalid compendia_id
+            "expression_url": "http://example.com/expression2",
+            "metadata_url": "http://example.com/metadata2"
+        }
+    ]
+    with pytest.raises(ValidationError):
+        DownloadListConfig(invalid_config)
+
+
+def test_download_list_config_wrong_type():
+    invalid_config = {
+        "compendia_downloads": "not_a_list"  # Invalid type
+    }
+    with pytest.raises(ValidationError):
+        DownloadListConfig(**invalid_config)
+
+
+valid_manifest_file_status_entry = {
+    "last_download": "2023-10-01T12:00:00",
+    "md5checksum": "d41d8cd98f00b204e9800998ecf8427e",
+    "file_size": 123456,
+    "status": STATUS_SUCCESS,
+    "software_version": "0.0.0"
+}
+
+
+def test_manifest_file_status_entry_valid():
+    entry = ManifestFileStatusEntry(**valid_manifest_file_status_entry)
+
+
+def test_manifest_file_status_entry_invalid_datetime():
+    invalid_entry = valid_manifest_file_status_entry.copy()
+    invalid_entry["last_download"] = "not_a_datetime"  # Invalid datetime
+    with pytest.raises(ValidationError):
+        ManifestFileStatusEntry(**invalid_entry)
+
+
+def test_manifest_file_status_entry_invalid_md5checksum():
+    invalid_entry = valid_manifest_file_status_entry.copy()
+    invalid_entry["md5checksum"] = 123456  # Invalid type
+    with pytest.raises(ValidationError):
+        ManifestFileStatusEntry(**invalid_entry)
+
+
+def test_manifest_file_status_entry_invalid_file_size():
+    invalid_entry = valid_manifest_file_status_entry.copy()
+    invalid_entry["file_size"] = "123456b"  # Invalid type
+    with pytest.raises(ValidationError):
+        ManifestFileStatusEntry(**invalid_entry)
+
+
+def test_manifest_file_status_entry_invalid_status():
+    invalid_entry = valid_manifest_file_status_entry.copy()
+    invalid_entry["status"] = 100  # Invalid type
+    with pytest.raises(ValidationError):
+        ManifestFileStatusEntry(**invalid_entry)
+
+
+def test_manifest_file_status_entry_invalid_software_version():
+    invalid_entry = valid_manifest_file_status_entry.copy()
+    invalid_entry["software_version"] = 1.0  # Invalid type
+    with pytest.raises(ValidationError):
+        ManifestFileStatusEntry(**invalid_entry)
+
+
+def test_manifest_file_status_entry_defaults():
+    entry = ManifestFileStatusEntry()
+    assert entry.last_download is None
+    assert entry.md5checksum == ""
+    assert entry.file_size == 0
+    assert entry.status == STATUS_INCOMPLETE
+    assert entry.software_version == lib_prep_tools.__version__

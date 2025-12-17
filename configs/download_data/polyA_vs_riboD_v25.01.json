@@ -1,0 +1,12 @@
+[
+  {
+    "compendia_id": "Tumor_Compendium_25.01_PolyA_01_2025",
+    "expression_url": "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE294351&format=file&file=GSE294351%5FTumor%2D25%2E01%2DPolya%5Fhugo%5Flog2tpm%5F58581genes%5F2025%2D02%2D27%2Etsv%2Egz",
+    "metadata_url": "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE294351&format=file&file=GSE294351%5Fclinical%5FTreehouse%2DTumor%2DCompendium%2D25%2E01%2DPolyA%5F20250131v1%2Etsv%2Egz"
+  },
+  {
+    "compendia_id": "Tumor_Compendium_25.01_RiboD_01_2025",
+    "expression_url": "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE294353&format=file&file=GSE294353%5FTumor%2D25%2E01%2DRibodeplete%5Fhugo%5Flog2tpm%5F58581genes%5F2025%2D03%2D19%2Etsv%2Egz",
+    "metadata_url": "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE294353&format=file&file=GSE294353%5Fclinical%5FTreehouse%2DTumor%2DCompendium%2D25%2E01%2DRiboD%5F20250306v1%2Etsv%2Egz"
+  }
+]
