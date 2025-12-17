@@ -1,8 +1,10 @@
 name: lib-prep-visualization
 channels:
   - defaults
+  - conda-forge
 dependencies:
-  - python=3.13
+  - python=3.13.3
+  - llvmlite=0.46.0
   - pip
   - pip:
       - -e '.[test]'
