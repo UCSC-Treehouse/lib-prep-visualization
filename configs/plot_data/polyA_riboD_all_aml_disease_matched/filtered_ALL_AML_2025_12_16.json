@@ -7,6 +7,10 @@
         "meta_key": "disease_and_prep",
         "categories": ["ALL_riboD", "ALL_polyA", "AML_riboD", "AML_polyA"],
         "color_map": {
+            "ALL_riboD": "#00689c",
+            "ALL_polyA": "#36bcff",
+            "AML_riboD": "#bd7000",
+            "AML_polyA": "#ffd79c",
             "other": "#d5d5d5"
         }
     }
