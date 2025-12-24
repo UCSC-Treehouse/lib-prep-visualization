@@ -11,9 +11,11 @@ Run the `matched_subsampling.py` script to generate a subset of samples of the p
 python scripts/matched_subsampling.py --config configs/matched_subsampling/polyA_vs_riboD_v25-01/disease.json
 ```
 
-`matched_subsampling.py` picks random samples for each disease in a compendia that needs to be downsampled to match the sample counts of the compendia with the fewest samples for that disease. The list of samples we are interested in labeling can be found in `configs/plot_data/polyA_riboD_disease_matched/filtered_ALL_AML_list.tsv`. Copy `matched_subsamples/polyA_riboD_disease_matched/subset_samples.tsv` to `matched_subsamples/polyA_riboD_disease_matched/all_aml_selected_samples_20251216.tsv` and manually add the additional ALL and AML samples to the list that were not included in the random sampling. This ensures that all highest correlated samples are included in the final plots.
+`matched_subsampling.py` picks random samples for each disease in a compendia that needs to be downsampled to match the sample counts of the compendia with the fewest samples for that disease. The list of samples we are interested in labeling can be found in `configs/plot_data/polyA_riboD_disease_matched/filtered_ALL_AML_list.tsv`. Copy `matched_subsamples/polyA_riboD_disease_matched/subset_samples.tsv` to `matched_subsamples/polyA_riboD_disease_matched/all_aml_selected_samples_20251216.tsv` and manually add the additional ALL and AML samples to the list that were not included in the random sampling. This ensures that all highest correlated samples are included in the final plots. Then to keep the sample counts balanced, remove non-top 80 correlated samples from each disease group as needed. Below are the samples to add and remove by hand.
 
-Samples to add by hand:
+**Samples to add by hand:**
+
+ALL PolyA:
 ```
 THR24_1644_S01
 THR24_1591_S01
@@ -24,6 +26,10 @@ THR24_1576_S01
 THR24_1630_S01
 THR24_1602_S01
 TARGET-10-PASNJI-09B-01R
+```
+
+AML PolyA:
+```
 TARGET-20-PASKUA-09A-01R
 THR24_1733_S01
 TARGET-20-PALFVW-09A-01R
@@ -42,6 +48,43 @@ TARGET-20-PASGGK-03
 TARGET-20-PASHWN-09A-01R
 TARGET-20-PARTST-09A-02R
 TARGET-20-PARTXH-09A-02R
+```
+
+**Samples to remove by hand to keep sample counts balanced between ALL and AML PolyA samples (remove non-top 80 correlated samples):**
+
+Non-top 80 correlated ALL PolyA Samples removed to keep sample counts balanced:
+```
+TARGET-10-PATLMA-03A-01R
+TARGET-10-PASWNU-09A-01R
+THR24_2118_S01
+TH27_1242_S01
+THR24_1882_S01
+TARGET-10-PARWLP-09A-01R
+THR08_0203_S01
+TARGET-10-PANRWG-09
+THR24_1703_S01
+```
+
+Non-top 80 correlated AML PolyA Samples removed to keep sample counts balanced:
+```
+TCGA-AB-2893-03
+TARGET-20-PARVSF-09A-02R
+THR24_1706_S01
+TARGET-20-PARAJX-09
+TARGET-20-PASMYS-04
+TARGET-20-PASMGW-09
+TARGET-20-PASVVS-09
+TCGA-AB-3011-03
+THR24_1726_S01
+TCGA-AB-2952-03
+TARGET-20-PAPXUF-09A-01R
+TARGET-20-PASFLM-09
+TCGA-AB-2869-03
+TARGET-20-PANCSC-09
+TCGA-AB-2837-03
+TCGA-AB-2959-03
+TH27_2669_S01
+TCGA-AB-3007-03
 ```
 
 ### 2. Process Data with Selected Samples
