@@ -1,0 +1,13 @@
+{
+    "src_adata_path": "processed/polyA_riboD_all_aml_disease_matched/merged_compendia.h5ad",
+    "plot_title": "RiboD and PolyA UMAP Disease Counts Plus Select ALL and AML Samples Colored by Dataset Source of Most Correlated ALL and AML Samples",
+    "out_dir_name": "polyA_riboD_all_aml_disease_matched",
+    "custom_metadata": "configs/plot_data/polyA_riboD_all_aml_disease_matched/filtered_ALL_AML_list.tsv",
+    "color_by": {
+        "meta_key": "dataset_src",
+        "categories": ["treehouse", "target", "tcga"],
+        "color_map": {
+            "other": "#d5d5d5"
+        }
+    }
+}
