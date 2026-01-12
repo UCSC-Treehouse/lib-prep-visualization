@@ -281,7 +281,7 @@ def init_figure(plot_title: str):
     # Remove axis ticks
     ax.set_xticks([])
     ax.set_yticks([])
-    ax.set_title(plot_title)
+    ax.set_title(plot_title, fontdict={'family': 'sans-serif', 'size': 12, 'weight': 'normal'})
     return fig, ax
 
 def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: dict, color_map: dict, ax: plt.Axes) -> None:
@@ -346,8 +346,8 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
         loc=loc,
         bbox_to_anchor=anchor_pos,  # Places it to the right, outside
         borderaxespad=0,
-        fontsize="small",
-        title_fontsize="medium",
+        prop={'family': 'cursive', 'size': 10, 'weight': 'bold'},
+        title_fontproperties={'family': 'Times New Roman', 'size': 8, 'weight': 'bold'},
         frameon=legend_config.frameon,
         fancybox=False,
         framealpha=0.9,
