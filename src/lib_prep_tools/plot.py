@@ -71,6 +71,7 @@ class LegendConfig(BaseModel):
     """
     title: str | None = None
     title_font: TextFontConfig = TextFontConfig(size=10)
+    label_font: TextFontConfig = TextFontConfig(size=9)
     alignment: str = "left"
     frameon: bool = False
     vertical_position: str = "top"
@@ -380,6 +381,13 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
         'weight': legend_config.title_font.weight,
         'style': legend_config.title_font.style,
     }
+
+    label_fontprops = {
+        'family': legend_config.label_font.family,
+        'size': legend_config.label_font.size,
+        'weight': legend_config.label_font.weight,
+        'style': legend_config.label_font.style,
+    }
     
     ax.legend(
         title=legend_config.title,
@@ -387,7 +395,7 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
         loc=loc,
         bbox_to_anchor=anchor_pos,  # Places it to the right, outside
         borderaxespad=0,
-        prop={'family': 'cursive', 'size': 10, 'weight': 'bold'},
+        prop=label_fontprops,
         title_fontproperties=title_fontprops,
         frameon=legend_config.frameon,
         fancybox=False,
