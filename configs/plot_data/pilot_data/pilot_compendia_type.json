@@ -1,6 +1,12 @@
 {
     "src_adata_path": "processed/pilot_data/merged_compendia.h5ad",
     "plot_title": "Pilot Data UMAP Labeled by Library Prep Method",
+    "plot_title_font": {
+        "family": "sans-serif",
+        "size": 12,
+        "weight": 400,
+        "style": "normal"
+    },
     "out_dir_name": "pilot_data",
     "color_by": {
         "meta_key": "compendia_type",
@@ -8,6 +14,18 @@
     },
     "legend": {
         "title": "Library Prep Method",
+        "title_font": {
+            "family": "sans-serif",
+            "size": 10,
+            "weight": 400,
+            "style": "normal"
+        },
+        "label_font": {
+            "family": "sans-serif",
+            "size": 9,
+            "weight": 400,
+            "style": "normal"
+        },
         "alignment": "left",
         "frameon": true,
         "vertical_position": "top"
