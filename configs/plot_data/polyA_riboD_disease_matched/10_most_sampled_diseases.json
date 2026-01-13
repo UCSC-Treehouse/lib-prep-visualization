@@ -1,6 +1,6 @@
 {
     "src_adata_path": "processed/polyA_riboD_disease_matched/merged_compendia.h5ad",
-    "plot_title": "RiboD and PolyA UMAP Disease Counts Matched Colored by 10 Most Sampled Diseases",
+    "plot_title": "10 Most Sampled Diseases",
     "out_dir_name": "polyA_riboD_disease_matched",
     "color_by": {
         "meta_key": "disease",
