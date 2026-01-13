@@ -102,6 +102,7 @@ class PlotConfig(BaseModel):
     """
     src_adata_path: str
     plot_title: str
+    plot_title_font: TextFontConfig = TextFontConfig()
     out_dir_name: str
     custom_metadata: Path | None = None
     color_by: ColorByConfig
