@@ -12,6 +12,32 @@ from . import logger
 
 OTHER_LABEL = "other"
 
+
+class TextFontConfig(BaseModel):
+    """
+    Model for font configuration for matplotlib text elements.
+    """
+    family: str = "sans-serif"
+    size: float = 12
+    weight: int = 400
+    style: str = "normal"
+
+    @field_validator("weight")
+    @classmethod
+    def weight_must_be_valid(cls, v: int) -> int:
+        # Make sure that the weight is one of the allowed values
+        if v < 0 or v > 1000:
+            raise ValueError("weight must int 0-1000")
+        return v
+
+    @field_validator("style")
+    @classmethod
+    def style_must_be_valid(cls, v: str) -> str:
+        # Make sure that the style is one of the allowed values
+        if v not in ["normal", "italic", "oblique"]:
+            raise ValueError("style must be one of 'normal', 'italic', or 'oblique'")
+        return v
+
 class ColorByConfig(BaseModel):
     """
     Model for the label_key config in the plot config. This will hold the meta_variable to color by and the target 
