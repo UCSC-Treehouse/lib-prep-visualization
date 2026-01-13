@@ -70,6 +70,7 @@ class LegendConfig(BaseModel):
         vertical_position (str): Vertical position (top, center, bottom) of the legend relative to the plot. Default is "top".
     """
     title: str | None = None
+    title_font: TextFontConfig = TextFontConfig(size=10)
     alignment: str = "left"
     frameon: bool = False
     vertical_position: str = "top"
@@ -373,6 +374,13 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
         anchor_pos = (1.02, 0)  # Places it to the right, outside
         loc = "lower left"
 
+    title_fontprops = {
+        'family': legend_config.title_font.family,
+        'size': legend_config.title_font.size,
+        'weight': legend_config.title_font.weight,
+        'style': legend_config.title_font.style,
+    }
+    
     ax.legend(
         title=legend_config.title,
         alignment=legend_config.alignment,
@@ -380,7 +388,7 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
         bbox_to_anchor=anchor_pos,  # Places it to the right, outside
         borderaxespad=0,
         prop={'family': 'cursive', 'size': 10, 'weight': 'bold'},
-        title_fontproperties={'family': 'Times New Roman', 'size': 8, 'weight': 'bold'},
+        title_fontproperties=title_fontprops,
         frameon=legend_config.frameon,
         fancybox=False,
         framealpha=0.9,
