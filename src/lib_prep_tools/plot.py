@@ -297,7 +297,7 @@ def gen_colormap(display_categories_dict: dict, base_color_map: dict[str, str] =
             color_map[label] = mcolors.to_hex(palette[i])
     return color_map
 
-def init_figure(plot_title: str):
+def init_figure(plot_config: PlotConfig) -> tuple[plt.Figure, plt.Axes]:
     # figure size in inches
     width, height = 10, 8
 
@@ -308,7 +308,13 @@ def init_figure(plot_title: str):
     # Remove axis ticks
     ax.set_xticks([])
     ax.set_yticks([])
-    ax.set_title(plot_title, fontdict={'family': 'sans-serif', 'size': 12, 'weight': 'normal'})
+    # Unpack config for title and font settings
+    title = plot_config.plot_title
+    font_family = plot_config.plot_title_font.family
+    font_size = plot_config.plot_title_font.size
+    font_weight = plot_config.plot_title_font.weight
+    font_style = plot_config.plot_title_font.style
+    ax.set_title(title, fontdict={'family': font_family, 'size': font_size, 'weight': font_weight, 'style': font_style})
     return fig, ax
 
 def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: dict, color_map: dict, ax: plt.Axes) -> None:
@@ -399,7 +405,7 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     color_map = gen_colormap(legend_to_meta_map, corrected_color_map)
     # Init a matplotlib figure and axes
     logger.info(f"{plot_config.plot_title}: Initializing figure.")
-    fig, ax = init_figure(plot_config.plot_title)
+    fig, ax = init_figure(plot_config)
     # Plot the UMAP points
     logger.info(f"{plot_config.plot_title}: Plotting points.")
     plot_points(adata, plot_config, legend_to_meta_map, color_map, ax)
