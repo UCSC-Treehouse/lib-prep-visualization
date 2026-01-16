@@ -26,15 +26,6 @@ class CompendiaSource(BaseModel):
             )
         return v
     
-    @field_validator("lib_prep_type")
-    @classmethod
-    def valid_lib_prep_type(cls, v: str) -> str:
-        # Make sure that the lib_prep_type is one of the accepted values.
-        accepted_values = ["polya", "ribodepletion"]
-        if v not in accepted_values:
-            raise ValueError(f"lib_prep_type must be one of {accepted_values}")
-        return v
-    
     def validate_id_dir(self, base_path: Path) -> bool:
         """
         Validate that the compendia_id directory for this source exists under the given base path.
