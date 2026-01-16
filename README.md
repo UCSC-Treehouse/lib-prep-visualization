@@ -153,7 +153,7 @@ The script accepts the following command-line arguments:
 - `sample_subset`: Optional. Path to a TSV file containing a list of sample IDs (one per line) to include in the final processed data. If provided, only these samples will be retained in the output Anndata object.
 - `compendia_list`: list of compendia to merge and process. Each entry is a JSON object with the following fields:
   - `compendia_id`: unique identifier matching a downloaded compendia.
-  - `lib_prep_type`: library preparation type, either "polya" or "ribodepletion".
+  - `lib_prep_type`: library preparation type.
 - `seed`: Optional. Integer random seed for UMAP reproducibility.
 
 ### Process script methods
