@@ -12,6 +12,32 @@ from . import logger
 
 OTHER_LABEL = "other"
 
+
+class TextFontConfig(BaseModel):
+    """
+    Model for font configuration for matplotlib text elements.
+    """
+    family: str = "sans-serif"
+    size: float = 12
+    weight: int = 400
+    style: str = "normal"
+
+    @field_validator("weight")
+    @classmethod
+    def weight_must_be_valid(cls, v: int) -> int:
+        # Make sure that the weight is one of the allowed values
+        if v < 0 or v > 1000:
+            raise ValueError("weight must int 0-1000")
+        return v
+
+    @field_validator("style")
+    @classmethod
+    def style_must_be_valid(cls, v: str) -> str:
+        # Make sure that the style is one of the allowed values
+        if v not in ["normal", "italic", "oblique"]:
+            raise ValueError("style must be one of 'normal', 'italic', or 'oblique'")
+        return v
+
 class ColorByConfig(BaseModel):
     """
     Model for the label_key config in the plot config. This will hold the meta_variable to color by and the target 
@@ -44,6 +70,8 @@ class LegendConfig(BaseModel):
         vertical_position (str): Vertical position (top, center, bottom) of the legend relative to the plot. Default is "top".
     """
     title: str | None = None
+    title_font: TextFontConfig = TextFontConfig(size=10)
+    label_font: TextFontConfig = TextFontConfig(size=9)
     alignment: str = "left"
     frameon: bool = False
     vertical_position: str = "top"
@@ -76,6 +104,7 @@ class PlotConfig(BaseModel):
     """
     src_adata_path: str
     plot_title: str
+    plot_title_font: TextFontConfig = TextFontConfig()
     out_dir_name: str
     custom_metadata: Path | None = None
     color_by: ColorByConfig
@@ -270,7 +299,7 @@ def gen_colormap(display_categories_dict: dict, base_color_map: dict[str, str] =
             color_map[label] = mcolors.to_hex(palette[i])
     return color_map
 
-def init_figure(plot_title: str):
+def init_figure(plot_config: PlotConfig) -> tuple[plt.Figure, plt.Axes]:
     # figure size in inches
     width, height = 10, 8
 
@@ -281,7 +310,13 @@ def init_figure(plot_title: str):
     # Remove axis ticks
     ax.set_xticks([])
     ax.set_yticks([])
-    ax.set_title(plot_title)
+    # Unpack config for title and font settings
+    title = plot_config.plot_title
+    font_family = plot_config.plot_title_font.family
+    font_size = plot_config.plot_title_font.size
+    font_weight = plot_config.plot_title_font.weight
+    font_style = plot_config.plot_title_font.style
+    ax.set_title(title, fontdict={'family': font_family, 'size': font_size, 'weight': font_weight, 'style': font_style})
     return fig, ax
 
 def plot_points(adata: sc.AnnData, plot_config: PlotConfig, display_categories: dict, color_map: dict, ax: plt.Axes) -> None:
@@ -340,14 +375,28 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
         anchor_pos = (1.02, 0)  # Places it to the right, outside
         loc = "lower left"
 
+    title_fontprops = {
+        'family': legend_config.title_font.family,
+        'size': legend_config.title_font.size,
+        'weight': legend_config.title_font.weight,
+        'style': legend_config.title_font.style,
+    }
+
+    label_fontprops = {
+        'family': legend_config.label_font.family,
+        'size': legend_config.label_font.size,
+        'weight': legend_config.label_font.weight,
+        'style': legend_config.label_font.style,
+    }
+    
     ax.legend(
         title=legend_config.title,
         alignment=legend_config.alignment,
         loc=loc,
         bbox_to_anchor=anchor_pos,  # Places it to the right, outside
         borderaxespad=0,
-        fontsize="small",
-        title_fontsize="medium",
+        prop=label_fontprops,
+        title_fontproperties=title_fontprops,
         frameon=legend_config.frameon,
         fancybox=False,
         framealpha=0.9,
@@ -372,7 +421,7 @@ def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:
     color_map = gen_colormap(legend_to_meta_map, corrected_color_map)
     # Init a matplotlib figure and axes
     logger.info(f"{plot_config.plot_title}: Initializing figure.")
-    fig, ax = init_figure(plot_config.plot_title)
+    fig, ax = init_figure(plot_config)
     # Plot the UMAP points
     logger.info(f"{plot_config.plot_title}: Plotting points.")
     plot_points(adata, plot_config, legend_to_meta_map, color_map, ax)

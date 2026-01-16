@@ -153,7 +153,7 @@ The script accepts the following command-line arguments:
 - `sample_subset`: Optional. Path to a TSV file containing a list of sample IDs (one per line) to include in the final processed data. If provided, only these samples will be retained in the output Anndata object.
 - `compendia_list`: list of compendia to merge and process. Each entry is a JSON object with the following fields:
   - `compendia_id`: unique identifier matching a downloaded compendia.
-  - `lib_prep_type`: library preparation type, either "polya" or "ribodepletion".
+  - `lib_prep_type`: library preparation type.
 - `seed`: Optional. Integer random seed for UMAP reproducibility.
 
 ### Process script methods
@@ -224,6 +224,12 @@ This script expects a JSON object specifying plotting parameters. Example:
 {
     "src_adata_path": "processed/sub_dir_name/merged_compendia.h5ad",
     "plot_title": "Plot Title",
+    "plot_title_font": {
+        "family": "sans-serif",
+        "size": 12,
+        "weight": 400,
+        "style": "normal"
+    },
     "out_dir_name": "fig_sub_dir",
     "custom_metadata": "table.tsv",
     "color_by": {
@@ -238,6 +244,18 @@ This script expects a JSON object specifying plotting parameters. Example:
     }
     "legend": {
         "title": "Legend Title",
+        "title_font": {
+            "family": "sans-serif",
+            "size": 10,
+            "weight": 400,
+            "style": "normal"
+        },
+        "label_font": {
+            "family": "sans-serif",
+            "size": 9,
+            "weight": 400,
+            "style": "normal"
+        },
         "alignment": "left",
         "frameon": false,
         "vertical_position": "top"
@@ -246,6 +264,7 @@ This script expects a JSON object specifying plotting parameters. Example:
 ```
 - `src_adata_path`: Path to the processed Anndata file.
 - `plot_title`: Title for the plot.
+- `plot_title_font`: Optional. Font settings for the plot title. See "Font Settings" details below.
 - `out_dir_name`: Subdirectory within the `plots/` directory where the figure will be saved.
 - `custom_metadata`: Optional. Path to a TSV file with additional metadata to merge into the Anndata object. See below for the required format.
 - `color_by`: JSON object specifying how to assign legend colors to points in the plot.
@@ -254,9 +273,28 @@ This script expects a JSON object specifying plotting parameters. Example:
     -   `color_map`: Optional. Dictionary mapping each legend label to a hex color code. The `other` key is used to color any categories not explicitly listed. Legend labels not present in the `color_map` will be assigned default colors from a seaborn color palette.
 - `legend`: Optional. JSON object specifying legend parameters.
     - `title`: Optional. Title for the legend. If omitted, no title will be displayed.
+    - `title_font`: Optional. Font settings for the legend title. See "Font Settings" details below.
+    - `label_font`: Optional. Font settings for the legend labels. See "Font Settings" details below.
     - `alignment`: Optional. Alignment of the legend within the figure. Default is "left".
     - `frameon`: Optional. Boolean indicating whether to draw a frame around the legend. Default is false.
     - `vertical_position`: Optional. Vertical alignment of the legend within the figure: "top", "center", or "bottom". Default is "top".
+
+#### Font Settings
+Font settings for `plot_title`, `legend.title`, and `legend.label` can be specified using a JSON object with any or all of the following fields:
+
+```json
+{
+    "family": "sans-serif",
+    "size": 12,
+    "weight": 400,
+    "style": "normal"
+}
+```
+
+- `family`: Optional. Font family (e.g., "sans-serif", "serif", "monospace"). This can be any font downloaded on your system. Defaults to matplotlib default (usually sans-serif). 
+- `size`: Optional. Font size (float). Figure title default is 12, legend title default is 10, legend label default is 9.
+- `weight`: Optional. Font weight (int). 0-1000. Default is 400.
+- `style`: Optional. Font style (string). {"normal", "italic", "oblique"}. Default is "normal".
 
 ### Custom metadata format
 If you use the `custom_metadata` option in the plot config, the TSV file must be parseable by pandas into a DataFrame (for example, with pandas.read_csv(..., sep='\t', index_col=0)). The first column should contain sample IDs and will be used as the DataFrame index; the remaining columns must have headers. Example:

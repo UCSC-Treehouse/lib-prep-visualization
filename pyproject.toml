@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lib_prep_tools"
-version = "1.0.0"
+version = "1.1.0"
 description = "Visualization tool for comparing RNA-seq expression data across different library preparation methods using UMAP."
 authors = [
     { name="Piet Rottinghuis", email="prottinghuis@gmail.com" }
