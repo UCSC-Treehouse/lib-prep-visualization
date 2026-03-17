@@ -8,4 +8,7 @@ __pycache__/
 data/
 processed/
 figures/
-matched_subsamples/
+matched_subsamples/.DS_Store
+
+# DS_store
+**/.DS_Store
