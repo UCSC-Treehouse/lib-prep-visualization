@@ -1,13 +1,37 @@
 {
     "src_adata_path": "processed/polyA_riboD_disease_matched/merged_compendia.h5ad",
-    "plot_title": "RiboD and PolyA UMAP Disease Counts Matched Colored by Compendia Type - Reversed Plot Order",
+    "plot_title": "Compendia Type - Reversed",
+    "plot_title_font": {
+        "family": "sans-serif",
+        "size": 23,
+        "weight": 400,
+        "style": "normal"
+    },
     "out_dir_name": "polyA_riboD_disease_matched",
     "color_by": {
         "meta_key": "compendia_type",
-        "categories": ["ribodepletion", "polya"],
+        "categories": ["RiboD", "PolyA"],
         "color_map": {
-            "polya": "#1f77b4",
-            "ribodepletion": "#ff7f0e"
+            "PolyA": "#0072B2",
+            "RiboD": "#E69F00"
         }
+    },
+    "legend": {
+        "title": "Library Type",
+        "title_font": {
+            "family": "sans-serif",
+            "size": 15,
+            "weight": 400,
+            "style": "normal"
+        },
+        "label_font": {
+            "family": "sans-serif",
+            "size": 13,
+            "weight": 400,
+            "style": "normal"
+        },
+        "alignment": "left",
+        "frameon": false,
+        "vertical_position": "top"
     }
 }

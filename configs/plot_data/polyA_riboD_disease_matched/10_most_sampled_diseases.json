@@ -1,6 +1,12 @@
 {
     "src_adata_path": "processed/polyA_riboD_disease_matched/merged_compendia.h5ad",
-    "plot_title": "RiboD and PolyA UMAP Disease Counts Matched Colored by 10 Most Sampled Diseases",
+    "plot_title": "10 Most Sampled Diseases",
+    "plot_title_font": {
+        "family": "sans-serif",
+        "size": 23,
+        "weight": 400,
+        "style": "normal"
+    },
     "out_dir_name": "polyA_riboD_disease_matched",
     "color_by": {
         "meta_key": "disease",
@@ -29,5 +35,23 @@
             "craniopharyngioma": "#4e483c",
             "other": "#D5D5D5"
         }
+    },
+        "legend": {
+        "title": "10 most-represented diseases",
+        "title_font": {
+            "family": "sans-serif",
+            "size": 15,
+            "weight": 400,
+            "style": "normal"
+        },
+        "label_font": {
+            "family": "sans-serif",
+            "size": 13,
+            "weight": 400,
+            "style": "normal"
+        },
+        "alignment": "left",
+        "frameon": false,
+        "vertical_position": "top"
     }
 }
