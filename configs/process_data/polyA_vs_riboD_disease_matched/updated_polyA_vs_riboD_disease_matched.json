@@ -1,0 +1,14 @@
+{
+    "out_dir_name": "polyA_riboD_disease_matched",
+    "sample_subset": "matched_subsamples/polyA_riboD_disease_matched/subset_samples_new_forUMAP_IDonly.tsv",
+    "compendia_list": [
+        {
+            "compendia_id": "Tumor_Compendium_25.01_PolyA_01_2025",
+            "lib_prep_type": "PolyA"
+        },
+        {
+            "compendia_id": "Tumor_Compendium_25.01_RiboD_01_2025",
+            "lib_prep_type": "RiboD"
+        }
+    ]
+}

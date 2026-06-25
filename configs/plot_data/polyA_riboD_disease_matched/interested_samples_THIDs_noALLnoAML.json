@@ -1,6 +1,6 @@
 {
     "src_adata_path": "processed/polyA_riboD_disease_matched/merged_compendia.h5ad",
-    "plot_title": "Samples used for analysis",
+    "plot_title": "Samples Used for analysis",
     "plot_title_font": {
         "family": "sans-serif",
         "size": 30,
@@ -8,7 +8,7 @@
         "style": "normal"
     },
     "out_dir_name": "polyA_riboD_disease_matched",
-    "custom_metadata": "configs/plot_data/polyA_riboD_disease_matched/all_interested_samples.tsv",
+    "custom_metadata": "configs/plot_data/polyA_riboD_disease_matched/all_interested_samples_noALLnoAML.tsv",
     "color_by": {
        "meta_key": "disease_and_prep",
        "categories": [
@@ -19,11 +19,7 @@
            "WT_riboD",
            "WT_polyA",
            "NB_riboD",
-           "NB_polyA",
-           "ALL_polyA",
-           "ALL_riboD",
-           "AML_polyA",
-           "AML_riboD"
+           "NB_polyA"
        ],
        "color_map": {
            "SS_riboD": "#a4b9eb",
@@ -34,10 +30,6 @@
            "WT_polyA": "#07adab",
            "NB_riboD": "#cda5e6",
            "NB_polyA": "#700cad",
-           "ALL_polyA": "#0c940c",
-           "ALL_riboD": "#a1d6a1",
-           "AML_polyA": "#c70c28",
-           "AML_riboD": "#e3a6af",
            "other": "#c7c7c7"
        }
     },

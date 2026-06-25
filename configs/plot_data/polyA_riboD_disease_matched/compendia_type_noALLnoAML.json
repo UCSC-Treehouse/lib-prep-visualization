@@ -1,5 +1,5 @@
 {
-    "src_adata_path": "processed/polyA_riboD_disease_matched/merged_compendia.h5ad",
+    "src_adata_path": "processed/polyA_riboD_disease_matched/merged_compendia_noALLnoAML.h5ad",
     "plot_title": "Compendia Type",
     "plot_title_font": {
         "family": "sans-serif",
