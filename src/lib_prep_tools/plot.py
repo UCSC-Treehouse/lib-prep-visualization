@@ -401,6 +401,7 @@ def add_legend(ax: plt.Axes, legend_config: LegendConfig) -> None:
         fancybox=False,
         framealpha=0.9,
         edgecolor="black",
+        markerscale=3,  # Makes the legend dots bigger without changing the plotted point size
     )
 
 def plot_umap(adata: sc.AnnData, plot_config: PlotConfig) -> plt.Figure:

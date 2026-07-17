@@ -46,12 +46,12 @@
         },
         "label_font": {
             "family": "sans-serif",
-            "size": 30,
+            "size": 25,
             "weight": 400,
             "style": "normal"
         },
         "alignment": "left",
-        "frameon": false,
+        "frameon": "false",
         "vertical_position": "top"
     }
 }
