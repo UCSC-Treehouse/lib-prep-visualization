@@ -3,7 +3,7 @@
     "plot_title": "Compendia Type",
     "plot_title_font": {
         "family": "sans-serif",
-        "size": 30,
+        "size": 40,
         "weight": 400,
         "style": "normal"
     },
@@ -20,13 +20,13 @@
         "title": "Library Type",
         "title_font": {
             "family": "sans-serif",
-            "size": 20,
+            "size": 30,
             "weight": 400,
             "style": "normal"
         },
         "label_font": {
             "family": "sans-serif",
-            "size": 20,
+            "size": 30,
             "weight": 400,
             "style": "normal"
         },

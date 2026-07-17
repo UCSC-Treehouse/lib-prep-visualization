@@ -3,12 +3,12 @@
     "plot_title": "Samples used for analysis",
     "plot_title_font": {
         "family": "sans-serif",
-        "size": 30,
+        "size": 40,
         "weight": 400,
         "style": "normal"
     },
     "out_dir_name": "polyA_riboD_disease_matched",
-    "custom_metadata": "configs/plot_data/polyA_riboD_disease_matched/all_interested_samples.tsv",
+    "custom_metadata": "configs/plot_data/polyA_riboD_disease_matched/final_all_interested_samples.tsv",
     "color_by": {
        "meta_key": "disease_and_prep",
        "categories": [
@@ -45,13 +45,13 @@
         "title": "Disease and library type",
         "title_font": {
             "family": "sans-serif",
-            "size": 20,
+            "size": 30,
             "weight": 400,
             "style": "normal"
         },
         "label_font": {
             "family": "sans-serif",
-            "size": 20,
+            "size": 30,
             "weight": 400,
             "style": "normal"
         },

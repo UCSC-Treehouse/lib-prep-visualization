@@ -3,7 +3,7 @@
     "plot_title": "10 Most Sampled Diseases",
     "plot_title_font": {
         "family": "sans-serif",
-        "size": 23,
+        "size": 40,
         "weight": 400,
         "style": "normal"
     },
@@ -40,13 +40,13 @@
         "title": "10 most-represented diseases",
         "title_font": {
             "family": "sans-serif",
-            "size": 15,
+            "size": 30,
             "weight": 400,
             "style": "normal"
         },
         "label_font": {
             "family": "sans-serif",
-            "size": 13,
+            "size": 30,
             "weight": 400,
             "style": "normal"
         },
